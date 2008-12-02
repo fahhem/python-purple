@@ -23,6 +23,8 @@ cdef extern from "glib.h":
     ctypedef int gint
     ctypedef unsigned int guint
     ctypedef unsigned long gulong
+    ctypedef signed long long gint64
+    ctypedef unsigned long long guint64
     ctypedef gint gboolean
     ctypedef gboolean (*GSourceFunc) (gpointer data)
     ctypedef unsigned int gsize

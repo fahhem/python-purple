@@ -40,6 +40,7 @@ cimport roomlist
 cimport signals
 cimport status
 cimport savedstatuses
+cimport value
 cimport util
 
 cdef extern from "libpurple/purple.h":
