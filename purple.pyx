@@ -29,12 +29,14 @@ __APP_NAME__ = "carman-purple-python"
 __APP_VERSION__ = "0.1"
 
 cdef core.PurpleCoreUiOps c_core_ui_ops
+cdef account.PurpleAccountUiOps c_account_ui_ops
 cdef conversation.PurpleConversationUiOps c_conv_ui_ops
 cdef eventloop.PurpleEventLoopUiOps c_eventloop_ui_ops
 cdef glib.GHashTable *c_ui_info
 
 c_ui_info = NULL
 
+include "account_cbs.pxd"
 include "conversation_cbs.pxd"
 
 cdef class Purple:
@@ -74,8 +76,10 @@ cdef class Purple:
     cdef void __core_ui_ops_ui_init(self):
         debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "core_ui_ops", "ui_init\n")
 
+        global c_account_ui_ops
         global c_conv_ui_ops
 
+        account.c_purple_accounts_set_ui_ops(&c_account_ui_ops)
         conversation.c_purple_conversations_set_ui_ops(&c_conv_ui_ops)
         # FIXME: Add core ui initialization here
 
@@ -113,13 +117,23 @@ cdef class Purple:
     def purple_init(self, callbacks_dict=None):
         """ Initializes libpurple """
 
+        global c_account_ui_ops
         global c_conv_ui_ops
         global c_core_ui_ops
         global c_eventloop_ui_ops
 
         if callbacks_dict is not None:
-            global conversations_cbs
-            conversations_cbs = callbacks_dict["conversation"]
+            global account_cbs
+            global conversation_cbs
+
+            account_cbs = callbacks_dict["account"]
+            conversation_cbs = callbacks_dict["conversation"]
+
+        c_account_ui_ops.notify_added = notify_added
+        c_account_ui_ops.status_changed = status_changed
+        c_account_ui_ops.request_add = request_add
+        c_account_ui_ops.request_authorize = request_authorize
+        c_account_ui_ops.close_account_request = close_account_request
 
         c_conv_ui_ops.create_conversation = create_conversation
         c_conv_ui_ops.destroy_conversation = destroy_conversation

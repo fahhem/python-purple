@@ -18,9 +18,16 @@
 #
 
 cimport glib
+
 cimport proxy
+cimport status
+
+cdef extern from *:
+    ctypedef char const_char "const char"
 
 cdef extern from "libpurple/account.h":
+    ctypedef void (*PurpleAccountRequestAuthorizationCb) (void *)
+
     ctypedef struct PurpleAccount:
         char *username
         char *alias
@@ -31,7 +38,18 @@ cdef extern from "libpurple/account.h":
         char *protocol_id
 
     ctypedef struct PurpleAccountUiOps:
-        pass
+        void (*notify_added) (PurpleAccount *account, const_char *remote_user, \
+                const_char *id, const_char *alias, const_char *message)
+        void (*status_changed) (PurpleAccount *account, \
+                status.PurpleStatus *status)
+        void (*request_add) (PurpleAccount *account, const_char *remote_user, \
+                const_char *id, const_char *alias, const_char *message)
+        void *(*request_authorize) (PurpleAccount *account, \
+                const_char *remote_user, const_char *id, const_char *alias, \
+                const_char *message, glib.gboolean on_list, \
+                PurpleAccountRequestAuthorizationCb authorize_cb, \
+                PurpleAccountRequestAuthorizationCb deny_cb, void *user_data)
+        void (*close_account_request) (void *ui_handle)
 
     PurpleAccount *c_purple_account_new "purple_account_new" \
             (char *username, char *protocol_id)

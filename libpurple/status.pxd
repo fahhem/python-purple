@@ -20,6 +20,8 @@
 cimport glib
 
 cdef extern from "libpurple/status.h":
+    ctypedef struct PurpleStatus
+
     ctypedef struct PurplePresence:
         pass
 

@@ -4,26 +4,38 @@ import getpass
 import sys
 
 cbs = {}
+acc_cbs = {}
 conv_cbs = {}
 
-def callback(name):
-    print "---- callback example: %s" % name
+def account_callback(name):
+    print "---- account callback example: %s" % name
 
-conv_cbs["create_conversation"] = callback
-conv_cbs["destroy_conversation"] = callback
-conv_cbs["write_chat"] = callback
-conv_cbs["write_im"] = callback
-conv_cbs["write_conv"] = callback
-conv_cbs["chat_add_users"] = callback
-conv_cbs["chat_rename_user"] = callback
-conv_cbs["chat_remove_users"] = callback
-conv_cbs["chat_update_user"] = callback
-conv_cbs["present"] = callback
-conv_cbs["has_focus"] = callback
-conv_cbs["custom_smiley_add"] = callback
-conv_cbs["custom_smiley_write"] = callback
-conv_cbs["custom_smiley_close"] = callback
-conv_cbs["send_confirm"] = callback
+acc_cbs["notify_added"] = account_callback
+acc_cbs["status_changed"] = account_callback
+acc_cbs["request_add"] = account_callback
+acc_cbs["request_authorize"] = account_callback
+acc_cbs["close_account_request"] = account_callback
+
+cbs["account"] = acc_cbs
+
+def conv_callback(name):
+    print "---- conversation callback example: %s" % name
+
+conv_cbs["create_conversation"] = conv_callback
+conv_cbs["destroy_conversation"] = conv_callback
+conv_cbs["write_chat"] = conv_callback
+conv_cbs["write_im"] = conv_callback
+conv_cbs["write_conv"] = conv_callback
+conv_cbs["chat_add_users"] = conv_callback
+conv_cbs["chat_rename_user"] = conv_callback
+conv_cbs["chat_remove_users"] = conv_callback
+conv_cbs["chat_update_user"] = conv_callback
+conv_cbs["present"] = conv_callback
+conv_cbs["has_focus"] = conv_callback
+conv_cbs["custom_smiley_add"] = conv_callback
+conv_cbs["custom_smiley_write"] = conv_callback
+conv_cbs["custom_smiley_close"] = conv_callback
+conv_cbs["send_confirm"] = conv_callback
 
 cbs["conversation"] = conv_cbs
 
