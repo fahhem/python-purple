@@ -25,8 +25,8 @@ cbs["account"] = acc_cbs
 def blist_callback(name):
     print "---- blist callback example: %s" % name
 
-blist_cbs["new_list"] = blist_callback
-blist_cbs["new_node"] = blist_callback
+#blist_cbs["new_list"] = blist_callback
+#blist_cbs["new_node"] = blist_callback
 blist_cbs["show"] = blist_callback
 #blist_cbs["update"] = blist_callback
 blist_cbs["remove"] = blist_callback
@@ -220,7 +220,7 @@ class NullClientPurple:
     def __init__(self):
         self.p = purple.Purple(debug_enabled=False)
         self.window = MainWindow(self.quit)
-        self.buddies = []
+        self.buddies = [] #online buddies
         self.account = None
         self.protocol = None
         self.username = "carmanplugintest@gmail.com"
@@ -229,7 +229,7 @@ class NullClientPurple:
 
         global cbs
         global signal_cbs
-        cbs["blist"]["update"] = self._purple_blist_new_cb
+        cbs["blist"]["update"] = self._purple_update_blist_cb
         signal_cbs["buddy_signed_off"] = self._purple_signal_sign_off_cb
         self.p.purple_init(cbs)
 
@@ -237,13 +237,13 @@ class NullClientPurple:
         self.window.add_bt_conn_cb(self.connect)
         self.window.init_window()
 
-    def _purple_blist_new_cb(self, pointer):
-        """ FIXME: Hack! to fill blist on UI """
-        buddies = self.account.get_buddies_online()
-        for i in buddies:
-            if i not in self.buddies:
-                self.buddies.append(i)
-                self.window.new_buddy(i)
+    def _purple_update_blist_cb(self, type, name=None, totalsize=None,\
+                             currentsize=None, online=None):
+        self.buddies = self.account.get_buddies_online()
+        if type == 2:
+            if name in self.buddies:
+                self.buddies.append(name)
+                self.window.new_buddy(name)
 
     def _purple_signal_sign_off_cb(self, name, bname):
         self.buddies.remove(bname)
