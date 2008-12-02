@@ -24,10 +24,15 @@ cdef extern from "libpurple/blist.h":
     ctypedef struct PurpleBlistUiOps:
         pass
 
-    ctypedef struct PurpleBuddy:
-        pass
+    cdef struct _PurpleBuddy:
+        char *name
+
+    ctypedef _PurpleBuddy PurpleBuddy
 
     ctypedef struct PurpleBuddyList:
+        pass
+
+    ctypedef struct PurplePresence:
         pass
 
     void *c_purple_blist_get_handle "purple_blist_get_handle" ()
@@ -42,3 +47,6 @@ cdef extern from "libpurple/blist.h":
     PurpleBuddy *c_purple_find_buddy "purple_find_buddy" (PurpleAccount *account,
             const_char_ptr name)
     void c_purple_set_blist "purple_set_blist" (PurpleBuddyList *list)
+    GSList *c_purple_find_buddies "purple_find_buddies" (PurpleAccount *account, const_char_ptr name)
+    PurpleAccount *c_purple_buddy_get_account "purple_buddy_get_account" (PurpleBuddy *buddy)
+    PurplePresence *c_purple_buddy_get_presence "purple_buddy_get_presence" (PurpleBuddy *buddy)

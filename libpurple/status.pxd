@@ -22,3 +22,5 @@ cdef extern from "libpurple/status.h":
         pass
 
     ctypedef int PurpleStatusPrimitive
+
+    gboolean c_purple_presence_is_online "purple_presence_is_online" (PurplePresence *presence)

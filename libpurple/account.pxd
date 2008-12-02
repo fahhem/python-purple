@@ -19,7 +19,7 @@
 
 cdef extern from "libpurple/account.h":
     ctypedef struct PurpleAccount:
-        pass
+        char* username
 
     ctypedef struct PurpleAccountUiOps:
         pass
@@ -31,3 +31,4 @@ cdef extern from "libpurple/account.h":
     const_char_ptr c_purple_account_get_username "purple_account_get_username" (PurpleAccount *account)
     GList *c_purple_accounts_get_all_active "purple_accounts_get_all_active" ()
     void c_purple_accounts_set_ui_ops "purple_accounts_set_ui_ops" (PurpleAccountUiOps *ops)
+    gboolean c_purple_account_is_connected "purple_account_is_connected" (PurpleAccount *account)
