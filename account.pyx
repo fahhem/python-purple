@@ -107,21 +107,21 @@ cdef class Account:
 
                 if self.c_account != NULL:
                     str_value = account.c_purple_account_get_string(self.c_account, setting, str_value)
-                    account.c_purple_account_set_string(self.c_account, setting, str_value );
+                    account.c_purple_account_set_string(self.c_account, setting, str_value)
 
             elif type == prefs.PURPLE_PREF_INT:
                 int_value = accountopt.c_purple_account_option_get_default_int(option)
                 if self.c_account != NULL:
                    int_value = account.c_purple_account_get_int(self.c_account, setting, int_value)
                    if str(<char *> setting) == "port":
-                        account.c_purple_account_set_int(self.c_account, setting, 443);
+                        account.c_purple_account_set_int(self.c_account, setting, 443)
 
             elif type == prefs.PURPLE_PREF_BOOLEAN:
                 bool_value = accountopt.c_purple_account_option_get_default_bool(option)
                 if self.c_account != NULL:
                     bool_value = account.c_purple_account_get_bool(self.c_account, setting, bool_value)
                     if str(<char *> setting) == "old_ssl":
-                        account.c_purple_account_set_bool(self.c_account, setting, True);
+                        account.c_purple_account_set_bool(self.c_account, setting, True)
 
             elif type == prefs.PURPLE_PREF_STRING_LIST:
                 str_value = accountopt.c_purple_account_option_get_default_list_value(option)
@@ -129,4 +129,3 @@ cdef class Account:
                     str_value = account.c_purple_account_get_string(self.c_account, setting, str_value)
 
             iter = iter.next
-
