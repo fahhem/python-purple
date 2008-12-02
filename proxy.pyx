@@ -17,7 +17,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cimport proxy
+cimport purple
 
 cdef class ProxyInfoType:
     cdef proxy.PurpleProxyType c_type
