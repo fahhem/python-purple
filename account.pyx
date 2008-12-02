@@ -305,6 +305,15 @@ cdef class Account:
             iter = iter.next
         return buddies
 
+    def new(self, username, protocol_id):
+        cdef account.PurpleAccount *c_account
+        c_account = account.c_purple_account_new(username, protocol_id)
+
+        if c_account == NULL:
+            return None
+
+        return (username, protocol_id)
+
     def get_all(self):
         cdef glib.GList *iter
         cdef account.PurpleAccount *acc
