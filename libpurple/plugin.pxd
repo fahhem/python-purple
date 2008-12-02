@@ -48,7 +48,7 @@ cdef extern from "libpurple/plugin.h":
     glib.GList *c_purple_plugins_get_protocols "purple_plugins_get_protocols" ()
     PurplePlugin *c_purple_plugins_find_with_name "purple_plugins_find_with_name" \
             (char *name)
-    PurplePlugin *c_purple_plugins_find_with_id "purple_plugins_find_with_id" \
-            (char *id)
+    PurplePlugin *purple_plugins_find_with_id(char *id)
+    char *purple_plugin_get_name(PurplePlugin *plugin)
 
 

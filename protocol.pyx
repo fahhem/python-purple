@@ -25,18 +25,32 @@ cdef class Protocol:
     @param protocol_id
     """
 
-    def __init__(self, account, protocol_id):
-        self.__account = account
-        self.__protocol_id = protocol_id
+    def __init__(self, id):
+        self.__id = id
 
-    cdef account.PurpleAccount *__account_get_structure(self):
-        return account.purple_accounts_find(self.__account.username, \
-                self.__account.protocol_id)
+        if self._get_structure() != NULL:
+            self.__exists = True
+        else:
+            self.__exists = False
 
-    def __get_protocol_id(self):
-        return self.__protocol_id.protocol_id
-    protocol_id = property(__get_protocol_id)
+    cdef plugin.PurplePlugin *_get_structure(self):
+        return plugin.purple_plugins_find_with_id(self.__protocol_id)
 
-    def _set_protocol_id(self, protocol_id):
-        account.purple_account_set_protocol_id( \
-                self.__account_get_structure(), protocol_id)
+    def __get_exists(self):
+        return self.__exists
+    exists = property(__get_exists)
+
+    def __get_id(self):
+        return self.__id
+    id = property(__get_id)
+
+    def __get_name(self):
+        cdef char *name = NULL
+        if self.__exists:
+            name = <char *> plugin.purple_plugin_get_name(self._get_structure())
+            if name != NULL:
+                return name
+            else:
+                return None
+        return None
+    name = property(__get_name)
