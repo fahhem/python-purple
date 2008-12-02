@@ -177,7 +177,53 @@ cdef class Account:
 
         return po
 
-    protocol_options = property(_get_protocol_options)
+    def _set_protocol_options(self, po):
+        cdef glib.GList *iter
+        cdef accountopt.PurpleAccountOption *option
+        cdef prefs.PurplePrefType type
+        cdef const_char *str_value
+        cdef const_char *setting
+        cdef int int_value
+        cdef glib.gboolean bool_value
+
+        if self.c_account == NULL:
+            return
+
+        po = {}
+
+        iter = self.c_prpl_info.protocol_options
+
+        while iter:
+
+            option = <accountopt.PurpleAccountOption *> iter.data
+            type = accountopt.c_purple_account_option_get_type(option)
+            setting = accountopt.c_purple_account_option_get_setting(option)
+
+            sett = str(<char *> setting)
+
+            if type == prefs.PURPLE_PREF_STRING:
+
+                str_value = <char *> po[sett]
+                account.c_purple_account_set_string(self.c_account, setting, str_value)
+
+            elif type == prefs.PURPLE_PREF_INT:
+
+                int_value = int(po[sett])
+                account.c_purple_account_set_int(self.c_account, setting, int_value)
+
+            elif type == prefs.PURPLE_PREF_BOOLEAN:
+
+                bool_value = bool(po[sett])
+                account.c_purple_account_set_bool(self.c_account, setting, bool_value)
+
+            elif type == prefs.PURPLE_PREF_STRING_LIST:
+
+                str_value = <char *> po[sett]
+                account.c_purple_account_set_string(self.c_account, setting, str_value)
+
+            iter = iter.next
+
+    protocol_options = property(_get_protocol_options, _set_protocol_options)
 
     def _get_protocol_labels(self):
         cdef glib.GList *iter
