@@ -63,25 +63,39 @@ cdef void write_chat (conversation.PurpleConversation *conv, const_char *who,
         pass
 
 cdef void write_im (conversation.PurpleConversation *conv, const_char *who,
-                    const_char *message, conversation.PurpleMessageFlags flags,
+                    const_char *c_message, conversation.PurpleMessageFlags flags,
                     time_t mtime):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "conversation", "write-im\n")
     cdef account.PurpleAccount *acc = conversation.c_purple_conversation_get_account(conv)
+    cdef blist.PurpleBuddy *buddy = blist.c_purple_find_buddy(acc, <char *> who)
     cdef char *c_username = NULL
+    cdef char *c_sender_alias = NULL
 
     c_username = <char *> account.c_purple_account_get_username(acc)
-    if c_username == NULL:
-        username = None
-    else:
+    if c_username:
         username = c_username
+    else:
+        username = None
 
     if who:
         sender = <char *> who
+        c_sender_alias = <char *> blist.c_purple_buddy_get_alias_only(buddy)
     else:
         sender = None
 
+    if c_sender_alias:
+        sender_alias = c_sender_alias
+    else:
+        sender_alias = None
+
+    if c_message:
+        message = <char *> c_message
+    else:
+        message = None
+
     try:
-        (<object>conversation_cbs["write-im"])(username, sender, <char *> message)
+        (<object>conversation_cbs["write-im"])(username, sender, \
+                                               sender_alias, message)
     except KeyError:
         pass
 

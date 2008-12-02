@@ -192,12 +192,12 @@ class NullClientPurple(object):
         if self.window:
             self.window.lstatus.text = "Disconnected"
 
-    def __purple_write_im_cb(self, sender, alias, message):
+    def __purple_write_im_cb(self, username, name, alias, message):
         if self.window:
             if alias:
                 self.window.txt_area.text += alias + ": " + message + "<br> "
             else:
-                self.window.txt_area.text += sender + ": " + message + "<br> "
+                self.window.txt_area.text += name + ": " + message + "<br> "
             self.window.show()
 
     def __purple_signal_signed_on_cb(self, username, protocol_id):
