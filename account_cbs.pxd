@@ -86,14 +86,22 @@ cdef void notify_added(account.PurpleAccount *c_account, \
                 (<char *> remote_user, remote_alias), \
                 (username, protocol_id), message)
 
-cdef void status_changed(account.PurpleAccount *account, \
-        status.PurpleStatus *status):
+cdef void status_changed(account.PurpleAccount *c_account, \
+        status.PurpleStatus *c_status):
     """
     This account's status changed.
     """
     debug.purple_debug_info("account", "%s", "status-changed\n")
+
+    username = account.purple_account_get_username(c_account)
+    protocol_id = account.purple_account_get_protocol_id(c_account)
+
+    status_id = status.purple_status_get_id(c_status)
+    status_name = status.purple_status_get_name(c_status)
+
     if account_cbs.has_key("status-changed"):
-        (<object> account_cbs["status-changed"])("status-changed: TODO")
+        (<object> account_cbs["status-changed"])( \
+                (username, protocol_id), status_id, status_name)
 
 cdef void request_add(account.PurpleAccount *c_account, \
         const_char *remote_user, const_char *id, const_char *alias, \
