@@ -50,14 +50,14 @@ cdef class Account:
         self.__sstatus = savedstatuses.c_purple_savedstatus_new(NULL, status.PURPLE_STATUS_AVAILABLE)
         savedstatuses.c_purple_savedstatus_activate(self.__sstatus)
 
-    def get_buddies_online(self, acc):
+    def get_buddies_online(self):
         cdef glib.GSList *iter
         cdef blist.PurpleBuddy *buddy
         buddies = []
         iter = blist.c_purple_find_buddies(self.__account, NULL)
         while iter:
             buddy = <blist.PurpleBuddy *> iter.data
-            if <object> buddy and \
+            if <blist.PurpleBuddy *>buddy and \
                 account.c_purple_account_is_connected(blist.c_purple_buddy_get_account(buddy)) and \
                 status.c_purple_presence_is_online(blist.c_purple_buddy_get_presence(buddy)):
                 buddies += [buddy.name]
