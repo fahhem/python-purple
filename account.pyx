@@ -29,7 +29,7 @@ cdef class Account:
     cdef account.PurpleAccount *__account
     cdef savedstatuses.PurpleSavedStatus *__sstatus
 
-    def __cinit__(self, char *username, char *protocol_id):
+    def __init__(self, char *username, char *protocol_id):
         self.__account = account.c_purple_account_new(username, protocol_id)
 
     def set_password(self, password):

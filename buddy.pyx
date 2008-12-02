@@ -23,7 +23,7 @@ cdef class Buddy:
     """ Buddy class """
     cdef blist.PurpleBuddy *__buddy
 
-    def __cinit__(self):
+    def __init__(self):
         self.__buddy = NULL
 
     def new_buddy(self, acc, char *scr, char *alias):

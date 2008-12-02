@@ -23,7 +23,7 @@ cdef class Conversation:
     """ Conversation class """
     cdef conversation.PurpleConversation *__conv
 
-    def __cinit__(self):
+    def __init__(self):
         conversation.c_purple_conversations_init()
 
     def conversation_new(self, type, acc, char *name):

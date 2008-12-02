@@ -54,17 +54,19 @@ __DEFAULT_PATH__ = "/tmp"
 __APP_NAME__ = "carman-purple-python"
 __APP_VERSION__ = "0.1"
 
-global __DEFAULT_PATH__
-global __APP_NAME__
-global __APP_VERSION__
-
 cdef class Purple:
-    """ Purple class """
+    """ Purple class.
+
+    @parm debug_enabled: Toggle debug messages.
+    @parm app_name: Set application name.
+    @parm default_path: Full path for libpurple user files.
+    """
+
     cdef core.PurpleCoreUiOps c_core_ui_ops
     cdef eventloop.PurpleEventLoopUiOps c_eventloop_ui_ops
     cdef glib.GHashTable *c_ui_info
 
-    def __cinit__(self, debug_enabled=True, app_name=__APP_NAME__, default_path=__DEFAULT_PATH__):
+    def __init__(self, debug_enabled=True, app_name=__APP_NAME__, default_path=__DEFAULT_PATH__):
         self.c_ui_info = NULL
 
         if app_name is not __APP_NAME__:
@@ -79,28 +81,23 @@ cdef class Purple:
 
         # adds glib iteration inside ecore main loop
         ecore.idler_add(self.__glib_iteration_when_idle)
-     # __cinit__
 
     def __del__(self):
         core.c_purple_core_quit()
-    # __del__
 
     cdef void __core_ui_ops_ui_prefs_init(self):
         debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "core_ui_ops", "ui_prefs_init\n")
         prefs.c_purple_prefs_load()
 
         prefs.c_purple_prefs_add_none("/carman")
-    # __core_ui_ops_ui_prefs_init
 
     cdef void __core_ui_ops_debug_init(self):
         debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "core_ui_ops", "debug_ui_init\n")
-    # __core_ui_ops_debug_init
 
     cdef void __core_ui_ops_ui_init(self):
         debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "core_ui_ops", "ui_init\n")
 
         # FIXME: Add core ui initialization here
-    # __core_ui_ops_ui_init
 
     cdef void __core_ui_ops_quit(self):
         debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "core_ui_ops", "quit\n")
@@ -116,7 +113,6 @@ cdef class Purple:
 
         if self.c_ui_info:
             glib.g_hash_table_destroy(self.c_ui_info)
-    # __core_ui_ops_quit
 
     cdef glib.GHashTable *__core_ui_ops_get_ui_info(self):
         if self.c_ui_info == NULL:
@@ -125,12 +121,10 @@ cdef class Purple:
             glib.g_hash_table_insert(self.c_ui_info, "name", <glib.gpointer> __APP_NAME__)
             glib.g_hash_table_insert(self.c_ui_info, "version", <glib.gpointer> __APP_VERSION__)
         return self.c_ui_info
-    # __core_ui_ops_get_ui_info
 
     def __glib_iteration_when_idle(self):
         glib.g_main_context_iteration(NULL, False)
         return True
-    # __glib_iteration_when_idle
 
     def purple_init(self):
         """ Initializes libpurple """
@@ -173,7 +167,6 @@ cdef class Purple:
         pounce.c_purple_pounces_load()
 
         return ret
-    # purple_init
 
     def get_protocols(self):
         cdef glib.GList *iter
@@ -186,13 +179,10 @@ cdef class Purple:
                 protocols += [(__plugin.info.id, __plugin.info.name)]
             iter = iter.next
         return protocols
-    # get_protocols
 
     def connect(self):
         conn = Connection()
         conn.connect()
-    # connect
-# Purple
 
 include "account.pyx"
 include "buddy.pyx"
