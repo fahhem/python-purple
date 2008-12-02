@@ -18,9 +18,10 @@
 #
 
 cdef extern from "libpurple/idle.h":
-    ctypedef struct PurpleIdleUiOps
+    ctypedef struct PurpleIdleUiOps:
+        pass
 
-    cdef void c_purple_idle_set_ui_ops "purple_idle_set_ui_ops" (PurpleIdleUiOps *ops)
+    void c_purple_idle_set_ui_ops "purple_idle_set_ui_ops" (PurpleIdleUiOps *ops)
 
 class Idle(object):
     """ Idle class """

@@ -18,7 +18,7 @@
 #
 
 cdef extern from "libpurple/debug.h":
-    cdef void c_purple_debug_set_enabled "purple_debug_set_enabled" (gboolean debug_enabled)
+    void c_purple_debug_set_enabled "purple_debug_set_enabled" (gboolean debug_enabled)
 
 class Debug(object):
     """ Debug class """

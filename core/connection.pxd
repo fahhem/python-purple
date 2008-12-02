@@ -18,9 +18,10 @@
 #
 
 cdef extern from "libpurple/connection.h":
-    ctypedef struct PurpleConnection
+    ctypedef struct PurpleConnection:
+        pass
 
-    cdef PurpleAccount* c_purple_connection_get_account "purple_connection_get_account" (PurpleConnection *gc)
+    PurpleAccount* c_purple_connection_get_account "purple_connection_get_account" (PurpleConnection *gc)
 
 class Connection(object):
     """ Connection class """

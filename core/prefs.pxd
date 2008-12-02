@@ -18,9 +18,9 @@
 #
 
 cdef extern from "libpurple/prefs.h":
-    cdef void c_purple_prefs_rename "purple_prefs_rename" (const_char_ptr oldname, const_char_ptr newname)
-    cdef const_char_ptr c_purple_prefs_get_string "purple_prefs_get_string" (const_char_ptr name)
-    cdef gboolean c_purple_prefs_load "purple_prefs_load" ()
+    void c_purple_prefs_rename "purple_prefs_rename" (const_char_ptr oldname, const_char_ptr newname)
+    const_char_ptr c_purple_prefs_get_string "purple_prefs_get_string" (const_char_ptr name)
+    gboolean c_purple_prefs_load "purple_prefs_load" ()
 
 class Prefs(object):
     """ Prefs class """

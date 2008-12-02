@@ -18,7 +18,7 @@
 #
 
 cdef extern from "libpurple/pounce.h":
-    cdef gboolean c_purple_pounces_load "purple_pounces_load" ()
+    gboolean c_purple_pounces_load "purple_pounces_load" ()
 
 class Pounce(object):
     """ Pounce class """

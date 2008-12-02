@@ -18,9 +18,10 @@
 #
 
 cdef extern from "libpurple/eventloop.h":
-    ctypedef struct PurpleEventLoopUiOps
+    ctypedef struct PurpleEventLoopUiOps:
+        pass
 
-    cdef void c_purple_eventloop_set_ui_ops "purple_eventloop_set_ui_ops" (PurpleEventLoopUiOps *ops)
+    void c_purple_eventloop_set_ui_ops "purple_eventloop_set_ui_ops" (PurpleEventLoopUiOps *ops)
 
 class EventLoop(object):
     """ EventLoop class """

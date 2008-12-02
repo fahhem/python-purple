@@ -18,11 +18,12 @@
 #
 
 cdef extern from "libpurple/blist.h":
-    ctypedef struct PurpleBuddyList
+    ctypedef struct PurpleBuddyList:
+        pass
 
-    cdef void c_purple_set_blist "purple_set_blist" (PurpleBuddyList *list)
-    cdef void c_purple_blist_load "purple_blist_load" ()
-    cdef PurpleBuddyList* purple_blist_new "purple_blist_new" ()
+    void c_purple_set_blist "purple_set_blist" (PurpleBuddyList *list)
+    void c_purple_blist_load "purple_blist_load" ()
+    PurpleBuddyList* purple_blist_new "purple_blist_new" ()
 
 class BList(object):
     """ BList class """

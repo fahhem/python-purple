@@ -18,7 +18,7 @@
 #
 
 cdef extern from "libpurple/util.h":
-    cdef void c_purple_util_set_user_dir "purple_util_set_user_dir" (char *dir)
+    void c_purple_util_set_user_dir "purple_util_set_user_dir" (char *dir)
 
 class Utils(object):
     """ Utils class """

@@ -18,12 +18,13 @@
 #
 
 cdef extern from "libpurple/account.h":
-    ctypedef struct PurpleAccount
+    ctypedef struct PurpleAccount:
+        pass
 
-    cdef PurpleAccount *c_purple_account_new "purple_account_new" (const_char_ptr username, const_char_ptr protocol_id)
-    cdef void c_purple_account_set_username "purple_account_set_username" (PurpleAccount *account, const_char_ptr username)
-    cdef void c_purple_account_set_password "purple_account_set_password" (PurpleAccount *account, const_char_ptr password)
-    cdef void c_purple_account_set_enabled "purple_account_set_enabled" (PurpleAccount *account, const_char_ptr ui, gboolean value)
+    PurpleAccount *c_purple_account_new "purple_account_new" (const_char_ptr username, const_char_ptr protocol_id)
+    void c_purple_account_set_username "purple_account_set_username" (PurpleAccount *account, const_char_ptr username)
+    void c_purple_account_set_password "purple_account_set_password" (PurpleAccount *account, const_char_ptr password)
+    void c_purple_account_set_enabled "purple_account_set_enabled" (PurpleAccount *account, const_char_ptr ui, gboolean value)
 
 class Account(object):
     """ Account class """

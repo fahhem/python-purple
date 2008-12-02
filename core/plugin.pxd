@@ -18,11 +18,12 @@
 #
 
 cdef extern from "libpurple/plugin.h":
-    ctypedef struct PurplePlugin
+    ctypedef struct PurplePlugin:
+        pass
 
-    cdef void c_purple_plugins_add_search_path "purple_plugins_add_search_path" (const_char_ptr path)
-    cdef void c_purple_plugins_load_saved "purple_plugins_load_saved" (const_char_ptr key)
-    cdef gboolean c_purple_plugin_register "purple_plugin_register" (PurplePlugin *plugin)
+    void c_purple_plugins_add_search_path "purple_plugins_add_search_path" (const_char_ptr path)
+    void c_purple_plugins_load_saved "purple_plugins_load_saved" (const_char_ptr key)
+    gboolean c_purple_plugin_register "purple_plugin_register" (PurplePlugin *plugin)
 
 class Plugin(object):
     """ Plugin class """
