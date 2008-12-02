@@ -27,17 +27,17 @@ cdef extern from *:
 
 cdef void *notify_message (notify.PurpleNotifyMsgType type, const_char *title,
                            const_char *primary, const_char *secondary):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "notify", "notify_message\n")
+    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "notify", "notify-message\n")
     try:
-        (<object>notify_cbs["notify_message"])("notify_message")
+        (<object>notify_cbs["notify-message"])("notify-message: TODO")
     except KeyError:
         pass
 
 cdef void *notify_email (connection.PurpleConnection *gc, const_char *subject,
                          const_char *_from, const_char *to, const_char *url):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "notify", "notify_email\n")
+    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "notify", "notify-email\n")
     try:
-        (<object>notify_cbs["notify_email"])("notify_email")
+        (<object>notify_cbs["notify-email"])("notify-email: TODO")
     except KeyError:
         pass
 
@@ -45,17 +45,17 @@ cdef void *notify_emails (connection.PurpleConnection *gc, size_t count,
                           glib.gboolean detailed, const_char **subjects,
                           const_char **froms, const_char **tos,
                           const_char **urls):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "notify", "notify_emails\n")
+    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "notify", "notify-emails\n")
     try:
-        (<object>notify_cbs["notify_emails"])("notify_emails")
+        (<object>notify_cbs["notify-emails"])("notify-emails: TODO")
     except KeyError:
         pass
 
 cdef void *notify_formatted (const_char *title, const_char *primary,
                              const_char *secondary, const_char *text):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "notify", "notify_formatted\n")
+    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "notify", "notify-formatted\n")
     try:
-        (<object>notify_cbs["notify_formatted"])("notify_formatted")
+        (<object>notify_cbs["notify-formatted"])("notify-formatted: TODO")
     except KeyError:
         pass
 
@@ -65,9 +65,9 @@ cdef void *notify_searchresults (connection.PurpleConnection *gc,
                                  notify.PurpleNotifySearchResults *results,
                                  glib.gpointer user_data):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "notify",
-                         "notify_searchresults\n")
+                         "notify-searchresults\n")
     try:
-        (<object>notify_cbs["notify_searchresults"])("notify_searchresults")
+        (<object>notify_cbs["notify-searchresults"])("notify-searchresults: TODO")
     except KeyError:
         pass
 
@@ -75,30 +75,30 @@ cdef void notify_searchresults_new_rows (connection.PurpleConnection *gc,
                             notify.PurpleNotifySearchResults *results,
                             void *data):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "notify",
-                         "notify_searchresults_new_rows\n")
+                         "notify-searchresults-new-rows\n")
     try:
-        (<object>notify_cbs["notify_searchresults_new_rows"])("notify_searchresults_new_rows")
+        (<object>notify_cbs["notify-searchresults-new-rows"])("notify-searchresults-new-rows: TODO")
     except KeyError:
         pass
 
 cdef void *notify_userinfo (connection.PurpleConnection *gc, const_char *who,
                             notify.PurpleNotifyUserInfo *user_info):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "notify", "notify_userinfo\n")
+    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "notify", "notify-userinfo\n")
     try:
-        (<object>notify_cbs["notify_userinfo"])("notify_userinfo")
+        (<object>notify_cbs["notify-userinfo"])("notify-userinfo: TODO")
     except KeyError:
         pass
 
 cdef void *notify_uri (const_char *uri):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "notify", "notify_uri\n")
+    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "notify", "notify-uri\n")
     try:
-        (<object>notify_cbs["notify_uri"])("notify_uri")
+        (<object>notify_cbs["notify-uri"])("notify-uri: TODO")
     except KeyError:
         pass
 
 cdef void close_notify (notify.PurpleNotifyType type, void *ui_handle):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "notify", "close_notify\n")
+    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "notify", "close-notify\n")
     try:
-        (<object>notify_cbs["close_notify"])("close_notify")
+        (<object>notify_cbs["close-notify"])("close-notify: TODO")
     except KeyError:
         pass

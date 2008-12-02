@@ -137,19 +137,8 @@ cdef class Purple:
         glib.g_main_context_iteration(NULL, False)
         return True
 
-    def purple_init(self, callbacks_dict=None):
+    def purple_init(self):
         """ Initializes libpurple """
-
-        if callbacks_dict is not None:
-            global connection_cbs
-            global conversation_cbs
-            global notify_cbs
-            global request_cbs
-
-            connection_cbs = callbacks_dict["connection"]
-            conversation_cbs = callbacks_dict["conversation"]
-            notify_cbs = callbacks_dict["notify"]
-            request_cbs = callbacks_dict["request"]
 
         c_account_ui_ops.notify_added = notify_added
         c_account_ui_ops.status_changed = status_changed
@@ -251,13 +240,23 @@ cdef class Purple:
 
         return ret
 
-    def add_account_cb(self, name, func):
+    def add_callback(self, type, name, func):
+        """ Adds a callback 'func' with given name 'name' inside type 'type'.
+        Example: add_callback("account", "notify-added", notify_added_cb)
+        """
         global account_cbs
-        account_cbs[name] = func
-
-    def add_blist_cb(self, name, func):
         global blist_cbs
-        blist_cbs[name] = func
+        global connection_cbs
+        global conversation_cbs
+        global notify_cbs
+        global request_cbs
+
+        { "account": account_cbs,
+          "blist": blist_cbs,
+          "connection": connection_cbs,
+          "conversation": conversation_cbs,
+          "notify": notify_cbs,
+          "request": request_cbs }[type][name] = func
 
     def connect(self):
         conn = Connection()

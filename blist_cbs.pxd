@@ -128,7 +128,7 @@ cdef void new_node (blist.PurpleBlistNode *node):
 cdef void show (blist.PurpleBuddyList *list):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "show\n")
     try:
-        (<object>blist_cbs["show"])("show")
+        (<object>blist_cbs["show"])("show: TODO")
     except KeyError:
         pass
 
@@ -168,23 +168,23 @@ cdef void remove (blist.PurpleBuddyList *list, blist.PurpleBlistNode *node):
 cdef void destroy (blist.PurpleBuddyList *list):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "destroy\n")
     try:
-        (<object>blist_cbs["destroy"])("destroy")
+        (<object>blist_cbs["destroy"])("destroy: TODO")
     except KeyError:
         pass
 
 cdef void set_visible (blist.PurpleBuddyList *list, glib.gboolean show):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "set_visible\n")
+    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "set-visible\n")
     try:
-        (<object>blist_cbs["set_visible"])("set_visible")
+        (<object>blist_cbs["set_visible"])("set-visible: TODO")
     except KeyError:
         pass
 
 cdef void request_add_buddy (account.PurpleAccount *acc,
                              const_char *username, const_char *group,
                              const_char *alias):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "request_add_buddy\n")
+    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "request-add-buddy\n")
     try:
-        (<object>blist_cbs["request_add_buddy"])("request_add_buddy")
+        (<object>blist_cbs["request-add-buddy"])("request-add-buddy: TODO")
     except KeyError:
         pass
 
@@ -193,13 +193,13 @@ cdef void request_add_chat (account.PurpleAccount *acc,
                             const_char *name):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "request_add_chat\n")
     try:
-        (<object>blist_cbs["request_add_chat"])("request_add_chat")
+        (<object>blist_cbs["request-add-chat"])("request-add-chat: TODO")
     except KeyError:
         pass
 
 cdef void request_add_group ():
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "request_add_group\n")
     try:
-        (<object>blist_cbs["request_add_chat"])("request_add_group")
+        (<object>blist_cbs["request-add-chat"])("request-add-group: TODO")
     except KeyError:
         pass

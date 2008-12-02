@@ -35,9 +35,9 @@ cdef void *request_input (const_char *title, const_char *primary,
                           account.PurpleAccount *account, const_char *who,
                           conversation.PurpleConversation *conv,
                           void *user_data):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "request", "request_input\n")
+    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "request", "request-input\n")
     try:
-        (<object>request_cbs["request_input"])("request_input")
+        (<object>request_cbs["request-input"])("request-input: TODO")
     except KeyError:
         pass
 
@@ -50,9 +50,9 @@ cdef void *request_choice (const_char *title, const_char *primary,
                            conversation.PurpleConversation *conv,
                            void *user_data, va_list choices):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "request",
-                         "request_choice\n")
+                         "request-choice\n")
     try:
-        (<object>request_cbs["request_choice"])("request_choice")
+        (<object>request_cbs["request-choice"])("request-choice: TODO")
     except KeyError:
         pass
 
@@ -63,9 +63,9 @@ cdef void *request_action (const_char *title, const_char *primary,
                            void *user_data, size_t action_count,
                            va_list actions):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "request",
-                         "request_action\n")
+                         "request-action\n")
     try:
-        (<object>request_cbs["request_action"])("request_action")
+        (<object>request_cbs["request-action"])("request-action: TODo")
     except KeyError:
         pass
 
@@ -78,9 +78,9 @@ cdef void *request_fields (const_char *title, const_char *primary,
                            conversation.PurpleConversation *conv,
                            void *user_data):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "request",
-                         "request_fields\n")
+                         "request-fields\n")
     try:
-        (<object>request_cbs["request_fields"])("request_fields")
+        (<object>request_cbs["request-fields"])("request-fields: TODO")
     except KeyError:
         pass
 
@@ -90,16 +90,16 @@ cdef void *request_file (const_char *title, const_char *filename,
                          account.PurpleAccount *account, const_char *who,
                          conversation.PurpleConversation *conv,
                          void *user_data):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "request", "request_file\n")
+    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "request", "request-file\n")
     try:
-        (<object>request_cbs["request_file"])("request_file")
+        (<object>request_cbs["request-file"])("request-file: TODO")
     except KeyError:
         pass
 
 cdef void close_request (request.PurpleRequestType type, void *ui_handle):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "request", "close_request\n")
+    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "request", "close-request\n")
     try:
-        (<object>request_cbs["close_request"])("close_request")
+        (<object>request_cbs["close-request"])("close-request: TODO")
     except KeyError:
         pass
 
@@ -111,8 +111,8 @@ cdef void *request_folder (const_char *title, const_char *dirname,
                            conversation.PurpleConversation *conv,
                            void *user_data):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "request",
-                         "request_folder\n")
+                         "request-folder\n")
     try:
-        (<object>request_cbs["request_folder"])("request_folder")
+        (<object>request_cbs["request-folder"])("request-folder: TODO")
     except KeyError:
         pass
