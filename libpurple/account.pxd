@@ -19,14 +19,55 @@
 
 cimport glib
 
-cimport proxy
-cimport status
-
 cdef extern from *:
     ctypedef char const_char "const char"
 
+# hack to avoid recursive loops by cython
+cdef extern from "libpurple/connection.h":
+    ctypedef struct PurpleConnection:
+        pass
+
+cdef extern from "libpurple/log.h":
+    ctypedef struct PurpleLog:
+        pass
+
+cdef extern from "libpurple/proxy.h":
+    ctypedef struct PurpleProxyInfo:
+        pass
+
+cdef extern from "libpurple/status.h":
+    ctypedef struct PurpleStatus:
+        pass
+
+    ctypedef struct PurplePresence:
+        pass
+
 cdef extern from "libpurple/account.h":
+    ctypedef struct PurpleAccountUiOps
+    ctypedef struct PurpleAccount
+
+    ctypedef glib.gboolean (*PurpleFilterAccountFunc) (PurpleAccount *account)
     ctypedef void (*PurpleAccountRequestAuthorizationCb) (void *)
+    ctypedef void (*PurpleAccountRegistrationCb) (PurpleAccount *account, \
+            glib.gboolean succeeded, void *user_data)
+    ctypedef void (*PurpleAccountUnregistrationCb) (PurpleAccount *account, \
+            glib.gboolean succeeded, void *user_data)
+
+    ctypedef enum PurpleAccountRequestType:
+        PURPLE_ACCOUNT_REQUEST_AUTHORIZATION = 0
+
+    ctypedef struct PurpleAccountUiOps:
+        void (*notify_added) (PurpleAccount *account, const_char *remote_user, \
+                const_char *id, const_char *alias, const_char *message)
+        void (*status_changed) (PurpleAccount *account, PurpleStatus *status)
+        void (*request_add) (PurpleAccount *account, const_char *remote_user, \
+                const_char *id, const_char *alias, const_char *message)
+        void *(*request_authorize) (PurpleAccount *account, \
+                const_char *remote_user, const_char *id, const_char *alias, \
+                const_char *message, glib.gboolean on_list, \
+                PurpleAccountRequestAuthorizationCb authorize_cb, \
+                PurpleAccountRequestAuthorizationCb deny_cb, void *user_data)
+        void (*close_account_request) (void *ui_handle)
 
     ctypedef struct PurpleAccount:
         char *username
@@ -36,20 +77,20 @@ cdef extern from "libpurple/account.h":
         char *buddy_icon_path
         glib.gboolean remember_pass
         char *protocol_id
-
-    ctypedef struct PurpleAccountUiOps:
-        void (*notify_added) (PurpleAccount *account, const_char *remote_user, \
-                const_char *id, const_char *alias, const_char *message)
-        void (*status_changed) (PurpleAccount *account, \
-                status.PurpleStatus *status)
-        void (*request_add) (PurpleAccount *account, const_char *remote_user, \
-                const_char *id, const_char *alias, const_char *message)
-        void *(*request_authorize) (PurpleAccount *account, \
-                const_char *remote_user, const_char *id, const_char *alias, \
-                const_char *message, glib.gboolean on_list, \
-                PurpleAccountRequestAuthorizationCb authorize_cb, \
-                PurpleAccountRequestAuthorizationCb deny_cb, void *user_data)
-        void (*close_account_request) (void *ui_handle)
+        PurpleConnection *gc
+        glib.gboolean disconnecting
+        glib.GHashTable *settings
+        glib.GHashTable *ui_settings
+        PurpleProxyInfo *proxy_info
+        glib.GSList *permit
+        glib.GSList *deny
+        int perm_deny
+        PurplePresence *presence
+        PurpleLog *system_log
+        void *ui_data
+        PurpleAccountRegistrationCb registration_cb
+        void *registration_cb_user_data
+        glib.gpointer priv
 
     PurpleAccount *c_purple_account_new "purple_account_new" \
             (char *username, char *protocol_id)
@@ -67,8 +108,7 @@ cdef extern from "libpurple/account.h":
             (PurpleAccountUiOps *ops)
     glib.gboolean c_purple_account_is_connected "purple_account_is_connected" \
             (PurpleAccount *account)
-    proxy.PurpleProxyInfo *c_purple_account_get_proxy_info \
+    PurpleProxyInfo *c_purple_account_get_proxy_info \
             "purple_account_get_proxy_info" (PurpleAccount *account)
     void c_purple_account_set_proxy_info "purple_account_set_proxy_info" \
-            (PurpleAccount *account, proxy.PurpleProxyInfo *info)
-
+            (PurpleAccount *account, PurpleProxyInfo *info)
