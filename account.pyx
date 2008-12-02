@@ -17,12 +17,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cimport glib
-
-cimport account
-cimport blist
-cimport savedstatuses
-cimport status
+cimport purple
 
 cdef class Account:
     """ Account class """

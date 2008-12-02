@@ -17,6 +17,8 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cimport account
+
 cdef extern from "libpurple/connection.h":
     ctypedef struct PurpleConnection:
         pass
@@ -24,4 +26,6 @@ cdef extern from "libpurple/connection.h":
     ctypedef struct PurpleConnectionUiOps:
         pass
 
+    account.PurpleAccount *c_purple_connection_get_account "purple_connection_get_account" (PurpleConnection *gc)
+    void *c_purple_connections_get_handle "purple_connections_get_handle" ()
     void c_purple_connections_set_ui_ops "purple_connections_set_ui_ops" (PurpleConnectionUiOps *ops)

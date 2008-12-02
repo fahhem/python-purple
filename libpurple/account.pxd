@@ -22,6 +22,12 @@ cimport glib
 cdef extern from "libpurple/account.h":
     ctypedef struct PurpleAccount:
         char *username
+        char *alias
+        char *password
+        char *user_info
+        char *buddy_icon_path
+        glib.gboolean remember_pass
+        char *protocol_id
 
     ctypedef struct PurpleAccountUiOps:
         pass

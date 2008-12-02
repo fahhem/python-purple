@@ -17,35 +17,9 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cdef extern from "libpurple/purple.h":
-    pass
-
-cimport glib
-
-cimport account
-cimport buddyicon
-cimport blist
-cimport connection
-cimport conversation
-cimport core
-cimport debug
-cimport eventloop
-cimport ft
-cimport idle
-cimport notify
-cimport plugin
-cimport pounce
-cimport prefs
-cimport proxy
-cimport request
-cimport roomlist
-cimport signals
-cimport status
-cimport savedstatuses
-cimport util
+cimport purple
 
 cdef extern from "c_purple.h":
-    void connect_to_signals_for_demonstration_purposes_only ()
     glib.guint glib_input_add(glib.gint fd, eventloop.PurpleInputCondition condition, eventloop.PurpleInputFunction function, glib.gpointer data)
 
 import ecore

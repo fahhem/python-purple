@@ -17,21 +17,16 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cimport purple
+cimport blist
+cimport conversation
+cimport ft
+#cimport imgstore
+cimport notify
+cimport proxy
+cimport plugin
+cimport roomlist
+cimport status
+#cimport whiteboard
 
-cdef void signed_on_cb (connection.PurpleConnection *gc, glib.gpointer null):
-    cdef account.PurpleAccount *acc = connection.c_purple_connection_get_account(gc)
-    print "Account connected: %s %s" % (acc.username, acc.protocol_id)
-
-cdef class Connection:
-    """ Connection class """
-    cdef connection.PurpleConnection *__conn
-
-    def __init__(self):
-        pass
-
-    def connect(self):
-        cdef int handle
-
-        signals.c_purple_signal_connect(connection.c_purple_connections_get_handle(),
-            "signed-on", &handle, <signals.PurpleCallback> signed_on_cb, NULL)
+cdef extern from "libpurple/prpl.h":
+    plugin.PurplePlugin *c_purple_find_prpl "purple_find_prpl" (char *id)
