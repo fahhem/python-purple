@@ -45,12 +45,20 @@ cdef extern from "libpurple/blist.h":
         PURPLE_BLIST_NODE_FLAG_NO_SAVE = 1 << 0
 
     ctypedef struct PurpleBlistNode:
-        pass
+        PurpleBlistNodeType type
+        PurpleBlistNode *prev
+        PurpleBlistNode *next
+        PurpleBlistNode *parent
+        PurpleBlistNode *child
+        glib.GHashTable *settings
+        void *ui_data
+        PurpleBlistNodeFlags flags
 
     ctypedef struct PurpleBuddy:
         char *name
         char *alias
         char *server_alias
+        void *proto_data
 
     ctypedef struct PurpleContact:
         pass
@@ -62,7 +70,9 @@ cdef extern from "libpurple/blist.h":
         pass
 
     ctypedef struct PurpleBuddyList:
-        pass
+        PurpleBlistNode *root
+        glib.GHashTable *buddies
+        void *ui_data
 
     ctypedef struct PurpleBlistUiOps:
         void (*new_list) (PurpleBuddyList *list)
