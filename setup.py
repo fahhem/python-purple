@@ -23,9 +23,8 @@ setup(
   version = '0.1',
   author ='Bruno Abinader',
   author_email='bruno.abinader@openbossa.org',
+  cmdclass = {'build_ext': pypurple_build_ext},
   ext_modules=[Extension('purple',
               sources=['c_purple.c','purple.pyx'],
               extra_compile_args=cflags,
-              extra_link_args=ldflags)],
-  cmdclass = {'build_ext': pypurple_build_ext},
-)
+              extra_link_args=ldflags)])

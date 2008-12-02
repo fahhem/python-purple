@@ -26,8 +26,16 @@ cdef extern from "time.h":
     ctypedef long int time_t
 
 cdef extern from "libpurple/core.h":
+    ctypedef struct PurpleCoreUiOps:
+        void (*ui_prefs_init) ()
+        void (*debug_ui_init) ()
+        void (*ui_init) ()
+        void (*quit) ()
+        GHashTable (*get_ui_info) ()
+
     gboolean c_purple_core_init "purple_core_init" (const_char_ptr ui_name)
     void c_purple_core_quit "purple_core_quit" ()
+    void c_purple_core_set_ui_ops "purple_core_set_ui_ops" (PurpleCoreUiOps *ops)
     gboolean c_purple_core_ensure_single_instance "purple_core_ensure_single_instance" ()
 
 cdef extern from "libpurple/debug.h":
@@ -42,17 +50,58 @@ cdef extern from "libpurple/debug.h":
     void c_purple_debug "purple_debug" (PurpleDebugLevel level, const_char_ptr category, const_char_ptr format)
     void c_purple_debug_set_enabled "purple_debug_set_enabled" (gboolean debug_enabled)
 
+cdef extern from "libpurple/eventloop.h":
+    ctypedef enum PurpleInputCondition:
+        PURPLE_INPUT_READ
+        PURPLE_INPUT_WRITE
+
+    ctypedef void (*PurpleInputFunction) (gpointer , gint, PurpleInputCondition)
+
+    ctypedef struct PurpleEventLoopUiOps:
+        guint (*timeout_add) (guint interval, GSourceFunc function, gpointer data)
+        gboolean (*timeout_remove) (guint handle)
+        guint (*input_add) (int fd, PurpleInputCondition cond, PurpleInputFunction func, gpointer user_data)
+        gboolean (*input_remove) (guint handle)
+        int (*input_get_error) (int fd, int *error)
+        guint (*timeout_add_seconds)(guint interval, GSourceFunc function, gpointer data)
+
+    void c_purple_eventloop_set_ui_ops "purple_eventloop_set_ui_ops" (PurpleEventLoopUiOps *ops)
+
 cdef extern from "libpurple/plugin.h":
     void c_purple_plugins_add_search_path "purple_plugins_add_search_path" (const_char_ptr path)
+
+cdef extern from "libpurple/prefs.h":
+    void c_purple_prefs_rename "purple_prefs_rename" (const_char_ptr oldname, const_char_ptr newname)
+    const_char_ptr c_purple_prefs_get_string "purple_prefs_get_string" (const_char_ptr name)
+    gboolean c_purple_prefs_load "purple_prefs_load" ()
 
 cdef extern from "libpurple/util.h":
     void c_purple_util_set_user_dir "purple_util_set_user_dir" (char *dir)
 
 cdef extern from "c_purple.h":
      void set_uiops()
+     guint glib_input_add(gint fd, PurpleInputCondition condition, PurpleInputFunction function, gpointer data)
+
+cdef void ui_init():
+    pass
 
 class Purple(object):
     def __init__(self):
+        cdef PurpleCoreUiOps c_core_ui_ops
+        c_core_ui_ops.ui_prefs_init = NULL
+        c_core_ui_ops.debug_ui_init = NULL
+        c_core_ui_ops.ui_init = ui_init
+        c_core_ui_ops.quit = NULL
+        c_core_ui_ops.get_ui_info = NULL
+
+        cdef PurpleEventLoopUiOps c_eventloop_ui_ops
+        c_eventloop_ui_ops.timeout_add = g_timeout_add
+        c_eventloop_ui_ops.timeout_remove = g_source_remove
+        c_eventloop_ui_ops.input_add = glib_input_add
+        c_eventloop_ui_ops.input_remove = g_source_remove
+        c_eventloop_ui_ops.input_get_error = NULL
+        c_eventloop_ui_ops.timeout_add_seconds = NULL
+
         self.DEFAULT_PATH = "/home/user/MyDocs/Carman"
         self.APP_NAME = "carman-purple-python"
 
@@ -60,7 +109,8 @@ class Purple(object):
         self.util_set_user_dir(self.DEFAULT_PATH)
         self.plugin_add_search_path(self.DEFAULT_PATH)
 
-        set_uiops()
+        c_purple_core_set_ui_ops(&c_core_ui_ops)
+        c_purple_eventloop_set_ui_ops(&c_eventloop_ui_ops)
 
         ret = self.core_init(self.APP_NAME)
         if ret is False:
@@ -133,6 +183,18 @@ class Purple(object):
         c_purple_plugins_add_search_path(path)
     # plugin_add_search_path
 
+    def prefs_rename(self, old_name, new_name):
+        c_purple_prefs_rename(old_name, new_name)
+    # prefs_rename
+
+    def prefs_get_string(self, name):
+        return c_purple_prefs_get_string(name)
+    # prefs_get_string
+
+    def prefs_load(self):
+        return c_purple_prefs_load()
+    # prefs_load
+
     def util_set_user_dir(self, dir):
         c_purple_util_set_user_dir(dir)
     # util_set_user_dir
@@ -141,7 +203,5 @@ class Purple(object):
 #include "core/blist.pxd"
 #include "core/connection.pxd"
 #include "core/core.pxd"
-#include "core/eventloop.pxd"
 #include "core/idle.pxd"
 #include "core/pounce.pxd"
-#include "core/prefs.pxd"

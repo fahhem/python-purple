@@ -38,3 +38,6 @@ cdef extern from "glib.h":
         _GList *next
         _GList *prev
     ctypedef _GList GList
+
+    guint g_timeout_add(guint interval, GSourceFunc function, gpointer data)
+    gboolean g_source_remove(guint tag)

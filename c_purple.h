@@ -18,4 +18,5 @@
  *
  */
 
-void set_uiops(void);
+guint glib_input_add(gint fd, PurpleInputCondition condition,
+	PurpleInputFunction function, gpointer data);
