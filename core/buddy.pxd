@@ -18,11 +18,24 @@
 #
 
 cdef extern from "libpurple/purple.h":
-    cdef struct _PurpleBuddy
-    ctypedef _PurpleBuddy PurpleBuddy
+    ctypedef struct PurpleBlistNode:
+        pass
 
-    cdef struct _PurpleAccount
-    ctypedef _PurpleAccount PurpleAccount
+    ctypedef struct PurpleBuddyIcon:
+        pass
+
+    ctypedef struct PurplePresence:
+        pass
+
+    ctypedef struct PurpleBuddy:
+        PurpleBlistNode node
+        char *name
+        char *alias
+        char *server_alias
+        void *proto_data
+        PurpleBuddyIcon *icon
+        PurpleAccount *account
+        PurplePresence *presence
 
     PurpleBuddy *c_purple_buddy_new "purple_buddy_new" (PurpleAccount *account,
             const_char_ptr screenname, const_char_ptr alias)

@@ -23,6 +23,7 @@ import ecore
 
 cdef extern from *:
     ctypedef char* const_char_ptr "const char *"
+    ctypedef char* const_guchar_ptr "const guchar *"
 
 cdef extern from "time.h":
     ctypedef long int time_t
@@ -248,3 +249,5 @@ include "glib.pxd"
 include "core/connection.pxd"
 #include "core/core.pxd"
 #include "core/idle.pxd"
+#include "core/pounce.pxd"
+include "core/conversation.pxd"

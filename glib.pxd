@@ -25,6 +25,7 @@ cdef extern from "glib.h":
     ctypedef unsigned long gulong
     ctypedef gint gboolean
     ctypedef gboolean (*GSourceFunc) (gpointer data)
+    ctypedef unsigned int gsize
 
     ctypedef struct GHashTable:
         pass
