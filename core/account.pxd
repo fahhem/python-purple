@@ -24,9 +24,11 @@ cdef extern from "libpurple/account.h":
     cdef struct _PurpleAccount
     ctypedef _PurpleAccount PurpleAccount
 
-    PurpleAccount *purple_account_new(const_char_ptr username, const_char_ptr protocol_id)
-    void purple_account_set_password(PurpleAccount *account, const_char_ptr password)
-    void purple_account_set_enabled(PurpleAccount *account, const_char_ptr ui, gboolean value)
+    PurpleAccount *c_purple_account_new "purple_account_new" (const_char_ptr username, const_char_ptr protocol_id)
+    void c_purple_account_set_password "purple_account_set_password" (PurpleAccount *account, const_char_ptr password)
+    const_char_ptr c_purple_account_get_password "purple_account_get_password" (PurpleAccount *account)
+    void c_purple_account_set_enabled "purple_account_set_enabled" (PurpleAccount *account, const_char_ptr ui, gboolean value)
+    const_char_ptr c_purple_account_get_username "purple_account_get_username" (PurpleAccount *account)
 
 cdef extern from "libpurple/status.h":
     ctypedef int PurpleStatusPrimitive
@@ -34,8 +36,8 @@ cdef extern from "libpurple/status.h":
     cdef struct _PurpleSavedStatus
     ctypedef _PurpleSavedStatus PurpleSavedStatus
 
-    PurpleSavedStatus *purple_saved_status_new(const_char_ptr title, PurpleStatusPrimitive type)
-    void purple_saved_status_activate(PurpleSavedStatus *saved_status)
+    PurpleSavedStatus *c_purple_savedstatus_new "purple_savedstatus_new" (const_char_ptr title, PurpleStatusPrimitive type)
+    void c_purple_savedstatus_activate "purple_savedstatus_activate" (PurpleSavedStatus *saved_status)
 
 cdef extern from "libpurple/proxy.h":
     cdef struct PurpleProxyInfo
@@ -73,15 +75,26 @@ class StatusPrimitive:
 cdef class Account:
     """ Account class """
     cdef PurpleAccount *__account
+    cdef PurpleSavedStatus *__sstatus
 
     def __cinit__(self, const_char_ptr username, const_char_ptr protocol_id):
-        self.__account = purple_account_new(username, protocol_id)
-        """FIXME: Check status implementation"""
-#        self.__sstatus = purple_saved_status_new("on-line", StatusPrimitive().STATUS_AVAILABLE)
-#        purple_saved_status_activate(self.__sstatus)
+        self.__account = c_purple_account_new(username, protocol_id)
 
     def set_password(self, password):
-        purple_account_set_password(self.__account, password)
+        c_purple_account_set_password(self.__account, password)
 
     def set_enabled(self, ui, value):
-        purple_account_set_enabled(self.__account, ui, value)
+        c_purple_account_set_enabled(self.__account, ui, value)
+
+    def get_acc_username(self):
+        if self.__account:
+            return c_purple_account_get_username(self.__account)
+
+    def get_password(self):
+        if self.__account:
+            return c_purple_account_get_password(self.__account)
+
+    def set_status(self):
+        self.__sstatus = c_purple_savedstatus_new(NULL, StatusPrimitive().STATUS_AVAILABLE)
+        c_purple_savedstatus_activate(self.__sstatus)
+
