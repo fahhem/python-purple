@@ -78,7 +78,19 @@ cdef extern from "libpurple/eventloop.h":
     void c_purple_eventloop_set_ui_ops "purple_eventloop_set_ui_ops" (PurpleEventLoopUiOps *ops)
 
 cdef extern from "libpurple/plugin.h":
+    ctypedef struct PurplePlugin
+
+    cdef struct _PurplePluginInfo:
+        char *id
+        char *name
+    ctypedef _PurplePluginInfo PurplePluginInfo
+
+    cdef struct _PurplePlugin:
+        PurplePluginInfo *info                # The plugin information.
+    ctypedef _PurplePlugin PurplePlugin
+
     void c_purple_plugins_add_search_path "purple_plugins_add_search_path" (const_char_ptr path)
+    GList *c_purple_plugins_get_protocols "purple_plugins_get_protocols" ()
 
 cdef extern from "libpurple/pounce.h":
     gboolean c_purple_pounces_load "purple_pounces_load" ()
@@ -94,8 +106,9 @@ cdef extern from "libpurple/util.h":
 
 cdef extern from "c_purple.h":
      guint glib_input_add(gint fd, PurpleInputCondition condition, PurpleInputFunction function, gpointer data)
+     void glib_main_loop()
 
-__DEFAULT_PATH__ = "/home/user/MyDocs/Carman"
+__DEFAULT_PATH__ = "/tmp"
 __APP_NAME__ = "carman-purple-python"
 __APP_VERSION__ = "0.1"
 
@@ -209,8 +222,29 @@ cdef class Purple:
 
 # Purple
 
+    def get_protocols(self):
+        cdef GList *iter
+        cdef PurplePlugin *plugin
+        protocols = []
+        iter = c_purple_plugins_get_protocols()
+        while iter:
+            plugin = <PurplePlugin*> iter.data
+            if plugin.info and plugin.info.name:
+                protocols += [(plugin.info.id, plugin.info.name)]
+            iter = iter.next
+        return protocols
+
+    def connect(self):
+        conn = Connection()
+        conn.connect()
+
+    def run_loop(self):
+        glib_main_loop()
+
 include "core/account.pxd"
 include "core/buddy.pxd"
-#include "core/connection.pxd"
+include "glib.pxd"
+#include "core/blist.pxd"
+include "core/connection.pxd"
 #include "core/core.pxd"
 #include "core/idle.pxd"

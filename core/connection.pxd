@@ -18,19 +18,13 @@
 #
 
 cdef extern from "libpurple/connection.h":
-    ctypedef struct PurpleConnection:
-        pass
+    cdef struct PurpleConnection
 
-    PurpleAccount* c_purple_connection_get_account "purple_connection_get_account" (PurpleConnection *gc)
+    void connect_to_signals_for_demonstration_purposes_only()
 
-class Connection(object):
+cdef class Connection:
     """ Connection class """
+    cdef PurpleConnection *__conn
 
-    def __init__(self):
-        purple_connection = None
-
-    # FIXME
-    """
-    def purple_connection_get_account(gc):
-        return purple_connection_get_account(gc)
-    """
+    def connect(self):
+        connect_to_signals_for_demonstration_purposes_only()
