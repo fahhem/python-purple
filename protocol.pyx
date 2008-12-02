@@ -17,15 +17,26 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cimport purple
+
 cdef class Protocol:
     """
     Protocol class
     @param protocol_id
     """
 
-    def __init__(self, protocol_id):
+    def __init__(self, account, protocol_id):
+        self.__account = account
         self.__protocol_id = protocol_id
 
     def __get_protocol_id(self):
         return self.__protocol_id.protocol_id
     protocol_id = property(__get_protocol_id)
+
+    def __get_account(self):
+        return self.__account
+    account = property(__get_account)
+
+    def _set_protocol_id(self, protocol_id):
+        account.purple_account_set_protocol_id( \
+                self.__account._get_structure(), protocol_id)
