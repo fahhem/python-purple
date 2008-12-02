@@ -25,7 +25,21 @@ cdef extern from *:
 cdef extern from "time.h":
     ctypedef long int time_t
 
+cdef extern from "libpurple/core.h":
+    gboolean c_purple_core_init "purple_core_init" (const_char_ptr ui_name)
+    void c_purple_core_quit "purple_core_quit" ()
+    gboolean c_purple_core_ensure_single_instance "purple_core_ensure_single_instance" ()
+
 cdef extern from "libpurple/debug.h":
+    ctypedef enum PurpleDebugLevel:
+        PURPLE_DEBUG_ALL
+        PURPLE_DEBUG_MISC
+        PURPLE_DEBUG_INFO
+        PURPLE_DEBUG_WARNING
+        PURPLE_DEBUG_ERROR
+        PURPLE_DEBUG_FATAL
+
+    void c_purple_debug "purple_debug" (PurpleDebugLevel level, const_char_ptr category, const_char_ptr format)
     void c_purple_debug_set_enabled "purple_debug_set_enabled" (gboolean debug_enabled)
 
 cdef extern from "libpurple/plugin.h":
@@ -35,7 +49,7 @@ cdef extern from "libpurple/util.h":
     void c_purple_util_set_user_dir "purple_util_set_user_dir" (char *dir)
 
 cdef extern from "c_purple.h":
-     void init_libpurple(const_char_ptr ui_id)
+     void set_uiops()
 
 class Purple(object):
     def __init__(self):
@@ -46,8 +60,70 @@ class Purple(object):
         self.util_set_user_dir(self.DEFAULT_PATH)
         self.plugin_add_search_path(self.DEFAULT_PATH)
 
-        init_libpurple(self.APP_NAME)
+        set_uiops()
+
+        ret = self.core_init(self.APP_NAME)
+        if ret is False:
+            self.debug_info("main", "Exiting because libpurple initialization failed.")
+            return
+
+        # check if there is another instance of libpurple running
+        if self.core_ensure_single_instance() == False:
+            self.debug_info("main", "Exiting because another instance of libpurple is already running.")
+            self.core_quit()
+            return
     # __init__
+
+    def __del__(self):
+        self.core_quit()
+    # __del__
+
+    def core_ensure_single_instance(self):
+        return c_purple_core_ensure_single_instance()
+    # core_ensure_single_instance
+
+    def core_init(self, ui_name):
+        return c_purple_core_init(ui_name)
+    # core_init
+
+    def core_quit(self):
+        c_purple_core_quit()
+    # core_quit
+
+    def debug_misc(self, category, format):
+        if category == None:
+            c_purple_debug(PURPLE_DEBUG_MISC, NULL, format)
+        else:
+            c_purple_debug(PURPLE_DEBUG_MISC, category, format)
+    # debug_misc
+
+    def debug_info(self, category, format):
+        if category == None:
+            c_purple_debug(PURPLE_DEBUG_INFO, NULL, format)
+        else:
+            c_purple_debug(PURPLE_DEBUG_INFO, category, format)
+    # debug_info
+
+    def debug_warning(self, category, format):
+        if category == None:
+            c_purple_debug(PURPLE_DEBUG_WARNING, NULL, format)
+        else:
+            c_purple_debug(PURPLE_DEBUG_WARNING, category, format)
+    # debug_warning
+
+    def debug_error(self, category, format):
+        if category == None:
+            c_purple_debug(PURPLE_DEBUG_ERROR, NULL, format)
+        else:
+            c_purple_debug(PURPLE_DEBUG_ERROR, category, format)
+    # debug_error
+
+    def debug_fatal(self, category, format):
+        if category == None:
+            c_purple_debug(PURPLE_DEBUG_FATAL, NULL, format)
+        else:
+            c_purple_debug(PURPLE_DEBUG_FATAL, category, format)
+    # debug_fatal
 
     def debug_set_enabled(self, debug_enabled):
         c_purple_debug_set_enabled(debug_enabled)

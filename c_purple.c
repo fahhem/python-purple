@@ -139,8 +139,7 @@ static PurpleConversationUiOps conv_uiops =
 };
 
 /* FIXME: Is this a valid struct? */
-static void
-ui_init(void)
+static void ui_init(void)
 {
 	/**
 	 * This should initialize the UI components for all the modules. Here we
@@ -163,19 +162,8 @@ static PurpleCoreUiOps core_uiops =
 	NULL
 };
 
-void init_libpurple(const char *ui_id)
+void set_uiops(void)
 {
 	purple_core_set_ui_ops(&core_uiops);
-
 	purple_eventloop_set_ui_ops(&glib_eventloops);
-
-	if (!purple_core_init(ui_id)) {
-		/* Initializing the core failed. Terminate. */
-		fprintf(stderr,
-				"libpurple initialization failed. Dumping core.\n"
-				"Please report this!\n");
-		abort();
-	}
-
-	printf("libpurple initialized");
 }
