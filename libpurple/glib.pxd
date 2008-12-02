@@ -17,6 +17,9 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cdef extern from *:
+    ctypedef int volatile_gint "volatile int"
+
 cdef extern from "glib.h":
     ctypedef void *gpointer
     ctypedef void *gconstpointer
@@ -32,33 +35,54 @@ cdef extern from "glib.h":
     ctypedef unsigned char guchar
 
     ctypedef void (*GCallback) ()
+    ctypedef void (*GDestroyNotify) (gpointer)
+
+    ctypedef guint GHashFunc (gconstpointer)
+    ctypedef gboolean GEqualFunc (gconstpointer, gconstpointer)
+
+    ctypedef struct GObject:
+        pass
+
+    ctypedef struct GHashNode:
+        gpointer key
+        gpointer value
+        GHashNode *next
+        guint key_hash
 
     ctypedef struct GHashTable:
-        pass
+        gint size
+        gint nnodes
+        GHashNode **nodes
+        GHashFunc hash_func
+        GEqualFunc key_equal_func
+        volatile_gint ref_count
+        int version
+        GDestroyNotify key_destroy_func
+        GDestroyNotify value_destroy_func
 
     ctypedef struct GMainContext:
         pass
 
-    struct _GSList:
+    ctypedef struct GSList:
         gpointer data
-        _GSList *next
-    ctypedef _GSList GSList
+        GSList *next
 
-    struct _GList:
+    ctypedef struct GList:
         gpointer data
-        _GList *next
-        _GList *prev
-    ctypedef _GList GList
+        GList *next
+        GList *prev
 
-    ctypedef guint GHashFunc (gconstpointer)
-    ctypedef gboolean GEqualFunc (gconstpointer, gconstpointer)
+    void g_list_free (GList*)
 
     gboolean g_str_equal (gconstpointer, gconstpointer)
     guint g_str_hash (gconstpointer)
 
     GHashTable *g_hash_table_new (GHashFunc, GEqualFunc)
-    void g_hash_table_insert (GHashTable*, gpointer, gpointer)
     void g_hash_table_destroy (GHashTable*)
+    GList *g_hash_table_get_keys (GHashTable*)
+    GList *g_hash_table_get_values (GHashTable*)
+    void g_hash_table_insert (GHashTable*, gpointer, gpointer)
+    gpointer g_hash_table_lookup (GHashTable*, gconstpointer)
 
     guint g_timeout_add(guint interval, GSourceFunc function, gpointer data)
     guint g_timeout_add_seconds(guint interval, GSourceFunc function, gpointer data)

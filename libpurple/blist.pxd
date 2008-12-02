@@ -110,12 +110,14 @@ cdef extern from "libpurple/blist.h":
     void *c_purple_blist_get_handle "purple_blist_get_handle" ()
     void c_purple_blist_load "purple_blist_load" ()
     PurpleBuddyList* c_purple_blist_new "purple_blist_new" ()
+    PurpleBlistNodeType c_purple_blist_node_get_type "purple_blist_node_get_type" (PurpleBlistNode *node)
     void c_purple_blist_set_ui_ops "purple_blist_set_ui_ops" (PurpleBlistUiOps *ops)
-
+    const_char *c_purple_chat_get_name "purple_chat_get_name" (PurpleChat *chat)
+    const_char *c_purple_group_get_name "purple_group_get_name" (PurpleGroup *group)
     PurpleBuddy *c_purple_buddy_new "purple_buddy_new" (account.PurpleAccount *account,
             char *screenname, char *alias)
-    char *c_purple_buddy_get_alias_only "purple_buddy_get_alias_only" (PurpleBuddy *buddy)
-    char *c_purple_buddy_get_name "purple_buddy_get_name" (PurpleBuddy *buddy)
+    const_char *c_purple_buddy_get_alias_only "purple_buddy_get_alias_only" (PurpleBuddy *buddy)
+    const_char *c_purple_buddy_get_name "purple_buddy_get_name" (PurpleBuddy *buddy)
     PurpleBuddy *c_purple_find_buddy "purple_find_buddy" (account.PurpleAccount *account, char *name)
     void c_purple_set_blist "purple_set_blist" (PurpleBuddyList *list)
     glib.GSList *c_purple_find_buddies "purple_find_buddies" (account.PurpleAccount *account, char *name)
