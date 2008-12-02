@@ -38,6 +38,7 @@ cdef core.PurpleCoreUiOps c_core_ui_ops
 cdef eventloop.PurpleEventLoopUiOps c_eventloop_ui_ops
 #cdef ft.PurpleXferUiOps c_ft_ui_ops
 cdef notify.PurpleNotifyUiOps c_notify_ui_ops
+#cdef privacy.PurplePrivacyUiOps c_privacy_ui_ops
 cdef request.PurpleRequestUiOps c_request_ui_ops
 #cdef roomlist.PurpleRoomlistUiOps c_rlist_ui_ops
 
@@ -51,6 +52,7 @@ include "connection_cbs.pxd"
 include "conversation_cbs.pxd"
 #include "xfer_cbs.pxd"
 include "notify_cbs.pxd"
+#include "privacy_cbs.pxd"
 include "request_cbs.pxd"
 #include "roomlist_cbs.pxd"
 include "signal_cbs.pxd"
@@ -100,6 +102,7 @@ cdef class Purple:
         blist.c_purple_blist_set_ui_ops(&c_blist_ui_ops)
         conversation.c_purple_conversations_set_ui_ops(&c_conv_ui_ops)
         notify.c_purple_notify_set_ui_ops(&c_notify_ui_ops)
+        #privacy.c_purple_privacy_set_ui_ops(&c_privacy_ui_ops)
         request.c_purple_request_set_ui_ops(&c_request_ui_ops)
         #ft.c_purple_xfers_set_ui_ops(&c_ft_ui_ops)
         #roomlist.c_purple_roomlist_set_ui_ops(&c_rlist_ui_ops)
@@ -114,6 +117,7 @@ cdef class Purple:
         blist.c_purple_blist_set_ui_ops(NULL)
         conversation.c_purple_conversations_set_ui_ops(NULL)
         notify.c_purple_notify_set_ui_ops(NULL)
+        #privacy.c_purple_privacy_set_ui_ops(NULL)
         request.c_purple_request_set_ui_ops(NULL)
         #ft.c_purple_xfers_set_ui_ops(NULL)
         #roomlist.c_purple_roomlist_set_ui_ops(NULL)

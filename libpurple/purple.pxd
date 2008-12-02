@@ -34,6 +34,7 @@ cimport notify
 cimport plugin
 cimport pounce
 cimport prefs
+cimport privacy
 cimport proxy
 cimport prpl
 cimport request
