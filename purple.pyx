@@ -352,6 +352,28 @@ cdef class Purple:
         else:
             return None
 
+    def accounts_get_all(self):
+        cdef glib.GList *iter
+        cdef account.PurpleAccount *acc
+        cdef char *username
+        cdef char *protocol_id
+
+        iter = account.purple_accounts_get_all()
+        account_list = []
+
+        while iter:
+            acc = <account.PurpleAccount *> iter.data
+
+            if <account.PurpleAccount *>acc:
+                username = <char *> account.purple_account_get_username(acc)
+                protocol_id = <char *> account.purple_account_get_protocol_id(acc)
+
+                if username != NULL and protocol_id != NULL:
+                    account_list.append(Account(username, protocol_id))
+            iter = iter.next
+
+        return account_list
+
 include "plugin.pyx"
 include "proxy.pyx"
 #include "protocol.pyx"
