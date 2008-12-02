@@ -436,7 +436,7 @@ cdef class Account:
         c_account = account.c_purple_accounts_find(acc[0], acc[1])
         if c_account:
             account.c_purple_account_set_enabled(c_account, <char *> ui, bool(value))
- 
+
     def get_enabled(self, acc, ui):
         ''' @param acc Tuple (username, protocol id) '''
         ''' @param ui The UI '''
@@ -458,7 +458,7 @@ cdef class Account:
             return account.c_purple_account_is_connected(c_account)
         else:
             return False
-    
+
     def connect(self, acc):
         ''' @param acc Tuple (username, protocol id) '''
         ''' @param ui The UI '''
@@ -467,7 +467,7 @@ cdef class Account:
         c_account = account.c_purple_accounts_find(acc[0], acc[1])
         if c_account:
             account.c_purple_account_connect(c_account)
-    
+
     def disconnect(self, acc):
         ''' @param acc Tuple (username, protocol id) '''
         ''' @param ui The UI '''
@@ -476,3 +476,17 @@ cdef class Account:
         c_account = account.c_purple_accounts_find(acc[0], acc[1])
         if c_account:
             account.c_purple_account_disconnect(c_account)
+
+    def set_remember_password(self, acc, value):
+        cdef account.PurpleAccount *c_account
+        c_account = account.c_purple_accounts_find(acc[0], acc[1])
+        if c_account:
+            account.c_purple_account_set_remember_password(c_account, value)
+
+    def get_remember_password(self, acc):
+        cdef account.PurpleAccount *c_account
+        c_account = account.c_purple_accounts_find(acc[0], acc[1])
+        if c_account:
+            return account.c_purple_account_get_remember_password(c_account)
+        else:
+            return None
