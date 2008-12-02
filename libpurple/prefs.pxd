@@ -34,3 +34,5 @@ cdef extern from "libpurple/prefs.h":
     void purple_prefs_rename(char *oldname, char *newname)
     char *purple_prefs_get_string(char *name)
     glib.gboolean purple_prefs_load()
+    void purple_prefs_add_bool(char *name, glib.gboolean value)
+    void purple_prefs_set_int(char *name, int value)

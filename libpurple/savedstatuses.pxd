@@ -18,10 +18,30 @@
 #
 
 cimport status
+cimport glib
+cimport account
+cimport status
+
+cdef extern from *:
+    ctypedef long int time_t
 
 cdef extern from "libpurple/savedstatuses.h":
     ctypedef struct PurpleSavedStatus:
         pass
 
-    PurpleSavedStatus *c_purple_savedstatus_new "purple_savedstatus_new" (char *title, status.PurpleStatusPrimitive type)
+    PurpleSavedStatus *purple_savedstatus_new(char *title, status.PurpleStatusPrimitive type)
     void c_purple_savedstatus_activate "purple_savedstatus_activate" (PurpleSavedStatus *saved_status)
+    PurpleSavedStatus *purple_savedstatus_get_current()
+    glib.gboolean purple_savedstatus_is_transient(PurpleSavedStatus *saved_status)
+    void purple_savedstatus_set_substatus(PurpleSavedStatus *status, account.PurpleAccount *account, \
+            status.PurpleStatusType *type, char *message)
+    void purple_savedstatus_set_idleaway(glib.gboolean idleaway)
+    PurpleSavedStatus *purple_savedstatus_find(char *title)
+    PurpleSavedStatus *purple_savedstatus_find_transient_by_type_and_message( \
+            status.PurpleStatusPrimitive type, char *message)
+    void purple_savedstatus_set_message(PurpleSavedStatus *status, char *message)
+    void purple_savedstatus_activate(PurpleSavedStatus *saved_status)
+    void purple_savedstatus_activate_for_account(PurpleSavedStatus *saved_status, \
+            account.PurpleAccount *account)
+    time_t purple_savedstatus_get_creation_time(PurpleSavedStatus *saved_status)
+    void purple_savedstatus_set_title(PurpleSavedStatus *status, char *title)

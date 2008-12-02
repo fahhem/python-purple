@@ -587,6 +587,7 @@ cdef class Account:
 
     def set_active_status(self, type, msg=None):
         cdef status.PurpleStatusType *c_statustype = NULL
+        cdef savedstatuses.PurpleSavedStatus *c_savedstatus = NULL
 
         if self.__exists:
             if msg:
@@ -595,6 +596,22 @@ cdef class Account:
             else:
                 account.purple_account_set_status(self._get_structure(),
                         <char *> type, True, NULL)
+
+            # FIXME: We can create only a savedstatus for each statustype
+            c_savedstatus = savedstatuses.purple_savedstatus_find(type)
+            if c_savedstatus == NULL:
+                c_statustype = account.purple_account_get_status_type( \
+                        self._get_structure(), type)
+                c_savedstatus = savedstatuses.purple_savedstatus_new( \
+                        NULL, status.purple_status_type_get_primitive( \
+                                c_statustype))
+                savedstatuses.purple_savedstatus_set_title(c_savedstatus,
+                        type)
+
+            savedstatuses.purple_savedstatus_set_message(c_savedstatus, msg)
+            prefs.purple_prefs_set_int("/purple/savedstatus/idleaway",
+                    savedstatuses.purple_savedstatus_get_creation_time(c_savedstatus))
+
             return True
         else:
             return False
@@ -602,11 +619,27 @@ cdef class Account:
     def set_status_message(self, type, msg):
         cdef status.PurpleStatus* c_status = NULL
         cdef status.PurpleStatusType *c_statustype = NULL
+        cdef savedstatuses.PurpleSavedStatus *c_savedstatus = NULL
 
         if self.__exists and msg:
             c_status = account.purple_account_get_status(self._get_structure(),
                     type)
+            if c_status == NULL:
+                return False
             status.purple_status_set_attr_string(c_status, "message", msg)
+
+            # FIXME: We can create only a savedstatus for each statustype
+            c_savedstatus = savedstatuses.purple_savedstatus_find(type)
+            if c_savedstatus == NULL:
+                c_statustype = account.purple_account_get_status_type( \
+                        self._get_structure(), type)
+                c_savedstatus = savedstatuses.purple_savedstatus_new( \
+                        NULL, status.purple_status_type_get_primitive( \
+                                c_statustype))
+                savedstatuses.purple_savedstatus_set_title(c_savedstatus,
+                        type)
+
+            savedstatuses.purple_savedstatus_set_message(c_savedstatus, msg)
             return True
         else:
             return False
