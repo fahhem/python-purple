@@ -222,7 +222,7 @@ class NullClientPurple:
         self.window = MainWindow(self.quit)
         self.buddies = [] #online buddies
         self.account = None
-        self.protocol = None
+        self.protocol_id = "prpl-jabber"
         self.username = "carmanplugintest@gmail.com"
         self.password = "abc123def"
 
@@ -249,15 +249,8 @@ class NullClientPurple:
         self.buddies.remove(bname)
         self.window.remove_buddy(bname)
 
-    def set_protocol(self, protocol):
-        for p in self.p.get_protocols():
-            if p.get_name() == protocol:
-                self.protocol = p
-                return
-
     def connect(self):
-        self.set_protocol("XMPP")
-        self.account = purple.Account(self.username, self.protocol.get_id())
+        self.account = purple.Account(self.username, self.protocol_id)
         self.account.set_password(self.password)
 
         self.account.proxy.set_type(purple.ProxyInfoType().HTTP)

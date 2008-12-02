@@ -183,21 +183,14 @@ class NullClient:
     def __init__(self):
         self.p = purple.Purple(debug_enabled=False)
         self.account = None
+        self.protocol_id = "prpl-jabber"
 
     def execute(self):
         global cbs
         self.p.purple_init(cbs)
 
-    def set_protocol(self, protocol):
-        for p in self.p.get_protocols():
-            if p.get_name() == protocol:
-                print "-- NULLCLIENT --: Choosing %s as protocol" % protocol
-                self.protocol = p
-                print "-- NULLCLIENT --: Protocol successfully chosen: %s" % p.get_id()
-                return
-
-    def new_account(self, username, protocol, password):
-        self.account = purple.Account(username, protocol.get_id())
+    def new_account(self, username, password):
+        self.account = purple.Account(username, self.protocol_id)
         self.account.set_password(password)
 
         self.account.proxy.set_type(purple.ProxyInfoType().HTTP)
@@ -223,10 +216,9 @@ if __name__ == '__main__':
 
     client = NullClient()
     client.execute()
-    client.set_protocol("XMPP")
     username = getuser()
     password = getpassword()
-    client.new_account(username, client.protocol, password)
+    client.new_account(username, password)
 
     client.p.connect()
     client.p.attach_signals(signal_cbs)
