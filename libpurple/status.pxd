@@ -102,4 +102,4 @@ cdef extern from "libpurple/status.h":
         account.PurpleAccount *account
         char *name
 
-    glib.gboolean c_purple_presence_is_online "purple_presence_is_online" (PurplePresence *presence)
+    glib.gboolean purple_presence_is_online(PurplePresence *presence)

@@ -34,13 +34,13 @@ cdef void create_conversation(conversation.PurpleConversation *conv):
     debug.purple_debug_info("conversation", "%s", "create-conversation\n")
     cdef char *c_name = NULL
 
-    c_name = <char *> conversation.c_purple_conversation_get_name(conv)
+    c_name = <char *> conversation.purple_conversation_get_name(conv)
     if c_name == NULL:
         name = None
     else:
         name = c_name
 
-    type = conversation.c_purple_conversation_get_type(conv)
+    type = conversation.purple_conversation_get_type(conv)
 
     if conversation_cbs.has_key("create-conversation"):
         (<object> conversation_cbs["create-conversation"])(name, type)
@@ -74,7 +74,7 @@ cdef void write_im(conversation.PurpleConversation *conv, const_char *who, \
     @see purple_conv_im_write()
     """
     debug.purple_debug_info("conversation", "%s", "write-im\n")
-    cdef account.PurpleAccount *acc = conversation.c_purple_conversation_get_account(conv)
+    cdef account.PurpleAccount *acc = conversation.purple_conversation_get_account(conv)
     cdef blist.PurpleBuddy *buddy = NULL
     cdef char *c_username = NULL
     cdef char *c_sender_alias = NULL
@@ -87,8 +87,8 @@ cdef void write_im(conversation.PurpleConversation *conv, const_char *who, \
 
     if who:
         sender = <char *> who
-        buddy = blist.c_purple_find_buddy(acc, <char *> who)
-        c_sender_alias = <char *> blist.c_purple_buddy_get_alias_only(buddy)
+        buddy = blist.purple_find_buddy(acc, <char *> who)
+        c_sender_alias = <char *> blist.purple_buddy_get_alias_only(buddy)
     else:
         sender = None
 

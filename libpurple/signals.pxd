@@ -22,8 +22,7 @@ cimport glib
 cdef extern from "libpurple/signals.h":
     ctypedef void (*PurpleCallback) ()
 
-    glib.gulong c_purple_signal_connect "purple_signal_connect" (void *instance,
-            char *signal, void *handle, PurpleCallback func,
-            void *data)
-    void c_purple_signal_disconnect "purple_signal_disconnect" (void *instance,
-            char *signal, void *handle, PurpleCallback func)
+    glib.gulong purple_signal_connect(void *instance, char *signal, \
+            void *handle, PurpleCallback func, void *data)
+    void purple_signal_disconnect(void *instance, char *signal, void *handle, \
+            PurpleCallback func)

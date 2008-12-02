@@ -23,4 +23,4 @@ def markup_strip_html(message):
     if message is None:
         return None
     else:
-        return util.c_purple_markup_strip_html(message)
+        return util.purple_markup_strip_html(message)

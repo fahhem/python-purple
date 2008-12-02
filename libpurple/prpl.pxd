@@ -27,4 +27,5 @@ cdef extern from "libpurple/prpl.h":
     ctypedef struct PurplePluginProtocolInfo:
         glib.GList *protocol_options
 
-    PurplePlugin *c_purple_find_prpl "purple_find_prpl" (char *id)
+    # Protocol Plugin Subsystem API
+    PurplePlugin *purple_find_prpl(char *id)

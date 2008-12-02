@@ -24,14 +24,31 @@ cdef extern from "libpurple/eventloop.h":
         PURPLE_INPUT_READ
         PURPLE_INPUT_WRITE
 
-    ctypedef void (*PurpleInputFunction) (glib.gpointer, glib.gint, PurpleInputCondition)
+    ctypedef void (*PurpleInputFunction) (glib.gpointer, glib.gint, \
+            PurpleInputCondition)
 
     ctypedef struct PurpleEventLoopUiOps:
-        glib.guint (*timeout_add) (glib.guint interval, glib.GSourceFunc function, glib.gpointer data)
+        glib.guint (*timeout_add) (glib.guint interval, \
+                glib.GSourceFunc function, glib.gpointer data)
         glib.gboolean (*timeout_remove) (glib.guint handle)
-        glib.guint (*input_add) (int fd, PurpleInputCondition cond, PurpleInputFunction func, glib.gpointer user_data)
+        glib.guint (*input_add) (int fd, PurpleInputCondition cond, \
+                PurpleInputFunction func, glib.gpointer user_data)
         glib.gboolean (*input_remove) (glib.guint handle)
         int (*input_get_error) (int fd, int *error)
-        glib.guint (*timeout_add_seconds) (glib.guint interval, glib.GSourceFunc function, glib.gpointer data)
+        glib.guint (*timeout_add_seconds) (glib.guint interval, \
+                glib.GSourceFunc function, glib.gpointer data)
 
-    void c_purple_eventloop_set_ui_ops "purple_eventloop_set_ui_ops" (PurpleEventLoopUiOps *ops)
+    # Event Loop API
+    glib.guint purple_timeout_add(glib.guint interval, \
+            glib.GSourceFunc function, glib.gpointer data)
+    glib.guint purple_timeout_add_seconds(glib.guint interval, \
+            glib.GSourceFunc function, glib.gpointer data)
+    glib.gboolean purple_timeout_remove(glib.guint handle)
+    glib.guint purple_input_add(int fd, PurpleInputCondition cond, \
+            PurpleInputFunction func, glib.gpointer user_data)
+    glib.gboolean purple_input_remove(glib.guint handle)
+    int purple_input_get_error(int fd, int *error)
+
+    # UI Registration Functions
+    void purple_eventloop_set_ui_ops(PurpleEventLoopUiOps *ops)
+    PurpleEventLoopUiOps *purple_eventloop_get_ui_ops()

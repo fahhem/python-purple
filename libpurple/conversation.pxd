@@ -156,14 +156,155 @@ cdef extern from "libpurple/conversation.h":
         connection.PurpleConnectionFlags features
         glib.GList *message_history
 
-    void c_purple_conversations_init "purple_conversations_init" ()
-    void *c_purple_conversations_get_handle "purple_conversations_get_handle" ()
-    PurpleConversation *c_purple_conversation_new "purple_conversation_new" (int type, account.PurpleAccount *account, char *name)
-    void c_purple_conversation_set_ui_ops "purple_conversation_set_ui_ops" (PurpleConversation *conv, PurpleConversationUiOps *ops)
-    void c_purple_conversations_set_ui_ops "purple_conversations_set_ui_ops" (PurpleConversationUiOps *ops)
-    PurpleConvIm *c_purple_conversation_get_im_data "purple_conversation_get_im_data" (PurpleConversation *conv)
-    char *c_purple_conversation_get_name "purple_conversation_get_name" (PurpleConversation *conv)
-    PurpleConversationType c_purple_conversation_get_type "purple_conversation_get_type" (PurpleConversation *conv)
-    account.PurpleAccount *c_purple_conversation_get_account "purple_conversation_get_account" (PurpleConversation *conv)
-    void c_purple_conv_im_send "purple_conv_im_send" (PurpleConvIm *im, char *message)
-    void c_purple_conversation_destroy "purple_conversation_destroy" (PurpleConversation *conv)
+    # Conversation API
+    PurpleConversation *purple_conversation_new(int type, \
+            account.PurpleAccount *account, char *name)
+    void purple_conversation_destroy(PurpleConversation *conv)
+    void purple_conversation_present(PurpleConversation *conv)
+    PurpleConversationType purple_conversation_get_type( \
+            PurpleConversation *conv)
+    void purple_conversation_set_ui_ops(PurpleConversation *conv, \
+            PurpleConversationUiOps *ops)
+    void purple_conversations_set_ui_ops(PurpleConversationUiOps *ops)
+    PurpleConversationUiOps *purple_conversation_get_ui_ops( \
+            PurpleConversation *conv)
+    void purple_conversation_set_account(PurpleConversation *conv, \
+            account.PurpleAccount *account)
+    account.PurpleAccount *purple_conversation_get_account( \
+            PurpleConversation *conv)
+    connection.PurpleConnection *purple_conversation_get_gc( \
+            PurpleConversation *conv)
+    void purple_conversation_set_title(PurpleConversation *conv, char *title)
+    char *purple_conversation_get_title(PurpleConversation *conv)
+    void purple_conversation_autoset_title(PurpleConversation *conv)
+    void purple_conversation_set_name(PurpleConversation *conv, char *name)
+    char *purple_conversation_get_name(PurpleConversation *conv)
+    void purple_conversation_set_logging(PurpleConversation *conv, \
+            glib.gboolean log)
+    glib.gboolean purple_conversation_is_logging(PurpleConversation *conv)
+    void purple_conversation_close_logs(PurpleConversation *conv)
+    PurpleConvIm *purple_conversation_get_im_data(PurpleConversation *conv)
+    PurpleConvChat *purple_conversation_get_chat_data(PurpleConversation *conv)
+    void purple_conversation_set_data(PurpleConversation *conv, char *key, \
+            glib.gpointer data)
+    glib.gpointer purple_conversation_get_data(PurpleConversation *conv, \
+            char *key)
+    glib.GList *purple_get_conversations()
+    glib.GList *purple_get_ims()
+    glib.GList *purple_get_chats()
+    PurpleConversation *purple_find_conversation_with_account( \
+            PurpleConversationType type, char *name, \
+            account.PurpleAccount *account)
+    void purple_conversation_write(PurpleConversation *conv, char *who, \
+    char *message, PurpleMessageFlags flags, time_t mtime)
+    void purple_conversation_set_features(PurpleConversation *conv, \
+            connection.PurpleConnectionFlags features)
+    connection.PurpleConnectionFlags purple_conversation_get_features( \
+            PurpleConversation *conv)
+    glib.gboolean purple_conversation_has_focus(PurpleConversation *conv)
+    void purple_conversation_update(PurpleConversation *conv, \
+            PurpleConvUpdateType type)
+    void purple_conversation_foreach(void (*func)(PurpleConversation *conv))
+    glib.GList *purple_conversation_get_message_history( \
+            PurpleConversation *conv)
+    void purple_conversation_clear_message_history(PurpleConversation *conv)
+    char *purple_conversation_message_get_sender(PurpleConvMessage *msg)
+    char *purple_conversation_message_get_message(PurpleConvMessage *msg)
+    PurpleMessageFlags purple_conversation_message_get_flags( \
+            PurpleConvMessage *msg)
+    time_t purple_conversation_message_get_timestamp(PurpleConvMessage *msg)
+
+    #IM Conversation API
+    PurpleConversation *purple_conv_im_get_conversation(PurpleConvIm *im)
+    void purple_conv_im_set_icon(PurpleConvIm *im, \
+            buddyicon.PurpleBuddyIcon *icon)
+    buddyicon.PurpleBuddyIcon *purple_conv_im_get_icon(PurpleConvIm *im)
+    void purple_conv_im_set_typing_state(PurpleConvIm *im, \
+            PurpleTypingState state)
+    PurpleTypingState purple_conv_im_get_typing_state(PurpleConvIm *im)
+    void purple_conv_im_start_typing_timeout(PurpleConvIm *im, int timeout)
+    void purple_conv_im_stop_typing_timeout(PurpleConvIm *im)
+    glib.guint purple_conv_im_get_typing_timeout(PurpleConvIm *im)
+    void purple_conv_im_set_type_again(PurpleConvIm *im, unsigned int val)
+    time_t purple_conv_im_get_type_again(PurpleConvIm *im)
+    void purple_conv_im_start_send_typed_timeout(PurpleConvIm *im)
+    void purple_conv_im_stop_send_typed_timeout(PurpleConvIm *im)
+    glib.guint purple_conv_im_get_send_typed_timeout(PurpleConvIm *im)
+    void purple_conv_im_update_typing(PurpleConvIm *im)
+    void purple_conv_im_write(PurpleConvIm *im, char *who, \
+            char *message, PurpleMessageFlags flags, time_t mtime)
+    glib.gboolean purple_conv_present_error(char *who, \
+            account.PurpleAccount *account, char *what)
+    void purple_conv_im_send(PurpleConvIm *im, char *message)
+    void purple_conv_send_confirm(PurpleConversation *conv, \
+            char *message)
+    void purple_conv_im_send_with_flags(PurpleConvIm *im, char *message, \
+            PurpleMessageFlags flags)
+    glib.gboolean purple_conv_custom_smiley_add(PurpleConversation *conv, \
+            char *smile, char *cksum_type, char *chksum, glib.gboolean remote)
+    void purple_conv_custom_smiley_write(PurpleConversation *conv, \
+            char *smile, glib.guchar *data, glib.gsize size)
+    void purple_conv_custom_smiley_close(PurpleConversation *conv, char *smile)
+
+    # Chat Conversation API
+    PurpleConversation *purple_conv_chat_get_conversation(PurpleConvChat *chat)
+    glib.GList *purple_conv_chat_set_users(PurpleConvChat *chat, \
+            glib.GList *users)
+    glib.GList *purple_conv_chat_get_users(PurpleConvChat *chat)
+    void purple_conv_chat_ignore(PurpleConvChat *chat, char *name)
+    void purple_conv_chat_unignore(PurpleConvChat *chat, char *name)
+    glib.GList *purple_conv_chat_set_ignored(PurpleConvChat *chat, \
+            glib.GList *ignored)
+    glib.GList *purple_conv_chat_get_ignored(PurpleConvChat *chat)
+    char *purple_conv_chat_get_ignored_user(PurpleConvChat *chat, char *user)
+    glib.gboolean purple_conv_chat_is_user_ignored(PurpleConvChat *chat, \
+            char *user)
+    void purple_conv_chat_set_topic(PurpleConvChat *chat, char *who, \
+            char *topic)
+    char *purple_conv_chat_get_topic(PurpleConvChat *chat)
+    void purple_conv_chat_set_id(PurpleConvChat *chat, int id)
+    int purple_conv_chat_get_id(PurpleConvChat *chat)
+    void purple_conv_chat_write(PurpleConvChat *chat, char *who, \
+            char *message, PurpleMessageFlags flags, time_t mtime)
+    void purple_conv_chat_send(PurpleConvChat *chat, char *message)
+    void purple_conv_chat_send_with_flags(PurpleConvChat *chat, \
+            char *message, PurpleMessageFlags flags)
+    void purple_conv_chat_add_user(PurpleConvChat *chat, char *user, \
+            char *extra_msg, PurpleConvChatBuddyFlags flags, \
+            glib.gboolean new_arrival)
+    void purple_conv_chat_add_users(PurpleConvChat *chat, glib.GList *users, \
+            glib.GList *extra_msgs, glib.GList *flags, \
+            glib.gboolean new_arrivals)
+    void purple_conv_chat_rename_user(PurpleConvChat *chat, \
+            char *old_user, char *new_user)
+    void purple_conv_chat_remove_user(PurpleConvChat *chat, \
+            char *user, char *reason)
+    void purple_conv_chat_remove_users(PurpleConvChat *chat, \
+            glib.GList *users, char *reason)
+    glib.gboolean purple_conv_chat_find_user(PurpleConvChat *chat, char *user)
+    void purple_conv_chat_user_set_flags(PurpleConvChat *chat, char *user, \
+            PurpleConvChatBuddyFlags flags)
+    PurpleConvChatBuddyFlags purple_conv_chat_user_get_flags( \
+            PurpleConvChat *chat, char *user)
+    void purple_conv_chat_clear_users(PurpleConvChat *chat)
+    void purple_conv_chat_set_nick(PurpleConvChat *chat, char *nick)
+    char *purple_conv_chat_get_nick(PurpleConvChat *chat)
+    PurpleConversation *purple_find_chat(connection.PurpleConnection *gc, \
+            int id)
+    void purple_conv_chat_left(PurpleConvChat *chat)
+    glib.gboolean purple_conv_chat_has_left(PurpleConvChat *chat)
+    PurpleConvChatBuddy *purple_conv_chat_cb_new(char *name, char *alias, \
+            PurpleConvChatBuddyFlags flags)
+    PurpleConvChatBuddy *purple_conv_chat_cb_find(PurpleConvChat *chat, \
+            char *name)
+    char *purple_conv_chat_cb_get_name(PurpleConvChatBuddy *cb)
+    void purple_conv_chat_cb_destroy(PurpleConvChatBuddy *cb)
+    glib.GList * purple_conversation_get_extended_menu( \
+            PurpleConversation *conv)
+    glib.gboolean purple_conversation_do_command(PurpleConversation *conv, \
+            glib.gchar *cmdline, glib.gchar *markup, glib.gchar **error)
+
+    # Conversations Subsystem
+    void *purple_conversations_get_handle()
+    void purple_conversations_init()
+    void purple_conversations_uninit()

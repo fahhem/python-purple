@@ -84,13 +84,13 @@ cdef class Purple:
     ui_name = property(__get_ui_name)
 
     def destroy(self):
-        core.c_purple_core_quit()
+        core.purple_core_quit()
 
     cdef void __core_ui_ops_ui_prefs_init(self):
         debug.purple_debug_info("core_ui_ops", "%s", "ui_prefs_init\n")
-        prefs.c_purple_prefs_load()
+        prefs.purple_prefs_load()
 
-        prefs.c_purple_prefs_add_none("/carman")
+        prefs.purple_prefs_add_none("/carman")
 
     cdef void __core_ui_ops_debug_init(self):
         debug.purple_debug_info("core_ui_ops", "%s", "debug_ui_init\n")
@@ -100,14 +100,14 @@ cdef class Purple:
         debug.purple_debug_info("core_ui_ops", "%s", "ui_init\n")
 
         account.purple_accounts_set_ui_ops(&c_account_ui_ops)
-        connection.c_purple_connections_set_ui_ops(&c_conn_ui_ops)
-        blist.c_purple_blist_set_ui_ops(&c_blist_ui_ops)
-        conversation.c_purple_conversations_set_ui_ops(&c_conv_ui_ops)
-        notify.c_purple_notify_set_ui_ops(&c_notify_ui_ops)
-        #privacy.c_purple_privacy_set_ui_ops(&c_privacy_ui_ops)
-        request.c_purple_request_set_ui_ops(&c_request_ui_ops)
-        #ft.c_purple_xfers_set_ui_ops(&c_ft_ui_ops)
-        #roomlist.c_purple_roomlist_set_ui_ops(&c_rlist_ui_ops)
+        connection.purple_connections_set_ui_ops(&c_conn_ui_ops)
+        blist.purple_blist_set_ui_ops(&c_blist_ui_ops)
+        conversation.purple_conversations_set_ui_ops(&c_conv_ui_ops)
+        notify.purple_notify_set_ui_ops(&c_notify_ui_ops)
+        #privacy.purple_privacy_set_ui_ops(&c_privacy_ui_ops)
+        request.purple_request_set_ui_ops(&c_request_ui_ops)
+        #ft.purple_xfers_set_ui_ops(&c_ft_ui_ops)
+        #roomlist.purple_roomlist_set_ui_ops(&c_rlist_ui_ops)
 
     cdef void __core_ui_ops_quit(self):
         debug.purple_debug_info("core_ui_ops", "%s", "quit\n")
@@ -115,14 +115,14 @@ cdef class Purple:
         global c_ui_info
 
         account.purple_accounts_set_ui_ops(NULL)
-        connection.c_purple_connections_set_ui_ops(NULL)
-        blist.c_purple_blist_set_ui_ops(NULL)
-        conversation.c_purple_conversations_set_ui_ops(NULL)
-        notify.c_purple_notify_set_ui_ops(NULL)
-        #privacy.c_purple_privacy_set_ui_ops(NULL)
-        request.c_purple_request_set_ui_ops(NULL)
-        #ft.c_purple_xfers_set_ui_ops(NULL)
-        #roomlist.c_purple_roomlist_set_ui_ops(NULL)
+        connection.purple_connections_set_ui_ops(NULL)
+        blist.purple_blist_set_ui_ops(NULL)
+        conversation.purple_conversations_set_ui_ops(NULL)
+        notify.purple_notify_set_ui_ops(NULL)
+        #privacy.purple_privacy_set_ui_ops(NULL)
+        request.purple_request_set_ui_ops(NULL)
+        #ft.purple_xfers_set_ui_ops(NULL)
+        #roomlist.purple_roomlist_set_ui_ops(NULL)
 
         if c_ui_info:
             glib.g_hash_table_destroy(c_ui_info)
@@ -217,29 +217,29 @@ cdef class Purple:
         c_eventloop_ui_ops.input_get_error = NULL
         c_eventloop_ui_ops.timeout_add_seconds = NULL
 
-        core.c_purple_core_set_ui_ops(&c_core_ui_ops)
-        eventloop.c_purple_eventloop_set_ui_ops(&c_eventloop_ui_ops)
+        core.purple_core_set_ui_ops(&c_core_ui_ops)
+        eventloop.purple_eventloop_set_ui_ops(&c_eventloop_ui_ops)
 
         # initialize purple core
-        ret = core.c_purple_core_init(__APP_NAME__)
+        ret = core.purple_core_init(__APP_NAME__)
         if ret is False:
             debug.purple_debug_fatal("main", "%s", "libpurple " \
                                        "initialization failed.\n")
             return False
 
         # check if there is another instance of libpurple running
-        if core.c_purple_core_ensure_single_instance() == False:
+        if core.purple_core_ensure_single_instance() == False:
             debug.purple_debug_fatal("main", "%s", "Another instance of " \
                                       "libpurple is already running.\n")
-            core.c_purple_core_quit()
+            core.purple_core_quit()
             return False
 
         # create and load the buddy list
-        blist.c_purple_set_blist(blist.c_purple_blist_new())
-        blist.c_purple_blist_load()
+        blist.purple_set_blist(blist.purple_blist_new())
+        blist.purple_blist_load()
 
         # load pounces
-        pounce.c_purple_pounces_load()
+        pounce.purple_pounces_load()
 
         return ret
 
@@ -272,7 +272,7 @@ cdef class Purple:
         if name is None:
             return
 
-        jabber = prpl.c_purple_find_prpl("prpl-jabber")
+        jabber = prpl.purple_find_prpl("prpl-jabber")
         if jabber == NULL:
             return
 
@@ -280,37 +280,37 @@ cdef class Purple:
         signal_cbs[name] = cb
 
         if name == "signed-on":
-            signals.c_purple_signal_connect(
-                    connection.c_purple_connections_get_handle(),
+            signals.purple_signal_connect(
+                    connection.purple_connections_get_handle(),
                     "signed-on", &handle,
                     <signals.PurpleCallback> signal_signed_on_cb, NULL)
         elif name == "signed-off":
-            signals.c_purple_signal_connect(
-                    connection.c_purple_connections_get_handle(),
+            signals.purple_signal_connect(
+                    connection.purple_connections_get_handle(),
                     "signed-off", &handle,
                     <signals.PurpleCallback> signal_signed_off_cb, NULL)
         elif name == "connection-error":
-            signals.c_purple_signal_connect(
-                    connection.c_purple_connections_get_handle(),
+            signals.purple_signal_connect(
+                    connection.purple_connections_get_handle(),
                     "connection-error", &handle,
                     <signals.PurpleCallback> signal_connection_error_cb, NULL)
         elif name == "buddy-signed-on":
-            signals.c_purple_signal_connect(
-                    blist.c_purple_blist_get_handle(),
+            signals.purple_signal_connect(
+                    blist.purple_blist_get_handle(),
                     "buddy-signed-on", &handle,
                     <signals.PurpleCallback> signal_buddy_signed_on_cb, NULL)
         elif name == "buddy-signed-off":
-            signals.c_purple_signal_connect(
-                    blist.c_purple_blist_get_handle(),
+            signals.purple_signal_connect(
+                    blist.purple_blist_get_handle(),
                     "buddy-signed-off", &handle,
                     <signals.PurpleCallback> signal_buddy_signed_off_cb, NULL)
         elif name == "receiving-im-msg":
-            signals.c_purple_signal_connect(
-                    conversation.c_purple_conversations_get_handle(),
+            signals.purple_signal_connect(
+                    conversation.purple_conversations_get_handle(),
                     "receiving-im-msg", &handle,
                     <signals.PurpleCallback> signal_receiving_im_msg_cb, NULL)
         elif name == "jabber-receiving-xmlnode":
-            signals.c_purple_signal_connect(
+            signals.purple_signal_connect(
                     jabber, "jabber-receiving-xmlnode", &handle,
                     <signals.PurpleCallback> jabber_receiving_xmlnode_cb, NULL)
 

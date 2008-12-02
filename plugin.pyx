@@ -29,7 +29,7 @@ cdef class Plugin:
 
     '''
     def __init__(self, id):
-        self.c_plugin = plugin.c_purple_plugins_find_with_id(id)
+        self.c_plugin = plugin.purple_plugins_find_with_id(id)
         self.c_prpl_info = plugin.c_PURPLE_PLUGIN_PROTOCOL_INFO(self.c_plugin)
     '''
 
@@ -47,7 +47,7 @@ cdef class Plugin:
 
         protocols = []
 
-        iter = plugin.c_purple_plugins_get_protocols()
+        iter = plugin.purple_plugins_get_protocols()
         while iter:
             pp = <plugin.PurplePlugin*> iter.data
             if pp.info and pp.info.name:
@@ -78,7 +78,7 @@ cdef class Plugin:
         if username:
             c_account = account.purple_accounts_find(username, id)
 
-        c_plugin = plugin.c_purple_plugins_find_with_id(id)
+        c_plugin = plugin.purple_plugins_find_with_id(id)
         c_prpl_info = plugin.c_PURPLE_PLUGIN_PROTOCOL_INFO(c_plugin)
 
         po = {}
@@ -159,7 +159,7 @@ cdef class Plugin:
             # FIXME: Message error or call a error handler
             return False
 
-        c_plugin = plugin.c_purple_plugins_find_with_id(acc[1])
+        c_plugin = plugin.purple_plugins_find_with_id(acc[1])
         c_prpl_info = plugin.c_PURPLE_PLUGIN_PROTOCOL_INFO(c_plugin)
 
         iter = c_prpl_info.protocol_options
@@ -213,7 +213,7 @@ cdef class Plugins:
         cdef glib.GList *iter
         cdef plugin.PurplePlugin *pp
         protocols = []
-        iter = plugin.c_purple_plugins_get_protocols()
+        iter = plugin.purple_plugins_get_protocols()
         while iter:
             pp = <plugin.PurplePlugin*> iter.data
             if pp.info and pp.info.name:

@@ -27,7 +27,7 @@ cdef class Conversation:
     cdef object __name
 
     def __init__(self):
-        conversation.c_purple_conversations_init()
+        conversation.purple_conversations_init()
         self.__name = None
         self.__acc = None
 
@@ -54,23 +54,23 @@ cdef class Conversation:
 
         if type == "UNKNOWN":
             self.__conv =\
-            conversation.c_purple_conversation_new(conversation.PURPLE_CONV_TYPE_UNKNOWN,\
+            conversation.purple_conversation_new(conversation.PURPLE_CONV_TYPE_UNKNOWN,\
                 c_account, self.__name)
         elif type == "IM":
             self.__conv =\
-            conversation.c_purple_conversation_new(conversation.PURPLE_CONV_TYPE_IM,\
+            conversation.purple_conversation_new(conversation.PURPLE_CONV_TYPE_IM,\
                 <account.PurpleAccount*> c_account, self.__name)
         elif type == "CHAT":
             self.__conv =\
-            conversation.c_purple_conversation_new(conversation.PURPLE_CONV_TYPE_CHAT,\
+            conversation.purple_conversation_new(conversation.PURPLE_CONV_TYPE_CHAT,\
                 c_account, self.__name)
         elif type == "MISC":
             self.__conv =\
-            conversation.c_purple_conversation_new(conversation.PURPLE_CONV_TYPE_MISC,\
+            conversation.purple_conversation_new(conversation.PURPLE_CONV_TYPE_MISC,\
                 c_account, self.__name)
         elif type == "ANY":
             self.__conv =\
-            conversation.c_purple_conversation_new(conversation.PURPLE_CONV_TYPE_ANY,\
+            conversation.purple_conversation_new(conversation.PURPLE_CONV_TYPE_ANY,\
                 c_account, self.__name)
 
     def conversation_set_ui_ops(self):
@@ -91,16 +91,16 @@ cdef class Conversation:
         c_conv_ui_ops.custom_smiley_close = NULL
         c_conv_ui_ops.send_confirm = NULL
 
-        conversation.c_purple_conversation_set_ui_ops(self.__conv, &c_conv_ui_ops)
+        conversation.purple_conversation_set_ui_ops(self.__conv, &c_conv_ui_ops)
 
     def write(self, char *message):
         if self.__conv:
-            conversation.c_purple_conv_im_send(conversation.c_purple_conversation_get_im_data(self.__conv), message)
+            conversation.purple_conv_im_send(conversation.purple_conversation_get_im_data(self.__conv), message)
 
     def get_handle(self):
-        conversation.c_purple_conversations_get_handle()
+        conversation.purple_conversations_get_handle()
 
     def destroy(self):
         print "[DEBUG]: Destroy conversation: %s" % self.__name
         if self.__conv:
-            conversation.c_purple_conversation_destroy(self.__conv)
+            conversation.purple_conversation_destroy(self.__conv)

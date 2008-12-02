@@ -25,7 +25,6 @@ cimport plugin
 cdef extern from *:
     ctypedef int size_t
     ctypedef long int time_t
-    ctypedef char const_char "const char"
 
 cdef extern from "libpurple/connection.h":
     ctypedef struct PurpleConnection
@@ -70,14 +69,14 @@ cdef extern from "libpurple/connection.h":
         char *description
 
     ctypedef struct PurpleConnectionUiOps:
-        void (*connect_progress) (PurpleConnection *gc, const_char *text, size_t step, size_t step_count)
+        void (*connect_progress) (PurpleConnection *gc, char *text, size_t step, size_t step_count)
         void (*connected) (PurpleConnection *gc)
         void (*disconnected) (PurpleConnection *gc)
-        void (*notice) (PurpleConnection *gc, const_char *text)
-        void (*report_disconnect) (PurpleConnection *gc, const_char *text)
+        void (*notice) (PurpleConnection *gc, char *text)
+        void (*report_disconnect) (PurpleConnection *gc, char *text)
         void (*network_connected) ()
         void (*network_disconnected) ()
-        void (*report_disconnect_reason) (PurpleConnection *gc, PurpleConnectionError reason, const_char *text)
+        void (*report_disconnect_reason) (PurpleConnection *gc, PurpleConnectionError reason, char *text)
 
     ctypedef struct PurpleConnection:
         plugin.PurplePlugin *prpl
@@ -94,6 +93,38 @@ cdef extern from "libpurple/connection.h":
         glib.guint disconnect_timeout
         time_t last_received
 
-    account.PurpleAccount *c_purple_connection_get_account "purple_connection_get_account" (PurpleConnection *gc)
-    void *c_purple_connections_get_handle "purple_connections_get_handle" ()
-    void c_purple_connections_set_ui_ops "purple_connections_set_ui_ops" (PurpleConnectionUiOps *ops)
+    # Connection API FIXME
+    void purple_connection_set_state(PurpleConnection *gc, \
+            PurpleConnectionState state)
+    void purple_connection_set_account(PurpleConnection *gc, \
+            account.PurpleAccount *account)
+    void purple_connection_set_display_name(PurpleConnection *gc, char *name)
+    PurpleConnectionState purple_connection_get_state(PurpleConnection *gc)
+    account.PurpleAccount *purple_connection_get_account(PurpleConnection *gc)
+    plugin.PurplePlugin * purple_connection_get_prpl(PurpleConnection *gc)
+    char *purple_connection_get_password(PurpleConnection *gc)
+    char *purple_connection_get_display_name(PurpleConnection *gc)
+    void purple_connection_update_progress(PurpleConnection *gc, char *text, \
+            size_t step, size_t count)
+    void purple_connection_notice(PurpleConnection *gc, char *text)
+    void purple_connection_error(PurpleConnection *gc, char *reason)
+    void purple_connection_error_reason (PurpleConnection *gc, \
+            PurpleConnectionError reason, char *description)
+    #void purple_connection_ssl_error (PurpleConnection *gc, \
+            #PurpleSslErrorType ssl_error)
+    glib.gboolean purple_connection_error_is_fatal ( \
+            PurpleConnectionError reason)
+
+    # Connections API
+    void purple_connections_disconnect_all()
+    glib.GList *purple_connections_get_all()
+    glib.GList *purple_connections_get_connecting()
+
+    # UI Registration Functions
+    void purple_connections_set_ui_ops(PurpleConnectionUiOps *ops)
+    PurpleConnectionUiOps *purple_connections_get_ui_ops()
+
+    # Connections Subsystem
+    void purple_connections_init()
+    void purple_connections_uninit()
+    void *purple_connections_get_handle()

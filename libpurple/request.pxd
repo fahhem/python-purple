@@ -115,4 +115,4 @@ cdef extern from "libpurple/request.h":
                                  conversation.PurpleConversation *conv,
                                  void *user_data)
 
-    void c_purple_request_set_ui_ops "purple_request_set_ui_ops" (PurpleRequestUiOps *ops)
+    void purple_request_set_ui_ops(PurpleRequestUiOps *ops)

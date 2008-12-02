@@ -92,4 +92,4 @@ cdef extern from "libpurple/notify.h":
         void *(*notify_uri) (const_char *uri)
         void (*close_notify) (PurpleNotifyType type, void *ui_handle)
 
-    void c_purple_notify_set_ui_ops "purple_notify_set_ui_ops" (PurpleNotifyUiOps *ops)
+    void purple_notify_set_ui_ops(PurpleNotifyUiOps *ops)

@@ -27,7 +27,7 @@ cdef void signal_signed_on_cb(connection.PurpleConnection *gc, \
     Emitted when a connection has signed on.
     @params gc  The connection that has signed on.
     """
-    cdef account.PurpleAccount *acc = connection.c_purple_connection_get_account(gc)
+    cdef account.PurpleAccount *acc = connection.purple_connection_get_account(gc)
     cdef char *c_username = NULL
     cdef char *c_protocol_id = NULL
 
@@ -52,7 +52,7 @@ cdef void signal_signed_off_cb(connection.PurpleConnection *gc, \
     Emitted when a connection has signed off.
     @params gc  The connection that has signed off.
     """
-    cdef account.PurpleAccount *acc = connection.c_purple_connection_get_account(gc)
+    cdef account.PurpleAccount *acc = connection.purple_connection_get_account(gc)
     cdef char *c_username = NULL
     cdef char *c_protocol_id = NULL
 
@@ -115,13 +115,13 @@ cdef void signal_buddy_signed_on_cb(blist.PurpleBuddy *buddy):
     cdef char *c_name = NULL
     cdef char *c_alias = NULL
 
-    c_name = <char *> blist.c_purple_buddy_get_name(buddy)
+    c_name = <char *> blist.purple_buddy_get_name(buddy)
     if c_name == NULL:
         name = None
     else:
         name = c_name
 
-    c_alias = <char *> blist.c_purple_buddy_get_alias_only(buddy)
+    c_alias = <char *> blist.purple_buddy_get_alias_only(buddy)
     if c_alias == NULL:
         alias = None
     else:
@@ -138,13 +138,13 @@ cdef void signal_buddy_signed_off_cb(blist.PurpleBuddy *buddy):
     cdef char *c_name = NULL
     cdef char *c_alias = NULL
 
-    c_name = <char *> blist.c_purple_buddy_get_name(buddy)
+    c_name = <char *> blist.purple_buddy_get_name(buddy)
     if c_name == NULL:
         name = None
     else:
         name = c_name
 
-    c_alias = <char *> blist.c_purple_buddy_get_alias_only(buddy)
+    c_alias = <char *> blist.purple_buddy_get_alias_only(buddy)
     if c_alias == NULL:
         alias = None
     else:
@@ -168,16 +168,16 @@ cdef glib.gboolean signal_receiving_im_msg_cb(account.PurpleAccount *account, \
     @params conv     The IM conversation.
     @params flags    A pointer to the IM message flags.
     """
-    cdef blist.PurpleBuddy *buddy = blist.c_purple_find_buddy(account, sender[0])
+    cdef blist.PurpleBuddy *buddy = blist.purple_find_buddy(account, sender[0])
     cdef char *c_alias = NULL
 
-    c_alias = <char *> blist.c_purple_buddy_get_alias_only(buddy)
+    c_alias = <char *> blist.purple_buddy_get_alias_only(buddy)
     if c_alias == NULL:
         alias = None
     else:
         alias = c_alias
 
-    stripped = util.c_purple_markup_strip_html(message[0])
+    stripped = util.purple_markup_strip_html(message[0])
 
     if signal_cbs.has_key("receiving-im-msg"):
         return (<object> signal_cbs["receiving-im-msg"])(sender[0], alias, stripped)

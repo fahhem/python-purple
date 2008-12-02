@@ -35,14 +35,14 @@ cdef class Buddy:
 
     def __get_alias(self):
         if self.c_buddy:
-            return <char *>blist.c_purple_buddy_get_alias_only(self.c_buddy)
+            return <char *>blist.purple_buddy_get_alias_only(self.c_buddy)
         else:
             return None
     alias = property(__get_alias)
 
     def __get_name(self):
         if self.c_buddy:
-            return <char *>blist.c_purple_buddy_get_name(self.c_buddy)
+            return <char *>blist.purple_buddy_get_name(self.c_buddy)
         else:
             return None
     name = property(__get_name)
@@ -50,8 +50,8 @@ cdef class Buddy:
     """
     def __get_online(self): # FIXME
         name = self.name
-        self.c_buddy = blist.c_purple_find_buddy(self.__acc.c_account, name)
-        return status.c_purple_presence_is_online(blist.c_purple_buddy_get_presence(self.c_buddy))
+        self.c_buddy = blist.purple_find_buddy(self.__acc.c_account, name)
+        return status.purple_presence_is_online(blist.purple_buddy_get_presence(self.c_buddy))
     online = property(__get_online)
     """
 
@@ -66,5 +66,5 @@ cdef class Buddy:
         if alias is not None:
             c_alias = alias
 
-        self.c_buddy = blist.c_purple_buddy_new(<account.PurpleAccount *>\
+        self.c_buddy = blist.purple_buddy_new(<account.PurpleAccount *>\
                 self.__acc.c_account, c_name, c_alias)
