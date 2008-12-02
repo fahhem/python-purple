@@ -21,8 +21,12 @@ cimport purple
 
 signal_cbs = {}
 
-cdef void signal_signed_on_cb (connection.PurpleConnection *gc, \
-                               glib.gpointer null):
+cdef void signal_signed_on_cb(connection.PurpleConnection *gc, \
+        glib.gpointer null):
+    """
+    Emitted when a connection has signed on.
+    @params gc  The connection that has signed on.
+    """
     cdef account.PurpleAccount *acc = connection.c_purple_connection_get_account(gc)
     cdef char *c_username = NULL
     cdef char *c_protocol_id = NULL
@@ -39,13 +43,15 @@ cdef void signal_signed_on_cb (connection.PurpleConnection *gc, \
     else:
         protocol_id = c_protocol_id
 
-    try:
+    if signal_cbs.has_key("signed-on"):
         (<object> signal_cbs["signed-on"])(username, protocol_id)
-    except KeyError:
-        pass
 
-cdef void signal_signed_off_cb (connection.PurpleConnection *gc, \
-                               glib.gpointer null):
+cdef void signal_signed_off_cb(connection.PurpleConnection *gc, \
+        glib.gpointer null):
+    """
+    Emitted when a connection has signed off.
+    @params gc  The connection that has signed off.
+    """
     cdef account.PurpleAccount *acc = connection.c_purple_connection_get_account(gc)
     cdef char *c_username = NULL
     cdef char *c_protocol_id = NULL
@@ -62,13 +68,17 @@ cdef void signal_signed_off_cb (connection.PurpleConnection *gc, \
     else:
         protocol_id = c_protocol_id
 
-    try:
+    if signal_cbs.has_key("signed-off"):
         (<object> signal_cbs["signed-off"])(username, protocol_id)
-    except KeyError:
-        pass
 
-cdef void signal_connection_error_cb (connection.PurpleConnection *gc, \
+cdef void signal_connection_error_cb(connection.PurpleConnection *gc, \
         connection.PurpleConnectionError err, char *c_desc):
+    """
+    Emitted when a connection error occurs, before signed-off.
+    @params gc   The connection on which the error has occured
+    @params err  The error that occured
+    @params desc A description of the error, giving more information
+    """
 
     short_desc = {
         0: "Network error",
@@ -94,12 +104,14 @@ cdef void signal_connection_error_cb (connection.PurpleConnection *gc, \
     else:
         desc = c_desc
 
-    try:
+    if signal_cbs.has_key("connection-error"):
         (<object> signal_cbs["connection-error"])(short_desc, desc)
-    except KeyError:
-        pass
 
-cdef void signal_buddy_signed_on_cb (blist.PurpleBuddy *buddy):
+cdef void signal_buddy_signed_on_cb(blist.PurpleBuddy *buddy):
+    """
+    Emitted when a buddy on your buddy list signs on.
+    @params buddy  The buddy that signed on.
+    """
     cdef char *c_name = NULL
     cdef char *c_alias = NULL
 
@@ -115,12 +127,14 @@ cdef void signal_buddy_signed_on_cb (blist.PurpleBuddy *buddy):
     else:
         alias = c_alias
 
-    try:
+    if signal_cbs.has_key("buddy-signed-on"):
         (<object> signal_cbs["buddy-signed-on"])(name, alias)
-    except KeyError:
-        pass
 
-cdef void signal_buddy_signed_off_cb (blist.PurpleBuddy *buddy):
+cdef void signal_buddy_signed_off_cb(blist.PurpleBuddy *buddy):
+    """
+    Emitted when a buddy on your buddy list signs off.
+    @params buddy  The buddy that signed off.
+    """
     cdef char *c_name = NULL
     cdef char *c_alias = NULL
 
@@ -136,14 +150,24 @@ cdef void signal_buddy_signed_off_cb (blist.PurpleBuddy *buddy):
     else:
         alias = c_alias
 
-    try:
+    if signal_cbs.has_key("buddy-signed-off"):
         (<object> signal_cbs["buddy-signed-off"])(name, alias)
-    except KeyError:
-        pass
 
-cdef glib.gboolean signal_receiving_im_msg_cb (account.PurpleAccount *account,
-        char **sender, char **message, conversation.PurpleConversation *conv,
+cdef glib.gboolean signal_receiving_im_msg_cb(account.PurpleAccount *account, \
+        char **sender, char **message, conversation.PurpleConversation *conv, \
         conversation.PurpleMessageFlags *flags):
+    """
+    Emitted when an IM is received. The callback can replace the name of the
+    sender, the message, or the flags by modifying the pointer to the strings
+    and integer. This can also be used to cancel a message by returning TRUE.
+    @note Make sure to free *sender and *message before you replace them!
+    @returns TRUE if the message should be canceled, or FALSE otherwise.
+    @params account  The account the message was received on.
+    @params sender   A pointer to the username of the sender.
+    @params message  A pointer to the message that was sent.
+    @params conv     The IM conversation.
+    @params flags    A pointer to the IM message flags.
+    """
     cdef blist.PurpleBuddy *buddy = blist.c_purple_find_buddy(account, sender[0])
     cdef char *c_alias = NULL
 
@@ -155,17 +179,15 @@ cdef glib.gboolean signal_receiving_im_msg_cb (account.PurpleAccount *account,
 
     stripped = util.c_purple_markup_strip_html(message[0])
 
-    try:
+    if signal_cbs.has_key("receiving-im-msg"):
         return (<object> signal_cbs["receiving-im-msg"])(sender[0], alias, stripped)
-    except KeyError:
-        return False
 
-cdef void jabber_receiving_xmlnode_cb (connection.PurpleConnection *gc,
+cdef void jabber_receiving_xmlnode_cb(connection.PurpleConnection *gc, \
         xmlnode.xmlnode **packet, glib.gpointer null):
-
+    """
+    Emitted when jabber receives a XML node.
+    """
     message = xmlnode.xmlnode_to_str(packet[0], NULL)
 
-    try:
+    if signal_cbs.has_key("jabber-receiving-xmlnode"):
         (<object> signal_cbs["jabber-receiving-xmlnode"])(message)
-    except KeyError:
-        pass
