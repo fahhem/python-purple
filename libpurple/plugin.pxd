@@ -38,16 +38,12 @@ cdef extern from "libpurple/plugin.h":
         glib.gboolean unloadable
         glib.GList *dependent_plugins
 
-    prpl.PurplePluginProtocolInfo *c_PURPLE_PLUGIN_PROTOCOL_INFO \
-                "PURPLE_PLUGIN_PROTOCOL_INFO" (PurplePlugin *plugin)
-    PurplePlugin *c_purple_plugin_new  "purple_plugin_new" \
-            (glib.gboolean native, char* path)
+    prpl.PurplePluginProtocolInfo *PURPLE_PLUGIN_PROTOCOL_INFO(PurplePlugin *plugin)
+    PurplePlugin *purple_plugin_new(glib.gboolean native, char* path)
 
-    void c_purple_plugins_add_search_path "purple_plugins_add_search_path" \
-            (char *path)
-    glib.GList *c_purple_plugins_get_protocols "purple_plugins_get_protocols" ()
-    PurplePlugin *c_purple_plugins_find_with_name "purple_plugins_find_with_name" \
-            (char *name)
+    void purple_plugins_add_search_path(char *path)
+    glib.GList *purple_plugins_get_protocols()
+    PurplePlugin purple_plugins_find_with_name(char *name)
     PurplePlugin *purple_plugins_find_with_id(char *id)
     char *purple_plugin_get_name(PurplePlugin *plugin)
 

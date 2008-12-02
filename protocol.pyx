@@ -22,8 +22,10 @@ cimport purple
 cdef class Protocol:
     """
     Protocol class
-    @param protocol_id
+    @param id
     """
+    cdef object __id
+    cdef object __exists
 
     def __init__(self, id):
         self.__id = id
@@ -34,7 +36,7 @@ cdef class Protocol:
             self.__exists = False
 
     cdef plugin.PurplePlugin *_get_structure(self):
-        return plugin.purple_plugins_find_with_id(self.__protocol_id)
+        return plugin.purple_plugins_find_with_id(self.__id)
 
     def __get_exists(self):
         return self.__exists
@@ -54,3 +56,96 @@ cdef class Protocol:
                 return None
         return None
     name = property(__get_name)
+
+    def __get_options_labels(self):
+        cdef prpl.PurplePluginProtocolInfo *prpl_info
+        cdef glib.GList *iter
+        cdef accountopt.PurpleAccountOption *option
+        cdef prefs.PurplePrefType type
+        cdef const_char *label_name
+        cdef const_char *setting
+
+        if not self.__exists:
+            return None
+
+        prpl_info = plugin.PURPLE_PLUGIN_PROTOCOL_INFO(self._get_structure())
+
+        po = {}
+
+        iter = prpl_info.protocol_options
+
+        while iter:
+
+            option = <accountopt.PurpleAccountOption *> iter.data
+            type = accountopt.purple_account_option_get_type(option)
+            label_name = accountopt.purple_account_option_get_text(option)
+            setting = accountopt.purple_account_option_get_setting(option)
+
+            sett = str(<char *> setting)
+            label = str(<char *> label_name)
+
+            iter = iter.next
+
+            po[sett] = label
+
+        return po
+    options_labels = property(__get_options_labels)
+
+    def __get_options_values(self):
+        cdef prpl.PurplePluginProtocolInfo *prpl_info
+        cdef glib.GList *iter
+        cdef accountopt.PurpleAccountOption *option
+        cdef prefs.PurplePrefType type
+        cdef const_char *str_value
+        cdef const_char *setting
+        cdef int int_value
+        cdef glib.gboolean bool_value
+
+        if not self.__exists:
+            return None
+
+        prpl_info = plugin.PURPLE_PLUGIN_PROTOCOL_INFO(self._get_structure())
+
+        po = {}
+
+        iter = prpl_info.protocol_options
+
+        while iter:
+
+            option = <accountopt.PurpleAccountOption *> iter.data
+            type = accountopt.purple_account_option_get_type(option)
+            setting = accountopt.purple_account_option_get_setting(option)
+
+            sett = str(<char *> setting)
+
+            if type == prefs.PURPLE_PREF_STRING:
+                str_value = accountopt.purple_account_option_get_default_string(option)
+                # Google Talk default domain hackery!
+                if str_value == NULL and sett == "connect_server":
+                    str_value = "talk.google.com"
+
+                val = str(<char *> str_value)
+
+            elif type == prefs.PURPLE_PREF_INT:
+                int_value = accountopt.purple_account_option_get_default_int(option)
+                if sett == "port":
+                        int_value = int(443)
+
+                val = int(int_value)
+
+            elif type == prefs.PURPLE_PREF_BOOLEAN:
+                bool_value = accountopt.purple_account_option_get_default_bool(option)
+
+                val = bool(bool_value)
+
+            elif type == prefs.PURPLE_PREF_STRING_LIST:
+                str_value = accountopt.purple_account_option_get_default_list_value(option)
+
+                val = str(<char *> str_value)
+
+            iter = iter.next
+
+            po[sett] = val
+
+        return po
+    options_values = property(__get_options_values)

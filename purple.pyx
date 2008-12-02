@@ -340,7 +340,7 @@ cdef class Purple:
         cdef glib.GList *iter
         cdef plugin.PurplePlugin *pp
 
-        iter = plugin.c_purple_plugins_get_protocols()
+        iter = plugin.purple_plugins_get_protocols()
         protocol_list = []
         while iter:
             pp = <plugin.PurplePlugin*> iter.data
