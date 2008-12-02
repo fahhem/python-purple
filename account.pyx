@@ -24,7 +24,7 @@ cdef extern from *:
 
 cdef class Account:
     """ Account class """
-    cdef account.PurpleAccount *__account
+    cdef account.PurpleAccount *c_account
     cdef plugin.PurplePlugin *c_plugin
     cdef prpl.PurplePluginProtocolInfo *c_prpl_info
     cdef plugin.PurplePluginInfo *c_plugin_info
@@ -33,32 +33,32 @@ cdef class Account:
 
     def __init__(self, char *username, char *protocol_id):
         cdef proxy.PurpleProxyInfo *c_proxyinfo
-        self.__account = account.c_purple_account_new(username, protocol_id)
+        self.c_account = account.c_purple_account_new(username, protocol_id)
         self.c_plugin = plugin.c_purple_plugins_find_with_id(protocol_id)
         self.c_prpl_info = plugin.c_PURPLE_PLUGIN_PROTOCOL_INFO(self.c_plugin)
 
-        c_proxyinfo = account.c_purple_account_get_proxy_info(self.__account)
+        c_proxyinfo = account.c_purple_account_get_proxy_info(self.c_account)
         if c_proxyinfo == NULL:
             c_proxyinfo = proxy.c_purple_proxy_info_new()
             proxy.c_purple_proxy_info_set_type(c_proxyinfo, proxy.PURPLE_PROXY_NONE)
-        account.c_purple_account_set_proxy_info(self.__account, c_proxyinfo)
+        account.c_purple_account_set_proxy_info(self.c_account, c_proxyinfo)
         self.__proxy = ProxyInfo()
         self.__proxy.c_proxyinfo = c_proxyinfo
 
 
     def set_password(self, password):
-        account.c_purple_account_set_password(self.__account, password)
+        account.c_purple_account_set_password(self.c_account, password)
 
     def set_enabled(self, ui, value):
-        account.c_purple_account_set_enabled(self.__account, ui, value)
+        account.c_purple_account_set_enabled(self.c_account, ui, value)
 
     def get_acc_username(self):
-        if self.__account:
-            return account.c_purple_account_get_username(self.__account)
+        if self.c_account:
+            return account.c_purple_account_get_username(self.c_account)
 
     def get_password(self):
-        if self.__account:
-            return account.c_purple_account_get_password(self.__account)
+        if self.c_account:
+            return account.c_purple_account_get_password(self.c_account)
 
     def set_status(self):
         self.__sstatus = savedstatuses.c_purple_savedstatus_new(NULL, status.PURPLE_STATUS_AVAILABLE)
@@ -73,7 +73,7 @@ cdef class Account:
         cdef glib.GSList *iter
         cdef blist.PurpleBuddy *buddy
         buddies = []
-        iter = blist.c_purple_find_buddies(self.__account, NULL)
+        iter = blist.c_purple_find_buddies(self.c_account, NULL)
         while iter:
             buddy = <blist.PurpleBuddy *> iter.data
             if <blist.PurpleBuddy *>buddy and \
@@ -106,28 +106,28 @@ cdef class Account:
                 if str_value == NULL and str(<char *> label_name) == "Connect server":
                     str_value = "talk.google.com"
 
-                if self.__account != NULL:
-                    str_value = account.c_purple_account_get_string(self.__account, setting, str_value)
-                    account.c_purple_account_set_string(self.__account, setting, str_value );
+                if self.c_account != NULL:
+                    str_value = account.c_purple_account_get_string(self.c_account, setting, str_value)
+                    account.c_purple_account_set_string(self.c_account, setting, str_value );
 
             elif type == prefs.PURPLE_PREF_INT:
                 int_value = accountopt.c_purple_account_option_get_default_int(option)
-                if self.__account != NULL:
-                   int_value = account.c_purple_account_get_int(self.__account, setting, int_value)
+                if self.c_account != NULL:
+                   int_value = account.c_purple_account_get_int(self.c_account, setting, int_value)
                    if str(<char *> setting) == "port":
-                        account.c_purple_account_set_int(self.__account, setting, 443);
+                        account.c_purple_account_set_int(self.c_account, setting, 443);
 
             elif type == prefs.PURPLE_PREF_BOOLEAN:
                 bool_value = accountopt.c_purple_account_option_get_default_bool(option)
-                if self.__account != NULL:
-                    bool_value = account.c_purple_account_get_bool(self.__account, setting, bool_value)
+                if self.c_account != NULL:
+                    bool_value = account.c_purple_account_get_bool(self.c_account, setting, bool_value)
                     if str(<char *> setting) == "old_ssl":
-                        account.c_purple_account_set_bool(self.__account, setting, True);
+                        account.c_purple_account_set_bool(self.c_account, setting, True);
 
             elif type == prefs.PURPLE_PREF_STRING_LIST:
                 str_value = accountopt.c_purple_account_option_get_default_list_value(option)
-                if self.__account != NULL:
-                    str_value = account.c_purple_account_get_string(self.__account, setting, str_value)
+                if self.c_account != NULL:
+                    str_value = account.c_purple_account_get_string(self.c_account, setting, str_value)
 
             iter = iter.next
 
