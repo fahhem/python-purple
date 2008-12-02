@@ -331,7 +331,7 @@ cdef class Purple:
                 protocol_id = <char *> account.purple_account_get_protocol_id(acc)
 
                 if username != NULL and protocol_id != NULL:
-                    account_list.append(Account(self, username, protocol_id))
+                    account_list.append(Account(username, protocol_id, self))
             iter = iter.next
 
         return account_list
