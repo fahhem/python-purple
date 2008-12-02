@@ -133,9 +133,10 @@ cdef class Account:
 
                 str_value = <char *> accountopt.purple_account_option_get_default_string(option)
 
-                # Google Talk default domain hackery!
-                if str_value == NULL and str(<char *> label_name) == "Connect server":
-                    str_value = "talk.google.com"
+                # Hack to set string "" as default value to Account options when
+                # the default value of the protocol is NULL
+                if str_value == NULL:
+                    str_value = ""
                 str_value = <char *> account.purple_account_get_string(c_account, setting, str_value)
 
                 val = str(<char *> str_value)

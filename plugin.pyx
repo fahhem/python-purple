@@ -97,9 +97,6 @@ cdef class Plugin:
 
             if type == prefs.PURPLE_PREF_STRING:
                 str_value = accountopt.purple_account_option_get_default_string(option)
-                # Google Talk default domain hackery!
-                if str_value == NULL and label == "Connect server":
-                    str_value = "talk.google.com"
                 if c_account != NULL:
                     str_value = account.purple_account_get_string(c_account, setting, str_value)
 
@@ -107,8 +104,6 @@ cdef class Plugin:
 
             elif type == prefs.PURPLE_PREF_INT:
                 int_value = accountopt.purple_account_option_get_default_int(option)
-                if sett == "port":
-                        int_value = int(443)
                 if c_account != NULL:
                     int_value = account.purple_account_get_int(c_account, setting, int_value)
 

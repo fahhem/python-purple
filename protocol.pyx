@@ -120,17 +120,14 @@ cdef class Protocol:
 
             if type == prefs.PURPLE_PREF_STRING:
                 str_value = accountopt.purple_account_option_get_default_string(option)
-                # Google Talk default domain hackery!
-                if str_value == NULL and sett == "connect_server":
-                    str_value = "talk.google.com"
-
+                # Hack to set string "" as default value when the
+                # protocol's option is NULL
+                if str_value == NULL:
+                    str_value = ""
                 val = str(<char *> str_value)
 
             elif type == prefs.PURPLE_PREF_INT:
                 int_value = accountopt.purple_account_option_get_default_int(option)
-                if sett == "port":
-                        int_value = int(443)
-
                 val = int(int_value)
 
             elif type == prefs.PURPLE_PREF_BOOLEAN:
