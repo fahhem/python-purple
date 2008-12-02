@@ -423,3 +423,96 @@ cdef class Account:
         else:
             return False
 
+    def add_buddy(self, name, alias=None, group=None):
+        """
+        Adds a buddy to account's buddy list.
+
+        @param name  Buddy name
+        @param alias Buddy alias (optional)
+        @return True if successfull, False otherwise
+        """
+        cdef blist.PurpleBuddy *c_buddy = NULL
+        cdef blist.PurpleGroup *c_group = NULL
+        cdef char *c_alias = NULL
+
+        if alias:
+            c_alias = alias
+        else:
+            c_alias = NULL
+
+        if self.__exists and \
+                account.purple_account_is_connected(self._get_structure()):
+            if blist.purple_find_buddy(self._get_structure(), name):
+                return False
+
+            if group:
+                c_group = blist.purple_find_group(group)
+                if c_group == NULL:
+                    c_group = blist.purple_group_new(group)
+
+            c_buddy = blist.purple_buddy_new(self._get_structure(), \
+                    name, c_alias)
+            if c_buddy == NULL:
+                return False
+
+            blist.purple_blist_add_buddy(c_buddy, NULL, c_group, NULL)
+            account.purple_account_add_buddy(self._get_structure(), c_buddy)
+            return True
+
+        else:
+            return None
+
+    def remove_buddy(self, name):
+        """
+        Removes a buddy from account's buddy list.
+
+        @param name Buddy name
+        @return True if successful, False otherwise
+        """
+        cdef blist.PurpleBuddy *c_buddy = NULL
+        cdef blist.PurpleGroup *c_group = NULL
+
+        if self.__exists and \
+                account.purple_account_is_connected(self._get_structure()):
+            c_buddy = blist.purple_find_buddy(self._get_structure(), name)
+            if c_buddy == NULL:
+                return False
+
+            c_group = blist.purple_buddy_get_group(c_buddy)
+
+            account.purple_account_remove_buddy(self._get_structure(), \
+                    c_buddy, c_group)
+            blist.purple_blist_remove_buddy(c_buddy)
+            return True
+        else:
+            return None
+
+    def get_buddies_online(self):
+        cdef glib.GSList *iter = NULL
+        cdef blist.PurpleBuddy *c_buddy = NULL
+        cdef char *c_alias = NULL
+
+        if self.__exists and \
+                account.purple_account_is_connected(self._get_structure()):
+            iter = blist.purple_find_buddies(self._get_structure(), NULL)
+
+            buddies_list = []
+            while iter:
+                c_alias = NULL
+                c_buddy = <blist.PurpleBuddy *> iter.data
+                if <blist.PurpleBuddy *> c_buddy and \
+                        status.purple_presence_is_online( \
+                                blist.purple_buddy_get_presence(c_buddy)):
+                    name = <char *> blist.purple_buddy_get_name(c_buddy)
+
+                    c_alias = <char *> blist.purple_buddy_get_alias_only(c_buddy)
+                    if c_alias == NULL:
+                        alias = None
+                    else:
+                        alias = c_alias
+
+                    buddies_list.append((name, alias))
+                iter = iter.next
+            return buddies_list
+        else:
+            return None

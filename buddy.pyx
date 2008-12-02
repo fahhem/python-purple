@@ -44,6 +44,10 @@ cdef class Buddy:
                 self.__account.username, self.__account.protocol.id), \
                 self.__name)
 
+    def __get_exists(self):
+        return self.__exists
+    exists = property(__get_exists)
+
     def __get_name(self):
         if self.__exists:
             return <char *> blist.purple_buddy_get_name(self._get_structure())
@@ -121,24 +125,3 @@ cdef class Buddy:
         else:
             return None
     idle = property(__get_idle)
-
-    def new(self, alias=None):
-        """
-        Created a new buddy.
-
-        @param alias (optional)
-        @return True if successful, False if buddy already exists
-        """
-        cdef char *c_alias = NULL
-
-        if alias:
-            c_alias = alias
-        else:
-            c_alias = NULL
-
-        if self.__exists:
-            return False
-        else:
-            blist.purple_buddy_new(account.purple_accounts_find( \
-                    self.__account.username, self.__account.protocol.id), \
-                    self.__name, c_alias)
