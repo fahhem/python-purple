@@ -40,6 +40,7 @@ include "libpurple/pounce.pxd"
 include "libpurple/prefs.pxd"
 include "libpurple/proxy.pxd"
 include "libpurple/status.pxd"
+include "libpurple/savedstatuses.pxd"
 include "libpurple/util.pxd"
 
 cdef extern from "c_purple.h":
@@ -158,9 +159,7 @@ cdef class Purple:
         c_purple_pounces_load()
 
         return ret
-    # core_init
-
-# Purple
+    # purple_init
 
     def get_protocols(self):
         cdef GList *iter
@@ -173,12 +172,15 @@ cdef class Purple:
                 protocols += [(plugin.info.id, plugin.info.name)]
             iter = iter.next
         return protocols
+    # get_protocols
 
     def connect(self):
         conn = Connection()
         conn.connect()
+    # connect
+# Purple
 
-include "account.pyx"
-include "buddy.pyx"
-include "connection.pyx"
-include "conversation.pyx"
+include "account.pxd"
+include "buddy.pxd"
+include "connection.pxd"
+include "conversation.pxd"
