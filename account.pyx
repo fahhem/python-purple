@@ -116,6 +116,14 @@ cdef class Account:
             return None
     remember_password = property(__get_remember_password)
 
+    def __get_enabled(self):
+        if self.__exists:
+            return account.purple_account_get_enabled(self._get_structure(), \
+                    self.core.ui_name)
+        else:
+            return None
+    enabled = property(__get_enabled)
+
     def set_username(self, username):
         """
         Sets the account's username.
@@ -196,6 +204,20 @@ cdef class Account:
         if self.__exists:
             account.purple_account_set_remember_password( \
                 self._get_structure(), remember_password)
+            return True
+        else:
+            return False
+
+    def set_enabled(self, value):
+        """
+        Sets wheter or not this account is enabled.
+
+        @param value True if it is enabled, or False otherwise
+        @return True if successful, False if account doesn't exists
+        """
+        if self.__exists:
+            account.purple_account_set_enabled(self._get_structure(), \
+                    self.core.ui_name, bool(value))
             return True
         else:
             return False
