@@ -117,6 +117,12 @@ cdef class Account:
     remember_password = property(__get_remember_password)
 
     def set_username(self, username):
+        """
+        Sets the account's username.
+
+        @param username The username
+        @return True if successful, False if account doesn't exists
+        """
         if self.__exists:
             account.purple_account_set_username(self._get_structure(), \
                     username)
@@ -125,6 +131,12 @@ cdef class Account:
             return False
 
     def set_protocol_id(self, protocol_id):
+        """
+        Sets the account's protocol ID.
+
+        @param protocol_id The protocol ID
+        @return True if successful, False if account doesn't exists
+        """
         if self.__exists:
             self.__protocol._set_protocol_id(protocol_id)
             return True
@@ -132,6 +144,12 @@ cdef class Account:
             return False
 
     def set_password(self, password):
+        """
+        Sets the account's password.
+
+        @param password The password
+        @return True if successful, False if account doesn't exists
+        """
         if self.__exists:
             account.purple_account_set_password(self._get_structure(), \
                     password)
@@ -140,6 +158,12 @@ cdef class Account:
             return False
 
     def set_alias(self, alias):
+        """
+        Sets the account's alias
+
+        @param alias The alias
+        @return True if successful, False if account doesn't exists
+        """
         if self.__exists:
             account.purple_account_set_alias(self._get_structure(), \
                     alias)
@@ -148,6 +172,12 @@ cdef class Account:
             return False
 
     def set_user_info(self, user_info):
+        """
+        Sets the account's user information
+
+        @param user_info The user information
+        @return True if successful, False if account doesn't exists
+        """
         if self.__exists:
             account.purple_account_set_user_info(self._get_structure(), \
                     user_info)
@@ -156,6 +186,13 @@ cdef class Account:
             return False
 
     def set_remember_password(self, remember_password):
+        """
+        Sets whether or not this account should save its password.
+
+        @param remember_password True if should remember the password,
+                                 or False otherwise
+        @return True if successful, False if account doesn't exists
+        """
         if self.__exists:
             account.purple_account_set_remember_password( \
                 self._get_structure(), remember_password)
@@ -164,6 +201,11 @@ cdef class Account:
             return False
 
     def new(self):
+        """
+        Creates a new account.
+
+        @return True if successful, False if account already exists
+        """
         if self.__exists:
             return False
         else:
