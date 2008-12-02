@@ -66,3 +66,16 @@ cdef class Account:
         self.__sstatus = c_purple_savedstatus_new(NULL, StatusPrimitive().STATUS_AVAILABLE)
         c_purple_savedstatus_activate(self.__sstatus)
 
+    def get_buddies_online(self, account):
+        cdef GSList *iter
+        cdef PurpleBuddy *buddy
+        buddies = []
+        iter = c_purple_find_buddies(self.__account, NULL)
+        while iter:
+            buddy = <PurpleBuddy *>iter.data
+            if buddy and \
+                c_purple_account_is_connected(c_purple_buddy_get_account(buddy)) and \
+                c_purple_presence_is_online(c_purple_buddy_get_presence(buddy)):
+                buddies += [buddy.name]
+            iter = iter.next
+        return buddies

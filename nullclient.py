@@ -24,6 +24,10 @@ class NullClient:
         self.account.set_password(password)
         self.account.set_enabled("carman-purple-python", True)
 
+    def get_buddies(self, account):
+        buddies = account.get_buddies_online(account)
+        print buddies
+
 def getuser():
     sys.stdout.write("GTalk account: ")
     username = sys.stdin.readline()
@@ -42,4 +46,5 @@ if __name__ == '__main__':
     client.new_account(username, client.protocol, password)
 
     client.p.connect()
+    ecore.timer_add(30, client.get_buddies, client.account)
     ecore.main_loop_begin()
