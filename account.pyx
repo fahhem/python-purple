@@ -332,3 +332,22 @@ cdef class Account:
 
         return accounts
 
+    def get_password(self, acc):
+        ''' @param acc Tuple (username, protocol id) '''
+        cdef account.PurpleAccount *c_account
+
+        c_account = account.c_purple_accounts_find(acc[0], acc[1])
+        if c_account:
+            return account.c_purple_account_get_password(c_account)
+        else:
+            return None
+
+    def set_password(self, acc, password):
+        ''' @param acc Tuple (username, protocol id) '''
+        ''' @param password The account's password '''
+        cdef account.PurpleAccount *c_account
+
+        c_account = account.c_purple_accounts_find(acc[0], acc[1])
+        if c_account:
+            account.c_purple_account_set_password(c_account, password)
+
