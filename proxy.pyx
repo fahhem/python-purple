@@ -95,7 +95,7 @@ cdef class ProxyInfo:
     def set_info(self, acc, info):
         ''' @param acc Tuple (username, protocol id) '''
         ''' @param info Dictionary {'type': "HTTP", 'port': "1234", '''
-        '''                'username': "foo", 'passworld': "foo123"} '''
+        '''   'host': "1.2.3.4", 'username': "foo", 'passworld': "foo123"} '''
 
         cdef account.PurpleAccount *c_account
         cdef proxy.PurpleProxyInfo *c_proxyinfo
@@ -114,6 +114,10 @@ cdef class ProxyInfo:
                 return False
             proxy.c_purple_proxy_info_set_type(c_proxyinfo, self.types[type])
 
+        if info.has_key('host'):
+            host = info['host']
+            proxy.c_purple_proxy_info_set_host(c_proxyinfo, host)
+
         if info.has_key('port'):
             port = int(info['port'])
             proxy.c_purple_proxy_info_set_port(c_proxyinfo, port)
@@ -125,5 +129,5 @@ cdef class ProxyInfo:
         if info.has_key('password'):
             password = info['password']
             proxy.c_purple_proxy_info_set_password(c_proxyinfo, password)
-           
+
         return True
