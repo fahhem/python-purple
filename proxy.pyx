@@ -56,9 +56,18 @@ cdef class ProxyInfoType:
 cdef class ProxyInfo:
 
     cdef proxy.PurpleProxyInfo *c_proxyinfo
+    cdef object types
 
     def __init__(self):
         self.c_proxyinfo = NULL
+
+        self.types = {"HTTP": proxy.PURPLE_PROXY_HTTP,
+                "USER_GLOBAL": proxy.PURPLE_PROXY_USE_GLOBAL,
+                "USE_ENVVAR": proxy.PURPLE_PROXY_USE_ENVVAR,
+                "SOCKS4": proxy.PURPLE_PROXY_SOCKS4,
+                "SOCKS5": proxy.PURPLE_PROXY_SOCKS5,
+                "NONE": proxy.PURPLE_PROXY_NONE}
+
 
     def set_type(self, ProxyInfoType type):
         if self.c_proxyinfo:
@@ -79,4 +88,7 @@ cdef class ProxyInfo:
     def set_password(self, char *password):
         if self.c_proxyinfo:
             proxy.c_purple_proxy_info_set_password(self.c_proxyinfo, password)
+
+    def get_types(self):
+        return self.types.keys()
 
