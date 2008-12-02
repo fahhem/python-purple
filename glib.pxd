@@ -18,14 +18,14 @@
 #
 
 cdef extern from "glib.h":
-    ctypedef void* gpointer
+    ctypedef void  *gpointer
     ctypedef int gint
     ctypedef unsigned int guint
     ctypedef gint gboolean
 
     # GHashTable is an opaque data structure
     ctypedef struct GHashTable:
-        void* none
+        void *none
 
     struct _GSList:
         gpointer data
