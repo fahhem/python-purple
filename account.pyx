@@ -527,3 +527,11 @@ cdef class Account:
             return buddies_list
         else:
             return None
+
+    def request_add_buddy(self, buddy_username, buddy_alias):
+        if buddy_alias:
+            blist.purple_blist_request_add_buddy(self._get_structure(), \
+                    buddy_username, NULL, buddy_alias)
+        else:
+            blist.purple_blist_request_add_buddy(self._get_structure(), \
+                    buddy_username, NULL, NULL)
