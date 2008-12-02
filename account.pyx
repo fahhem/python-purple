@@ -398,6 +398,20 @@ cdef class Account:
 
             self.__exists = True
             return True
+	
+	def remove_account(self, username, protocol_id):
+		"""
+        Removes as existing account.
+
+        @return True if successful, False if account doesnt exists
+        """
+		who = account.purple_accounts_find(username, protocol_id)
+		
+		if who == NULL:
+			return False
+		else
+			account.purple_accounts_remove( who )
+			return True
 
     def connect(self):
         """
