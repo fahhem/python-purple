@@ -113,6 +113,73 @@ cdef class Account:
             account.c_purple_account_set_remember_password(self.c_account, value)
     remember_password = property(__get_remember_password, __set_remember_password)
 
+    def _get_protocol_options(self):
+        cdef glib.GList *iter
+        cdef accountopt.PurpleAccountOption *option
+        cdef prefs.PurplePrefType type
+        cdef const_char *label_name
+        cdef const_char *str_value
+        cdef const_char *setting
+        cdef int int_value
+        cdef glib.gboolean bool_value
+
+        if self.c_account == NULL:
+            return None
+
+        po = {}
+
+        iter = self.c_prpl_info.protocol_options
+
+        while iter:
+
+            option = <accountopt.PurpleAccountOption *> iter.data
+            type = accountopt.c_purple_account_option_get_type(option)
+            label_name = accountopt.c_purple_account_option_get_text(option)
+            setting = accountopt.c_purple_account_option_get_setting(option)
+
+            sett = str(<char *> setting)
+
+            if type == prefs.PURPLE_PREF_STRING:
+
+                str_value = accountopt.c_purple_account_option_get_default_string(option)
+
+                # Google Talk default domain hackery!
+                if str_value == NULL and str(<char *> label_name) == "Connect server":
+                    str_value = "talk.google.com"
+                str_value = account.c_purple_account_get_string(self.c_account, setting, str_value)
+
+                val = str(<char *> str_value)
+
+            elif type == prefs.PURPLE_PREF_INT:
+
+                int_value = accountopt.c_purple_account_option_get_default_int(option)
+                int_value = account.c_purple_account_get_int(self.c_account, setting, int_value)
+
+                val = int(int_value)
+
+            elif type == prefs.PURPLE_PREF_BOOLEAN:
+
+                bool_value = accountopt.c_purple_account_option_get_default_bool(option)
+                bool_value = account.c_purple_account_get_bool(self.c_account, setting, bool_value)
+
+                val = bool(bool_value)
+
+            elif type == prefs.PURPLE_PREF_STRING_LIST:
+
+                str_value = accountopt.c_purple_account_option_get_default_list_value(option)
+                str_value = account.c_purple_account_get_string(self.c_account, setting, str_value)
+
+                val = str(<char *> str_value)
+
+            iter = iter.next
+
+            po[sett] = val
+
+        return po
+
+    protocol_options = property(_get_protocol_options)
+
+
     def get_protocol_name(self):
         if self.c_account:
             return account.c_purple_account_get_protocol_name(self.c_account)
