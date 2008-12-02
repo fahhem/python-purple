@@ -27,15 +27,66 @@ def blist_callback(name):
     print "---- blist callback example: %s" % name
 
 blist_cbs["new_list"] = blist_callback
-blist_cbs["new_node"] = blist_callback
 blist_cbs["show"] = blist_callback
-blist_cbs["update"] = blist_callback
-blist_cbs["remove"] = blist_callback
 blist_cbs["destroy"] = blist_callback
 blist_cbs["set_visible"] = blist_callback
 blist_cbs["request_add_buddy"] = blist_callback
 blist_cbs["request_add_chat"] = blist_callback
 blist_cbs["request_add_group"] = blist_callback
+
+def new_node_cb(type, name=None, totalsize=None, currentsize=None, online=None):
+    if type == 0:
+        print "---- blist callback: new node (group): %s (%s/%s) (%s online)" % \
+                (name, totalsize, currentsize, online)
+    elif type == 1:
+        print "---- blist callback: new node (contact): %s (%s/%s) (%s online)" % \
+                (name, totalsize, currentsize, online)
+    elif type == 2: # totalsize = alias
+        print "---- blist callback: new node (buddy): %s (%s)" % (name, totalsize)
+    elif type == 3:
+        print "---- blist callback: new node (chat): %s" % alias
+    elif type == 4:
+        print "---- blist callback: new node (other type)"
+    else:
+        print "---- blist callback: new node (unknown type %s)" % type
+
+def update_cb(type, name=None, totalsize=None, currentsize=None, online=None):
+    if type == 0:
+        print "---- blist callback: update (group): %s (%s/%s) (%s online)" % \
+                (name, totalsize, currentsize, online)
+    elif type == 1:
+        print "---- blist callback: update (contact): %s (%s/%s) (%s online)" % \
+                (name, totalsize, currentsize, online)
+    elif type == 2: # totalsize = alias
+        print "---- blist callback: update (buddy): %s (%s)" % \
+                (name, totalsize)
+    elif type == 3:
+        print "---- blist callback: update (chat): %s" % alias
+    elif type == 4:
+        print "---- blist callback: update (other type)"
+    else:
+        print "---- blist callback: update (unknown type %s)" % type
+
+def remove_cb(type, name=None, totalsize=None, currentsize=None, online=None):
+    if type == 0:
+        print "---- blist callback: remove (group): %s (%s/%s) (%s online)" % \
+                (name, totalsize, currentsize, online)
+    elif type == 1:
+        print "---- blist callback: remove (contact): %s (%s/%s) (%s online)" % \
+                (name, totalsize, currentsize, online)
+    elif type == 2: # totalsize = alias
+        print "---- blist callback: remove (buddy): %s (%s)" % \
+                (name, totalsize)
+    elif type == 3:
+        print "---- blist callback: remove (chat): %s" % alias
+    elif type == 4:
+        print "---- blist callback: remove (other type)"
+    else:
+        print "---- blist callback: remove (unknown type %s)" % type
+
+blist_cbs["new_node"] = new_node_cb
+blist_cbs["update"] = update_cb
+blist_cbs["remove"] = remove_cb
 
 cbs["blist"] = blist_cbs
 
