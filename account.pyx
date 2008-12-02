@@ -22,10 +22,15 @@ cimport purple
 cdef class Account:
     """
     Account class
-    @param core Purple class instance
     @param username
     @param protocol Protocol class instance
+    @param core Purple class instance
     """
+
+    cdef object __username
+    cdef object __protocol
+    cdef object __core
+    cdef object __exists
 
     def __init__(self, username, protocol, core):
         self.__username = username
@@ -38,8 +43,8 @@ cdef class Account:
             self.__exists = False
 
     cdef account.PurpleAccount *_get_structure(self):
-        return account.purple_accounts_find(self.username, \
-                self.protocol.protocol_id)
+        return account.purple_accounts_find(self.__username, \
+                self.__protocol.id)
 
     def __is_connected(self):
         if self.__exists:
@@ -85,7 +90,7 @@ cdef class Account:
     username = property(__get_username)
 
     def __get_protocol(self):
-        return self.protocol
+        return self.__protocol
     protocol = property(__get_protocol)
 
     def __get_password(self):
@@ -136,7 +141,7 @@ cdef class Account:
     def __get_enabled(self):
         if self.__exists:
             return account.purple_account_get_enabled(self._get_structure(), \
-                    self.core.ui_name)
+                    self.__core.ui_name)
         else:
             return None
     enabled = property(__get_enabled)
@@ -164,7 +169,7 @@ cdef class Account:
         """
         if protocol.exists and self.__exists:
             account.purple_account_set_protocol_id(self._get_structure(), \
-                        protocol.protocol_id)
+                        protocol.id)
             self.__protocol = protocol
             return True
         else:
@@ -236,7 +241,7 @@ cdef class Account:
         """
         if self.__exists:
             account.purple_account_set_enabled(self._get_structure(), \
-                    self.core.ui_name, bool(value))
+                    self.__core.ui_name, bool(value))
             return True
         else:
             return False
@@ -250,7 +255,7 @@ cdef class Account:
         if self.__exists:
             return False
         else:
-            account.purple_account_new(self.username, self.protocol_id)
+            account.purple_account_new(self.__username, self.__protocol.id)
             self.__exists = True
             return True
 
