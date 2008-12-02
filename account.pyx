@@ -18,7 +18,6 @@
 #
 
 cimport purple
-cimport proxy
 
 cdef class Account:
     """ Account class """

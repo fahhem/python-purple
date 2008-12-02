@@ -18,7 +18,6 @@
 #
 
 cdef extern from "libpurple/proxy.h":
-
     ctypedef enum PurpleProxyType:
         PURPLE_PROXY_USE_GLOBAL
         PURPLE_PROXY_NONE
@@ -34,18 +33,17 @@ cdef extern from "libpurple/proxy.h":
         char *password
 
     PurpleProxyInfo *c_purple_proxy_info_new "purple_proxy_info_new" ()
-    void c_purple_proxy_info_destroy "purple_proxy_info_destroy"        \
-    (PurpleProxyInfo *info)
-    void c_purple_proxy_info_set_type "purple_proxy_info_set_type"      \
-    (PurpleProxyInfo *info, PurpleProxyType type)
+    void c_purple_proxy_info_destroy "purple_proxy_info_destroy" \
+            (PurpleProxyInfo *info)
+    void c_purple_proxy_info_set_type "purple_proxy_info_set_type" \
+            (PurpleProxyInfo *info, PurpleProxyType type)
     PurpleProxyType c_purple_proxy_info_get_type "purple_proxy_info_get_type" \
-    (PurpleProxyInfo *info)
-    void c_purple_proxy_info_set_host "purple_proxy_info_set_host"      \
-    (PurpleProxyInfo *info, char *host)
-    void c_purple_proxy_info_set_port "purple_proxy_info_set_port"      \
-    (PurpleProxyInfo *info, int port)
+            (PurpleProxyInfo *info)
+    void c_purple_proxy_info_set_host "purple_proxy_info_set_host" \
+            (PurpleProxyInfo *info, char *host)
+    void c_purple_proxy_info_set_port "purple_proxy_info_set_port" \
+            (PurpleProxyInfo *info, int port)
     void c_purple_proxy_info_set_username "purple_proxy_info_set_username" \
-    (PurpleProxyInfo *info, char *username)
+            (PurpleProxyInfo *info, char *username)
     void c_purple_proxy_info_set_password "purple_proxy_info_set_password" \
-    (PurpleProxyInfo *info, char *password)
-
+            (PurpleProxyInfo *info, char *password)
