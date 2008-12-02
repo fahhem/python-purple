@@ -24,6 +24,32 @@ cdef extern from *:
 
 account_cbs = {}
 
+cdef account.PurpleAccountRequestAuthorizationCb c_request_authorize_authorize_cb = NULL
+cdef account.PurpleAccountRequestAuthorizationCb c_request_authorize_deny_cb = NULL
+cdef void *c_request_authorize_user_data = NULL
+
+def call_authorize_cb():
+    global c_request_authorize_authorize_cb
+    global c_request_authorize_deny_cb
+    global c_request_authorize_user_data
+
+    if c_request_authorize_authorize_cb:
+        c_request_authorize_authorize_cb(c_request_authorize_user_data)
+    c_request_authorize_authorize_cb = NULL
+    c_request_authorize_deny_cb = NULL
+    c_request_authorize_user_data = NULL
+
+def call_deny_cb():
+    global c_request_authorize_authorize_cb
+    global c_request_authorize_deny_cb
+    global c_request_authorize_user_data
+
+    if c_request_authorize_deny_cb:
+        c_request_authorize_deny_cb(c_request_authorize_user_data)
+    c_request_authorize_authorize_cb = NULL
+    c_request_authorize_deny_cb = NULL
+    c_request_authorize_user_data = NULL
+
 cdef void notify_added(account.PurpleAccount *account, \
         const_char *remote_user, const_char *id, const_char *alias, \
         const_char *message):
@@ -54,9 +80,9 @@ cdef void request_add(account.PurpleAccount *account, \
     if account_cbs.has_key("request-add"):
         (<object> account_cbs["request-add"])("request-add: TODO")
 
-cdef void *request_authorize(account.PurpleAccount *account, \
+cdef void *request_authorize(account.PurpleAccount *c_account, \
         const_char *remote_user, const_char *id, const_char *alias, \
-        const_char *message, glib.gboolean on_list, \
+        const_char *c_message, glib.gboolean on_list, \
         account.PurpleAccountRequestAuthorizationCb authorize_cb, \
         account.PurpleAccountRequestAuthorizationCb deny_cb, \
         void *user_data):
@@ -66,9 +92,44 @@ cdef void *request_authorize(account.PurpleAccount *account, \
     authorize_cb(user_data) otherwise call deny_cb(user_data).
     @return a UI-specific handle, as passed to #close_account_request.
     """
+    cdef connection.PurpleConnection *gc = \
+            account.purple_account_get_connection(c_account)
+
     debug.purple_debug_info("account", "%s", "request-authorize\n")
+
+    global c_request_authorize_authorize_cb
+    global c_request_authorize_deny_cb
+    global c_request_authorize_user_data
+
+    c_request_authorize_authorize_cb = authorize_cb
+    c_request_authorize_deny_cb = deny_cb
+    c_request_authorize_user_data = user_data
+
+    if alias:
+        remote_alias = <char *> alias
+    else:
+        remote_alias = None
+
+    if id:
+        username = <char *> id
+    elif connection.purple_connection_get_display_name(gc) != NULL:
+        username = connection.purple_connection_get_display_name(gc)
+    else:
+        username = account.purple_account_get_username(c_account)
+
+    protocol_id = account.purple_account_get_protocol_id(c_account)
+
+    if c_message:
+        message = <char *> c_message
+    else:
+        message = None
+
     if account_cbs.has_key("request-authorize"):
-        (<object> account_cbs["request-authorize"])("request-authorize: TODO")
+        (<object> account_cbs["request-authorize"])( \
+                (<char *> remote_user, remote_alias), \
+                (username, protocol_id), \
+                message, on_list, \
+                call_authorize_cb, call_deny_cb)
 
 cdef void close_account_request (void *ui_handle):
     """
@@ -76,5 +137,8 @@ cdef void close_account_request (void *ui_handle):
     returned by request_authorize.
     """
     debug.purple_debug_info("account", "%s", "close-account-request\n")
+
+    request.purple_request_close(request.PURPLE_REQUEST_ACTION, ui_handle)
+
     if account_cbs.has_key("close-account-request"):
-        (<object> account_cbs["close-account-request"])("close-account-request: TODO")
+        (<object> account_cbs["close-account-request"])()
