@@ -17,6 +17,8 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cimport glib
+
 cdef extern from "libpurple/plugin.h":
     ctypedef struct PurplePluginInfo:
         char *id
@@ -25,5 +27,5 @@ cdef extern from "libpurple/plugin.h":
     ctypedef struct PurplePlugin:
         PurplePluginInfo *info
 
-    void c_purple_plugins_add_search_path "purple_plugins_add_search_path" (const_char_ptr path)
-    GList *c_purple_plugins_get_protocols "purple_plugins_get_protocols" ()
+    void c_purple_plugins_add_search_path "purple_plugins_add_search_path" (char *path)
+    glib.GList *c_purple_plugins_get_protocols "purple_plugins_get_protocols" ()

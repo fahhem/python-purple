@@ -24,5 +24,5 @@ cdef extern from "libpurple/proxy.h":
 
     PurpleProxyInfo *c_purple_proxy_info_new "purple_proxy_info_new" ()
     void c_purple_proxy_info_set_type "purple_proxy_info_set_type" (PurpleProxyInfo *info, PurpleProxyType type)
-    void c_purple_proxy_info_set_host "purple_proxy_info_set_host" (const_char_ptr host)
-    void c_purple_proxy_info_set_port "purple_proxy_info_set_port" (const_char_ptr port)
+    void c_purple_proxy_info_set_host "purple_proxy_info_set_host" (char *host)
+    void c_purple_proxy_info_set_port "purple_proxy_info_set_port" (char *port)

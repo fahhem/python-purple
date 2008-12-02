@@ -17,6 +17,8 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cimport glib
+
 cdef extern from "libpurple/account.h":
     ctypedef struct PurpleAccount:
         char* username
@@ -24,11 +26,11 @@ cdef extern from "libpurple/account.h":
     ctypedef struct PurpleAccountUiOps:
         pass
 
-    PurpleAccount *c_purple_account_new "purple_account_new" (const_char_ptr username, const_char_ptr protocol_id)
-    void c_purple_account_set_password "purple_account_set_password" (PurpleAccount *account, const_char_ptr password)
-    const_char_ptr c_purple_account_get_password "purple_account_get_password" (PurpleAccount *account)
-    void c_purple_account_set_enabled "purple_account_set_enabled" (PurpleAccount *account, const_char_ptr ui, gboolean value)
-    const_char_ptr c_purple_account_get_username "purple_account_get_username" (PurpleAccount *account)
-    GList *c_purple_accounts_get_all_active "purple_accounts_get_all_active" ()
+    PurpleAccount *c_purple_account_new "purple_account_new" (char *username, char *protocol_id)
+    void c_purple_account_set_password "purple_account_set_password" (PurpleAccount *account, char *password)
+    char *c_purple_account_get_password "purple_account_get_password" (PurpleAccount *account)
+    void c_purple_account_set_enabled "purple_account_set_enabled" (PurpleAccount *account, char *ui, glib.gboolean value)
+    char *c_purple_account_get_username "purple_account_get_username" (PurpleAccount *account)
+    glib.GList *c_purple_accounts_get_all_active "purple_accounts_get_all_active" ()
     void c_purple_accounts_set_ui_ops "purple_accounts_set_ui_ops" (PurpleAccountUiOps *ops)
-    gboolean c_purple_account_is_connected "purple_account_is_connected" (PurpleAccount *account)
+    glib.gboolean c_purple_account_is_connected "purple_account_is_connected" (PurpleAccount *account)

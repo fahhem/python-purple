@@ -17,6 +17,10 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cimport glib
+cimport account
+cimport status
+
 cdef extern from "libpurple/blist.h":
     ctypedef struct PurpleBlistNode:
         pass
@@ -24,10 +28,8 @@ cdef extern from "libpurple/blist.h":
     ctypedef struct PurpleBlistUiOps:
         pass
 
-    cdef struct _PurpleBuddy:
+    ctypedef struct PurpleBuddy:
         char *name
-
-    ctypedef _PurpleBuddy PurpleBuddy
 
     ctypedef struct PurpleBuddyList:
         pass
@@ -40,13 +42,12 @@ cdef extern from "libpurple/blist.h":
     PurpleBuddyList* c_purple_blist_new "purple_blist_new" ()
     void c_purple_blist_set_ui_ops "purple_blist_set_ui_ops" (PurpleBlistUiOps *ops)
 
-    PurpleBuddy *c_purple_buddy_new "purple_buddy_new" (PurpleAccount *account,
-            const_char_ptr screenname, const_char_ptr alias)
-    const_char_ptr c_purple_buddy_get_alias_only "purple_buddy_get_alias_only" (PurpleBuddy *buddy)
-    const_char_ptr c_purple_buddy_get_name "purple_buddy_get_name" (PurpleBuddy *buddy)
-    PurpleBuddy *c_purple_find_buddy "purple_find_buddy" (PurpleAccount *account,
-            const_char_ptr name)
+    PurpleBuddy *c_purple_buddy_new "purple_buddy_new" (account.PurpleAccount *account,
+            char *screenname, char *alias)
+    char *c_purple_buddy_get_alias_only "purple_buddy_get_alias_only" (PurpleBuddy *buddy)
+    char *c_purple_buddy_get_name "purple_buddy_get_name" (PurpleBuddy *buddy)
+    PurpleBuddy *c_purple_find_buddy "purple_find_buddy" (account.PurpleAccount *account, char *name)
     void c_purple_set_blist "purple_set_blist" (PurpleBuddyList *list)
-    GSList *c_purple_find_buddies "purple_find_buddies" (PurpleAccount *account, const_char_ptr name)
-    PurpleAccount *c_purple_buddy_get_account "purple_buddy_get_account" (PurpleBuddy *buddy)
-    PurplePresence *c_purple_buddy_get_presence "purple_buddy_get_presence" (PurpleBuddy *buddy)
+    glib.GSList *c_purple_find_buddies "purple_find_buddies" (account.PurpleAccount *account, char *name)
+    account.PurpleAccount *c_purple_buddy_get_account "purple_buddy_get_account" (PurpleBuddy *buddy)
+    status.PurplePresence *c_purple_buddy_get_presence "purple_buddy_get_presence" (PurpleBuddy *buddy)

@@ -17,11 +17,13 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cimport glib
+
 cdef extern from "libpurple/signals.h":
     ctypedef void (*PurpleCallback) ()
 
-    gulong c_purple_signal_connect "purple_signal_connect" (void *instance,
-            const_char_ptr signal, void *handle, PurpleCallback func,
+    glib.gulong c_purple_signal_connect "purple_signal_connect" (void *instance,
+            char *signal, void *handle, PurpleCallback func,
             void *data)
     void c_purple_signal_disconnect "purple_signal_disconnect" (void *instance,
-            const_char_ptr signal, void *handle, PurpleCallback func)
+            char *signal, void *handle, PurpleCallback func)

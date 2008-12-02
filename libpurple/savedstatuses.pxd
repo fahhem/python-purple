@@ -17,9 +17,11 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cimport status
+
 cdef extern from "libpurple/savedstatuses.h":
     ctypedef struct PurpleSavedStatus:
         pass
 
-    PurpleSavedStatus *c_purple_savedstatus_new "purple_savedstatus_new" (const_char_ptr title, PurpleStatusPrimitive type)
+    PurpleSavedStatus *c_purple_savedstatus_new "purple_savedstatus_new" (char *title, status.PurpleStatusPrimitive type)
     void c_purple_savedstatus_activate "purple_savedstatus_activate" (PurpleSavedStatus *saved_status)

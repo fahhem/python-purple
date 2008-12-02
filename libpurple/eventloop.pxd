@@ -17,19 +17,21 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cimport glib
+
 cdef extern from "libpurple/eventloop.h":
     ctypedef enum PurpleInputCondition:
         PURPLE_INPUT_READ
         PURPLE_INPUT_WRITE
 
-    ctypedef void (*PurpleInputFunction) (gpointer, gint, PurpleInputCondition)
+    ctypedef void (*PurpleInputFunction) (glib.gpointer, glib.gint, PurpleInputCondition)
 
     ctypedef struct PurpleEventLoopUiOps:
-        guint (*timeout_add) (guint interval, GSourceFunc function, gpointer data)
-        gboolean (*timeout_remove) (guint handle)
-        guint (*input_add) (int fd, PurpleInputCondition cond, PurpleInputFunction func, gpointer user_data)
-        gboolean (*input_remove) (guint handle)
+        glib.guint (*timeout_add) (glib.guint interval, glib.GSourceFunc function, glib.gpointer data)
+        glib.gboolean (*timeout_remove) (glib.guint handle)
+        glib.guint (*input_add) (int fd, PurpleInputCondition cond, PurpleInputFunction func, glib.gpointer user_data)
+        glib.gboolean (*input_remove) (glib.guint handle)
         int (*input_get_error) (int fd, int *error)
-        guint (*timeout_add_seconds)(guint interval, GSourceFunc function, gpointer data)
+        glib.guint (*timeout_add_seconds) (glib.guint interval, glib.GSourceFunc function, glib.gpointer data)
 
     void c_purple_eventloop_set_ui_ops "purple_eventloop_set_ui_ops" (PurpleEventLoopUiOps *ops)

@@ -17,40 +17,36 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-include "glib.pxd"
+cdef extern from "libpurple/purple.h":
+    pass
 
-cdef extern from *:
-    ctypedef char* const_char_ptr "const char *"
-    ctypedef char* const_guchar_ptr "const guchar *"
+cimport glib
 
-cdef extern from "time.h":
-    ctypedef long int time_t
-
-include "libpurple/account.pxd"
-include "libpurple/buddyicon.pxd"
-include "libpurple/blist.pxd"
-include "libpurple/connection.pxd"
-include "libpurple/conversation.pxd"
-include "libpurple/core.pxd"
-include "libpurple/debug.pxd"
-include "libpurple/eventloop.pxd"
-include "libpurple/ft.pxd"
-include "libpurple/idle.pxd"
-include "libpurple/notify.pxd"
-include "libpurple/plugin.pxd"
-include "libpurple/pounce.pxd"
-include "libpurple/prefs.pxd"
-include "libpurple/proxy.pxd"
-include "libpurple/request.pxd"
-include "libpurple/roomlist.pxd"
-include "libpurple/signals.pxd"
-include "libpurple/status.pxd"
-include "libpurple/savedstatuses.pxd"
-include "libpurple/util.pxd"
+cimport account
+cimport buddyicon
+cimport blist
+cimport connection
+cimport conversation
+cimport core
+cimport debug
+cimport eventloop
+cimport ft
+cimport idle
+cimport notify
+cimport plugin
+cimport pounce
+cimport prefs
+cimport proxy
+cimport request
+cimport roomlist
+cimport signals
+cimport status
+cimport savedstatuses
+cimport util
 
 cdef extern from "c_purple.h":
     void connect_to_signals_for_demonstration_purposes_only ()
-    guint glib_input_add(gint fd, PurpleInputCondition condition, PurpleInputFunction function, gpointer data)
+    glib.guint glib_input_add(glib.gint fd, eventloop.PurpleInputCondition condition, eventloop.PurpleInputFunction function, glib.gpointer data)
 
 import ecore
 
@@ -64,9 +60,9 @@ global __APP_VERSION__
 
 cdef class Purple:
     """ Purple class """
-    cdef PurpleCoreUiOps c_core_ui_ops
-    cdef PurpleEventLoopUiOps c_eventloop_ui_ops
-    cdef GHashTable *c_ui_info
+    cdef core.PurpleCoreUiOps c_core_ui_ops
+    cdef eventloop.PurpleEventLoopUiOps c_eventloop_ui_ops
+    cdef glib.GHashTable *c_ui_info
 
     def __cinit__(self, debug_enabled=True, app_name=__APP_NAME__, default_path=__DEFAULT_PATH__):
         self.c_ui_info = NULL
@@ -77,61 +73,62 @@ cdef class Purple:
         if default_path is not __DEFAULT_PATH__:
             __DEFAULT_PATH__ = default_path
 
-        c_purple_debug_set_enabled(debug_enabled)
-        c_purple_util_set_user_dir(default_path)
-        c_purple_plugins_add_search_path(default_path)
+        debug.c_purple_debug_set_enabled(debug_enabled)
+        util.c_purple_util_set_user_dir(default_path)
+        plugin.c_purple_plugins_add_search_path(default_path)
 
         # adds glib iteration inside ecore main loop
         ecore.idler_add(self.__glib_iteration_when_idle)
      # __cinit__
 
     def __del__(self):
-        c_purple_core_quit()
+        core.c_purple_core_quit()
     # __del__
 
     cdef void __core_ui_ops_ui_prefs_init(self):
-        c_purple_debug(PURPLE_DEBUG_INFO, "core_ui_ops", "ui_prefs_init\n")
-        c_purple_prefs_load()
+        debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "core_ui_ops", "ui_prefs_init\n")
+        prefs.c_purple_prefs_load()
 
-        c_purple_prefs_add_none("/carman")
+        prefs.c_purple_prefs_add_none("/carman")
     # __core_ui_ops_ui_prefs_init
 
     cdef void __core_ui_ops_debug_init(self):
-        c_purple_debug(PURPLE_DEBUG_INFO, "core_ui_ops", "debug_ui_init\n")
+        debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "core_ui_ops", "debug_ui_init\n")
     # __core_ui_ops_debug_init
 
     cdef void __core_ui_ops_ui_init(self):
-        c_purple_debug(PURPLE_DEBUG_INFO, "core_ui_ops", "ui_init\n")
+        debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "core_ui_ops", "ui_init\n")
 
         # FIXME: Add core ui initialization here
     # __core_ui_ops_ui_init
 
     cdef void __core_ui_ops_quit(self):
-        c_purple_debug(PURPLE_DEBUG_INFO, "core_ui_ops", "quit\n")
-        c_purple_accounts_set_ui_ops(NULL)
-        c_purple_connections_set_ui_ops(NULL)
-        c_purple_blist_set_ui_ops(NULL)
-        c_purple_conversations_set_ui_ops(NULL)
-        c_purple_notify_set_ui_ops(NULL)
-        c_purple_request_set_ui_ops(NULL)
-        c_purple_xfers_set_ui_ops(NULL)
-        c_purple_roomlist_set_ui_ops(NULL)
+        debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "core_ui_ops", "quit\n")
+
+        account.c_purple_accounts_set_ui_ops(NULL)
+        connection.c_purple_connections_set_ui_ops(NULL)
+        blist.c_purple_blist_set_ui_ops(NULL)
+        conversation.c_purple_conversations_set_ui_ops(NULL)
+        notify.c_purple_notify_set_ui_ops(NULL)
+        request.c_purple_request_set_ui_ops(NULL)
+        ft.c_purple_xfers_set_ui_ops(NULL)
+        roomlist.c_purple_roomlist_set_ui_ops(NULL)
 
         if self.c_ui_info:
-            g_hash_table_destroy(self.c_ui_info)
+            glib.g_hash_table_destroy(self.c_ui_info)
     # __core_ui_ops_quit
 
-    cdef GHashTable *__core_ui_ops_get_ui_info(self):
+    cdef glib.GHashTable *__core_ui_ops_get_ui_info(self):
         if self.c_ui_info == NULL:
-            self.c_ui_info = g_hash_table_new(g_str_hash, g_str_equal)
+            self.c_ui_info = glib.g_hash_table_new(glib.g_str_hash, glib.g_str_equal)
 
-            g_hash_table_insert(self.c_ui_info, "name", <gpointer> __APP_NAME__)
-            g_hash_table_insert(self.c_ui_info, "version", <gpointer> __APP_VERSION__)
+            glib.g_hash_table_insert(self.c_ui_info, "name", <glib.gpointer> __APP_NAME__)
+            glib.g_hash_table_insert(self.c_ui_info, "version", <glib.gpointer> __APP_VERSION__)
         return self.c_ui_info
     # __core_ui_ops_get_ui_info
 
     def __glib_iteration_when_idle(self):
-        g_main_context_iteration(NULL, False)
+        glib.g_main_context_iteration(NULL, False)
         return True
     # __glib_iteration_when_idle
 
@@ -142,51 +139,51 @@ cdef class Purple:
         self.c_core_ui_ops.debug_ui_init = <void (*)()> self.__core_ui_ops_debug_init
         self.c_core_ui_ops.ui_init = <void (*)()> self.__core_ui_ops_ui_init
         self.c_core_ui_ops.quit = <void (*)()> self.__core_ui_ops_quit
-        self.c_core_ui_ops.get_ui_info = <GHashTable* (*)()> self.__core_ui_ops_get_ui_info
+        self.c_core_ui_ops.get_ui_info = <glib.GHashTable* (*)()> self.__core_ui_ops_get_ui_info
 
-        c_purple_core_set_ui_ops(&self.c_core_ui_ops)
+        core.c_purple_core_set_ui_ops(&self.c_core_ui_ops)
 
         # initialize c_eventloop_ui_ops structure
-        self.c_eventloop_ui_ops.timeout_add = g_timeout_add
-        self.c_eventloop_ui_ops.timeout_remove = g_source_remove
+        self.c_eventloop_ui_ops.timeout_add = glib.g_timeout_add
+        self.c_eventloop_ui_ops.timeout_remove = glib.g_source_remove
         self.c_eventloop_ui_ops.input_add = glib_input_add
-        self.c_eventloop_ui_ops.input_remove = g_source_remove
+        self.c_eventloop_ui_ops.input_remove = glib.g_source_remove
         self.c_eventloop_ui_ops.input_get_error = NULL
-        self.c_eventloop_ui_ops.timeout_add_seconds = g_timeout_add_seconds
+        self.c_eventloop_ui_ops.timeout_add_seconds = glib.g_timeout_add_seconds
 
-        c_purple_eventloop_set_ui_ops(&self.c_eventloop_ui_ops)
+        eventloop.c_purple_eventloop_set_ui_ops(&self.c_eventloop_ui_ops)
 
         # initialize purple core
-        ret = c_purple_core_init(__APP_NAME__)
+        ret = core.c_purple_core_init(__APP_NAME__)
         if ret is False:
-            c_purple_debug(PURPLE_DEBUG_INFO, "main", "Exiting because libpurple initialization failed.\n")
+            debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "main", "Exiting because libpurple initialization failed.\n")
             return False
 
         # check if there is another instance of libpurple running
-        if c_purple_core_ensure_single_instance() == False:
-            c_purple_debug(PURPLE_DEBUG_INFO, "main", "Exiting because another instance of libpurple is already running.\n")
-            c_purple_core_quit()
+        if core.c_purple_core_ensure_single_instance() == False:
+            debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "main", "Exiting because another instance of libpurple is already running.\n")
+            core.c_purple_core_quit()
             return False
 
         # create and load the buddy list
-        c_purple_set_blist(c_purple_blist_new())
-        c_purple_blist_load()
+        blist.c_purple_set_blist(blist.c_purple_blist_new())
+        blist.c_purple_blist_load()
 
         # load pounces
-        c_purple_pounces_load()
+        pounce.c_purple_pounces_load()
 
         return ret
     # purple_init
 
     def get_protocols(self):
-        cdef GList *iter
-        cdef PurplePlugin *plugin
+        cdef glib.GList *iter
+        cdef plugin.PurplePlugin *__plugin
         protocols = []
-        iter = c_purple_plugins_get_protocols()
+        iter = plugin.c_purple_plugins_get_protocols()
         while iter:
-            plugin = <PurplePlugin*> iter.data
-            if plugin.info and plugin.info.name:
-                protocols += [(plugin.info.id, plugin.info.name)]
+            __plugin = <plugin.PurplePlugin*> iter.data
+            if __plugin.info and __plugin.info.name:
+                protocols += [(__plugin.info.id, __plugin.info.name)]
             iter = iter.next
         return protocols
     # get_protocols
@@ -197,7 +194,7 @@ cdef class Purple:
     # connect
 # Purple
 
-include "account.pxd"
-include "buddy.pxd"
-include "connection.pxd"
-include "conversation.pxd"
+include "account.pyx"
+include "buddy.pyx"
+include "connection.pyx"
+include "conversation.pyx"

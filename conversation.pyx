@@ -17,18 +17,20 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cimport conversation
+
 cdef class Conversation:
     """ Conversation class """
-    cdef PurpleConversation *__conv
+    cdef conversation.PurpleConversation *__conv
 
     def __cinit__(self):
-        c_purple_conversations_init()
+        conversation.c_purple_conversations_init()
 
-    def conversation_new(self, type, acc, const_char_ptr name):
-        self.__conv = c_purple_conversation_new(type, <PurpleAccount*>acc.__account, name)
+    def conversation_new(self, type, acc, char *name):
+        self.__conv = conversation.c_purple_conversation_new(type, <account.PurpleAccount*>acc.__account, name)
 
     def conversation_set_ui_ops(self):
-        cdef PurpleConversationUiOps c_conv_ui_ops
+        cdef conversation.PurpleConversationUiOps c_conv_ui_ops
         c_conv_ui_ops.create_conversation = NULL
         c_conv_ui_ops.destroy_conversation = NULL
         c_conv_ui_ops.write_chat = NULL
@@ -45,18 +47,18 @@ cdef class Conversation:
         c_conv_ui_ops.custom_smiley_close = NULL
         c_conv_ui_ops.send_confirm = NULL
 
-        c_purple_conversation_set_ui_ops(self.__conv, &c_conv_ui_ops)
+        conversation.c_purple_conversation_set_ui_ops(self.__conv, &c_conv_ui_ops)
 
-    def conversation_write(self, const_char_ptr message):
-        c_purple_conv_im_send(c_purple_conversation_get_im_data(self.__conv), message)
+    def conversation_write(self, char *message):
+        conversation.c_purple_conv_im_send(conversation.c_purple_conversation_get_im_data(self.__conv), message)
 
     def conversation_destroy(self):
-        c_purple_conversation_destroy(self.__conv)
+        conversation.c_purple_conversation_destroy(self.__conv)
 
     def conversation_get_handle(self):
-        c_purple_conversations_get_handle()
+        conversation.c_purple_conversations_get_handle()
 
-    def send_message(self, buddy, const_char_ptr message):
+    def send_message(self, buddy, char *message):
         self.conversation_new(1, buddy.account, buddy.name)
         self.conversation_set_ui_ops()
         self.conversation_write(message)

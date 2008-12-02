@@ -17,6 +17,8 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cimport glib
+
 cdef extern from "libpurple/debug.h":
     ctypedef enum PurpleDebugLevel:
         PURPLE_DEBUG_ALL
@@ -26,5 +28,5 @@ cdef extern from "libpurple/debug.h":
         PURPLE_DEBUG_ERROR
         PURPLE_DEBUG_FATAL
 
-    void c_purple_debug "purple_debug" (PurpleDebugLevel level, const_char_ptr category, const_char_ptr format)
-    void c_purple_debug_set_enabled "purple_debug_set_enabled" (gboolean debug_enabled)
+    void c_purple_debug "purple_debug" (PurpleDebugLevel level, char *category, char *format)
+    void c_purple_debug_set_enabled "purple_debug_set_enabled" (glib.gboolean debug_enabled)

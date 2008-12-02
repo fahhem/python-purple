@@ -17,8 +17,10 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cimport glib
+
 cdef extern from "libpurple/prefs.h":
-    void c_purple_prefs_add_none "purple_prefs_add_none" (const_char_ptr name)
-    void c_purple_prefs_rename "purple_prefs_rename" (const_char_ptr oldname, const_char_ptr newname)
-    const_char_ptr c_purple_prefs_get_string "purple_prefs_get_string" (const_char_ptr name)
-    gboolean c_purple_prefs_load "purple_prefs_load" ()
+    void c_purple_prefs_add_none "purple_prefs_add_none" (char *name)
+    void c_purple_prefs_rename "purple_prefs_rename" (char *oldname, char *newname)
+    char *c_purple_prefs_get_string "purple_prefs_get_string" (char *name)
+    glib.gboolean c_purple_prefs_load "purple_prefs_load" ()

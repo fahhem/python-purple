@@ -17,10 +17,22 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cimport glib
+
 cdef extern from "libpurple/status.h":
     ctypedef struct PurplePresence:
         pass
 
-    ctypedef int PurpleStatusPrimitive
+    ctypedef enum PurpleStatusPrimitive:
+        PURPLE_STATUS_UNSET
+        PURPLE_STATUS_OFFLINE
+        PURPLE_STATUS_AVAILABLE
+        PURPLE_STATUS_UNAVAILABLE
+        PURPLE_STATUS_INVISIBLE
+        PURPLE_STATUS_AWAY
+        PURPLE_STATUS_EXTENDED_AWAY
+        PURPLE_STATUS_MOBILE
+        PURPLE_STATUS_TUNE
+        PURPLE_STATUS_NUN_PRIMITIVE
 
-    gboolean c_purple_presence_is_online "purple_presence_is_online" (PurplePresence *presence)
+    glib.gboolean c_purple_presence_is_online "purple_presence_is_online" (PurplePresence *presence)

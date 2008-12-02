@@ -17,9 +17,11 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cimport connection
+
 cdef class Connection:
     """ Connection class """
-    cdef PurpleConnection *__conn
+    cdef connection.PurpleConnection *__conn
 
     def connect(self):
         connect_to_signals_for_demonstration_purposes_only()

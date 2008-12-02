@@ -17,6 +17,13 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cimport glib
+
+cimport account
+
+cdef extern from "time.h":
+    ctypedef long int time_t
+
 cdef extern from "libpurple/conversation.h":
     ctypedef struct PurpleConversation:
         pass
@@ -44,25 +51,25 @@ cdef extern from "libpurple/conversation.h":
     ctypedef struct PurpleConversationUiOps:
         void (*create_conversation) (PurpleConversation *conv)
         void (*destroy_conversation) (PurpleConversation *conv)
-        void (*write_chat) (PurpleConversation *conv, const_char_ptr who, const_char_ptr message, PurpleMessageFlags flags, time_t mtime)
-        void (*write_im) (PurpleConversation *conv, const_char_ptr who, const_char_ptr message, PurpleMessageFlags flags, time_t mtime)
-        void (*write_conv) (PurpleConversation *conv, const_char_ptr name, const_char_ptr alias, const_char_ptr message, PurpleMessageFlags flags, time_t mtime)
-        void (*chat_add_users) (PurpleConversation *conv, GList *cbuddies, gboolean new_arrivals)
-        void (*chat_rename_user) (PurpleConversation *conv, const_char_ptr old_name, const_char_ptr new_name, const_char_ptr new_alias)
-        void (*chat_remove_users) (PurpleConversation *conv, GList *users)
-        void (*chat_update_user) (PurpleConversation *conv, const_char_ptr user)
+        void (*write_chat) (PurpleConversation *conv, char *who, char *message, PurpleMessageFlags flags, time_t mtime)
+        void (*write_im) (PurpleConversation *conv, char *who, char *message, PurpleMessageFlags flags, time_t mtime)
+        void (*write_conv) (PurpleConversation *conv, char *name, char *alias, char *message, PurpleMessageFlags flags, time_t mtime)
+        void (*chat_add_users) (PurpleConversation *conv, glib.GList *cbuddies, glib.gboolean new_arrivals)
+        void (*chat_rename_user) (PurpleConversation *conv, char *old_name, char *new_name, char *new_alias)
+        void (*chat_remove_users) (PurpleConversation *conv, glib.GList *users)
+        void (*chat_update_user) (PurpleConversation *conv, char *user)
         void (*present) (PurpleConversation *conv)
-        gboolean (*has_focus) (PurpleConversation *conv)
-        gboolean (*custom_smiley_add) (PurpleConversation *conv, const_char_ptr smile, gboolean remote)
-        void (*custom_smiley_write) (PurpleConversation *conv, const_char_ptr smile, const_guchar_ptr data, gsize size)
-        void (*custom_smiley_close) (PurpleConversation *conv, const_char_ptr smile)
-        void (*send_confirm) (PurpleConversation *conv, const_char_ptr message)
+        glib.gboolean (*has_focus) (PurpleConversation *conv)
+        glib.gboolean (*custom_smiley_add) (PurpleConversation *conv, char *smile, glib.gboolean remote)
+        void (*custom_smiley_write) (PurpleConversation *conv, char *smile, glib.guchar *data, glib.gsize size)
+        void (*custom_smiley_close) (PurpleConversation *conv, char *smile)
+        void (*send_confirm) (PurpleConversation *conv, char *message)
 
     void c_purple_conversations_init "purple_conversations_init" ()
     void *c_purple_conversations_get_handle "purple_conversations_get_handle" ()
-    PurpleConversation *c_purple_conversation_new "purple_conversation_new" (int type, PurpleAccount *account, const_char_ptr name)
+    PurpleConversation *c_purple_conversation_new "purple_conversation_new" (int type, account.PurpleAccount *account, char *name)
     void c_purple_conversation_set_ui_ops "purple_conversation_set_ui_ops" (PurpleConversation *conv, PurpleConversationUiOps *ops)
     void c_purple_conversations_set_ui_ops "purple_conversations_set_ui_ops" (PurpleConversationUiOps *ops)
     PurpleConvIm *c_purple_conversation_get_im_data "purple_conversation_get_im_data" (PurpleConversation *conv)
-    void c_purple_conv_im_send "purple_conv_im_send" (PurpleConvIm *im, const_char_ptr message)
+    void c_purple_conv_im_send "purple_conv_im_send" (PurpleConvIm *im, char *message)
     void c_purple_conversation_destroy "purple_conversation_destroy" (PurpleConversation *conv)

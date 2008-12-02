@@ -17,18 +17,20 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cimport blist
+
 cdef class Buddy:
     """ Buddy class """
-    cdef PurpleBuddy *__buddy
+    cdef blist.PurpleBuddy *__buddy
 
     def __cinit__(self):
         self.__buddy = NULL
 
-    def new_buddy(self, acc, const_char_ptr scr, const_char_ptr alias):
-        self.__buddy = c_purple_buddy_new(<PurpleAccount *>acc.__account, scr, alias)
+    def new_buddy(self, acc, char *scr, char *alias):
+        self.__buddy = blist.c_purple_buddy_new(<account.PurpleAccount *>acc.__account, scr, alias)
 
     def get_alias(self):
-        return c_purple_buddy_get_alias_only(self.__buddy)
+        return blist.c_purple_buddy_get_alias_only(self.__buddy)
 
     def get_name(self):
-        return c_purple_buddy_get_name(self.__buddy)
+        return blist.c_purple_buddy_get_name(self.__buddy)

@@ -17,15 +17,17 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cimport glib
+
 cdef extern from "libpurple/core.h":
     ctypedef struct PurpleCoreUiOps:
         void (*ui_prefs_init) ()
         void (*debug_ui_init) ()
         void (*ui_init) ()
         void (*quit) ()
-        GHashTable* (*get_ui_info) ()
+        glib.GHashTable* (*get_ui_info) ()
 
-    gboolean c_purple_core_init "purple_core_init" (const_char_ptr ui_name)
+    glib.gboolean c_purple_core_init "purple_core_init" (char *ui_name)
     void c_purple_core_quit "purple_core_quit" ()
     void c_purple_core_set_ui_ops "purple_core_set_ui_ops" (PurpleCoreUiOps *ops)
-    gboolean c_purple_core_ensure_single_instance "purple_core_ensure_single_instance" ()
+    glib.gboolean c_purple_core_ensure_single_instance "purple_core_ensure_single_instance" ()

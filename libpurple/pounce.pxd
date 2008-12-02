@@ -17,5 +17,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cimport glib
+
 cdef extern from "libpurple/pounce.h":
-    gboolean c_purple_pounces_load "purple_pounces_load" ()
+    glib.gboolean c_purple_pounces_load "purple_pounces_load" ()
