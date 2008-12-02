@@ -387,7 +387,11 @@ cdef class Account:
         if self.__exists:
             return False
         else:
-            account.purple_account_new(self.__username, self.__protocol.id)
+            # FIXME: Using purple_accounts_add(...) to save to xml
+            #   I think we could improve this ..
+            account.purple_accounts_add(account.purple_account_new( \
+                    self.__username, self.__protocol.id))
+
             self.__exists = True
             return True
 
