@@ -23,15 +23,20 @@ cdef extern from *:
 cdef extern from "time.h":
     ctypedef long int time_t
 
-include "glib.pxd"
-include "core/account.pxd"
-include "core/blist.pxd"
-include "core/connection.pxd"
-include "core/core.pxd"
-include "core/debug.pxd"
-include "core/eventloop.pxd"
-include "core/idle.pxd"
-include "core/plugin.pxd"
-include "core/pounce.pxd"
-include "core/prefs.pxd"
-include "core/util.pxd"
+class Core(object):
+    def init(self):
+        init_libpurple()
+
+include "c_purple.pxd"
+#include "glib.pxd"
+#include "core/account.pxd"
+#include "core/blist.pxd"
+#include "core/connection.pxd"
+#include "core/core.pxd"
+#include "core/debug.pxd"
+#include "core/eventloop.pxd"
+#include "core/idle.pxd"
+#include "core/plugin.pxd"
+#include "core/pounce.pxd"
+#include "core/prefs.pxd"
+#include "core/util.pxd"
