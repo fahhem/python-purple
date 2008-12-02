@@ -99,16 +99,16 @@ cdef class ProxyInfo:
 
         cdef account.PurpleAccount *c_account
         cdef proxy.PurpleProxyInfo *c_proxyinfo
-        c_account = account.c_purple_accounts_find(acc[0], acc[1])
+        c_account = account.purple_accounts_find(acc[0], acc[1])
 
         if c_account == NULL:
             #FIXME: Message error or call a callback handle to error
             return False
 
-        c_proxyinfo = account.c_purple_account_get_proxy_info(c_account)
+        c_proxyinfo = account.purple_account_get_proxy_info(c_account)
         if c_proxyinfo == NULL:
                 c_proxyinfo = proxy.c_purple_proxy_info_new()
-                account.c_purple_account_set_proxy_info(c_account, c_proxyinfo)
+                account.purple_account_set_proxy_info(c_account, c_proxyinfo)
 
         if info.has_key('type') and info['type']:
             type = info['type']

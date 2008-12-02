@@ -76,7 +76,7 @@ cdef class Plugin:
         c_account = NULL
 
         if username:
-            c_account = account.c_purple_accounts_find(username, id)
+            c_account = account.purple_accounts_find(username, id)
 
         c_plugin = plugin.c_purple_plugins_find_with_id(id)
         c_prpl_info = plugin.c_PURPLE_PLUGIN_PROTOCOL_INFO(c_plugin)
@@ -88,43 +88,43 @@ cdef class Plugin:
         while iter:
 
             option = <accountopt.PurpleAccountOption *> iter.data
-            type = accountopt.c_purple_account_option_get_type(option)
-            label_name = accountopt.c_purple_account_option_get_text(option)
-            setting = accountopt.c_purple_account_option_get_setting(option)
+            type = accountopt.purple_account_option_get_type(option)
+            label_name = accountopt.purple_account_option_get_text(option)
+            setting = accountopt.purple_account_option_get_setting(option)
 
             sett = str(<char *> setting)
             label = str(<char *> label_name)
 
             if type == prefs.PURPLE_PREF_STRING:
-                str_value = accountopt.c_purple_account_option_get_default_string(option)
+                str_value = accountopt.purple_account_option_get_default_string(option)
                 # Google Talk default domain hackery!
                 if str_value == NULL and label == "Connect server":
                     str_value = "talk.google.com"
                 if c_account != NULL:
-                    str_value = account.c_purple_account_get_string(c_account, setting, str_value)
+                    str_value = account.purple_account_get_string(c_account, setting, str_value)
 
                 val = str(<char *> str_value)
 
             elif type == prefs.PURPLE_PREF_INT:
-                int_value = accountopt.c_purple_account_option_get_default_int(option)
+                int_value = accountopt.purple_account_option_get_default_int(option)
                 if sett == "port":
                         int_value = int(443)
                 if c_account != NULL:
-                    int_value = account.c_purple_account_get_int(c_account, setting, int_value)
+                    int_value = account.purple_account_get_int(c_account, setting, int_value)
 
                 val = int(int_value)
 
             elif type == prefs.PURPLE_PREF_BOOLEAN:
-                bool_value = accountopt.c_purple_account_option_get_default_bool(option)
+                bool_value = accountopt.purple_account_option_get_default_bool(option)
                 if c_account != NULL:
-                    bool_value = account.c_purple_account_get_bool(c_account, setting, bool_value)
+                    bool_value = account.purple_account_get_bool(c_account, setting, bool_value)
 
                 val = bool(bool_value)
 
             elif type == prefs.PURPLE_PREF_STRING_LIST:
-                str_value = accountopt.c_purple_account_option_get_default_list_value(option)
+                str_value = accountopt.purple_account_option_get_default_list_value(option)
                 if c_account != NULL:
-                    str_value = account.c_purple_account_get_string(c_account, setting, str_value)
+                    str_value = account.purple_account_get_string(c_account, setting, str_value)
 
                 val = str(<char *> str_value)
 
@@ -154,7 +154,7 @@ cdef class Plugin:
 
         c_account = NULL
 
-        c_account = account.c_purple_accounts_find(acc[0], acc[1])
+        c_account = account.purple_accounts_find(acc[0], acc[1])
         if c_account == NULL:
             # FIXME: Message error or call a error handler
             return False
@@ -167,8 +167,8 @@ cdef class Plugin:
         while iter:
 
             option = <accountopt.PurpleAccountOption *> iter.data
-            type = accountopt.c_purple_account_option_get_type(option)
-            setting = accountopt.c_purple_account_option_get_setting(option)
+            type = accountopt.purple_account_option_get_type(option)
+            setting = accountopt.purple_account_option_get_setting(option)
 
             sett = str(<char *> setting)
 
@@ -180,22 +180,22 @@ cdef class Plugin:
             if type == prefs.PURPLE_PREF_STRING:
 
                 str_value = <char *> po[sett]
-                account.c_purple_account_set_string(c_account, setting, str_value)
+                account.purple_account_set_string(c_account, setting, str_value)
 
             elif type == prefs.PURPLE_PREF_INT:
 
                 int_value = int(po[sett])
-                account.c_purple_account_set_int(c_account, setting, int_value)
+                account.purple_account_set_int(c_account, setting, int_value)
 
             elif type == prefs.PURPLE_PREF_BOOLEAN:
 
                 bool_value = bool(po[sett])
-                account.c_purple_account_set_bool(c_account, setting, bool_value)
+                account.purple_account_set_bool(c_account, setting, bool_value)
 
             elif type == prefs.PURPLE_PREF_STRING_LIST:
 
                 str_value = <char *> po[sett]
-                account.c_purple_account_set_string(c_account, setting, str_value)
+                account.purple_account_set_string(c_account, setting, str_value)
 
         return True
 

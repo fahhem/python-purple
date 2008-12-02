@@ -21,9 +21,6 @@ cimport glib
 
 cimport prefs
 
-cdef extern from *:
-    ctypedef char const_char "const char"
-
 cdef extern from "libpurple/accountopt.h":
 
     ctypedef struct UnionType:
@@ -39,10 +36,58 @@ cdef extern from "libpurple/accountopt.h":
         UnionType default_value
         glib.gboolean masked
 
-    prefs.PurplePrefType c_purple_account_option_get_type "purple_account_option_get_type" (PurpleAccountOption *option)
-    char *c_purple_account_option_get_setting "purple_account_option_get_setting" (PurpleAccountOption *option)
-    char *c_purple_account_option_get_default_string "purple_account_option_get_default_string" (PurpleAccountOption *option)
-    int c_purple_account_option_get_default_int "purple_account_option_get_default_int" (PurpleAccountOption *option)
-    glib.gboolean c_purple_account_option_get_default_bool "purple_account_option_get_default_bool" (PurpleAccountOption *option)
-    const_char *c_purple_account_option_get_default_list_value "purple_account_option_get_default_list_value" (PurpleAccountOption *option)
-    const_char *c_purple_account_option_get_text "purple_account_option_get_text" (PurpleAccountOption *option)
+    ctypedef struct PurpleAccountUserSplit:
+        char *text
+        char *default_value
+        char field_sep
+        glib.gboolean reverse
+
+    # Account Option API
+    PurpleAccountOption *purple_account_option_new(prefs.PurplePrefType type, \
+            char *text, char *pref_name)
+    PurpleAccountOption *purple_account_option_bool_new(char *text, \
+            char *pref_name, glib.gboolean default_value)
+    PurpleAccountOption *purple_account_option_int_new(char *text, \
+            char *pref_name, int default_value)
+    PurpleAccountOption *purple_account_option_string_new(char *text, \
+            char *pref_name,  char *default_value)
+    PurpleAccountOption *purple_account_option_list_new(char *text, \
+            char *pref_name, glib.GList *list)
+    void purple_account_option_destroy(PurpleAccountOption *option)
+    void purple_account_option_set_default_bool(PurpleAccountOption *option, \
+            glib.gboolean value)
+    void purple_account_option_set_default_int(PurpleAccountOption *option, \
+            int value)
+    void purple_account_option_set_default_string( \
+            PurpleAccountOption *option, char *value)
+    void purple_account_option_set_masked(PurpleAccountOption *option, \
+            glib.gboolean masked)
+    void purple_account_option_set_list(PurpleAccountOption *option, \
+            glib.GList *values)
+    void purple_account_option_add_list_item(PurpleAccountOption *option, \
+            char *key,  char *value)
+    prefs.PurplePrefType purple_account_option_get_type( \
+            PurpleAccountOption *option)
+    char *purple_account_option_get_text( PurpleAccountOption *option)
+    char *purple_account_option_get_setting( PurpleAccountOption *option)
+    glib.gboolean purple_account_option_get_default_bool( \
+            PurpleAccountOption *option)
+    int purple_account_option_get_default_int(PurpleAccountOption *option)
+    char *purple_account_option_get_default_string(PurpleAccountOption *option)
+    char *purple_account_option_get_default_list_value( \
+            PurpleAccountOption *option)
+    glib.gboolean purple_account_option_get_masked( \
+            PurpleAccountOption *option)
+    glib.GList *purple_account_option_get_list( \
+            PurpleAccountOption *option)
+    PurpleAccountUserSplit *purple_account_user_split_new(char *text, \
+            char *default_value, char sep)
+    void purple_account_user_split_destroy(PurpleAccountUserSplit *split)
+    char *purple_account_user_split_get_text( PurpleAccountUserSplit *split)
+    char *purple_account_user_split_get_default_value( \
+            PurpleAccountUserSplit *split)
+    char purple_account_user_split_get_separator(PurpleAccountUserSplit *split)
+    glib.gboolean purple_account_user_split_get_reverse( \
+            PurpleAccountUserSplit *split)
+    void purple_account_user_split_set_reverse(PurpleAccountUserSplit *split, \
+            glib.gboolean reverse)

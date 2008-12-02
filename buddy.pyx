@@ -47,11 +47,13 @@ cdef class Buddy:
             return None
     name = property(__get_name)
 
+    """
     def __get_online(self): # FIXME
         name = self.name
         self.c_buddy = blist.c_purple_find_buddy(self.__acc.c_account, name)
         return status.c_purple_presence_is_online(blist.c_purple_buddy_get_presence(self.c_buddy))
     online = property(__get_online)
+    """
 
     def new_buddy(self, acc, name, alias):
         self.__acc = acc

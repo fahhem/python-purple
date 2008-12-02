@@ -19,12 +19,19 @@
 
 cimport glib
 
-cdef extern from *:
-    ctypedef char const_char "const char"
-
 # hack to avoid recursive loops by cython
+cdef extern from "libpurple/blist.h":
+    ctypedef struct PurpleBuddy:
+        pass
+
+    ctypedef struct PurpleGroup:
+        pass
+
 cdef extern from "libpurple/connection.h":
     ctypedef struct PurpleConnection:
+        pass
+
+    ctypedef struct PurpleConnectionErrorInfo:
         pass
 
 cdef extern from "libpurple/log.h":
@@ -37,6 +44,12 @@ cdef extern from "libpurple/proxy.h":
 
 cdef extern from "libpurple/status.h":
     ctypedef struct PurpleStatus:
+        pass
+
+    ctypedef struct PurpleStatusType:
+        pass
+
+    ctypedef struct PurpleStatusPrimitive:
         pass
 
     ctypedef struct PurplePresence:
@@ -57,14 +70,14 @@ cdef extern from "libpurple/account.h":
         PURPLE_ACCOUNT_REQUEST_AUTHORIZATION = 0
 
     ctypedef struct PurpleAccountUiOps:
-        void (*notify_added) (PurpleAccount *account, const_char *remote_user, \
-                const_char *id, const_char *alias, const_char *message)
+        void (*notify_added) (PurpleAccount *account, char *remote_user, \
+                char *id, char *alias, char *message)
         void (*status_changed) (PurpleAccount *account, PurpleStatus *status)
-        void (*request_add) (PurpleAccount *account, const_char *remote_user, \
-                const_char *id, const_char *alias, const_char *message)
+        void (*request_add) (PurpleAccount *account, char *remote_user, \
+                char *id, char *alias, char *message)
         void *(*request_authorize) (PurpleAccount *account, \
-                const_char *remote_user, const_char *id, const_char *alias, \
-                const_char *message, glib.gboolean on_list, \
+                char *remote_user, char *id, char *alias, \
+                char *message, glib.gboolean on_list, \
                 PurpleAccountRequestAuthorizationCb authorize_cb, \
                 PurpleAccountRequestAuthorizationCb deny_cb, void *user_data)
         void (*close_account_request) (void *ui_handle)
@@ -92,73 +105,142 @@ cdef extern from "libpurple/account.h":
         void *registration_cb_user_data
         glib.gpointer priv
 
-    PurpleAccount *c_purple_account_new "purple_account_new" \
-            (char *username, char *protocol_id)
+    # Account API
+    PurpleAccount *purple_account_new(char *username, char *protocol_id)
+    void purple_account_destroy(PurpleAccount *account)
+    void purple_account_connect(PurpleAccount *account)
+    void purple_account_set_register_callback(PurpleAccount *account, PurpleAccountRegistrationCb cb, void *user_data)
+    void purple_account_register(PurpleAccount *account)
+    void purple_account_unregister(PurpleAccount *account, PurpleAccountUnregistrationCb cb, void *user_data)
+    void purple_account_disconnect(PurpleAccount *account)
+    void purple_account_notify_added(PurpleAccount *account, \
+            char *remote_user, char *id, char *alias, \
+            char *message)
+    void purple_account_request_add(PurpleAccount *account, \
+            char *remote_user, char *id, char *alias, \
+            char *message)
+    void *purple_account_request_authorization(PurpleAccount *account, \
+            char *remote_user, char *id, char *alias, \
+            char *message, glib.gboolean on_list, \
+            PurpleAccountRequestAuthorizationCb auth_cb, \
+            PurpleAccountRequestAuthorizationCb deny_cb, void *user_data)
+    void purple_account_request_close_with_account(PurpleAccount *account)
+    void purple_account_request_close(void *ui_handle)
+    void purple_account_request_password(PurpleAccount *account, \
+            glib.GCallback ok_cb, glib.GCallback cancel_cb, void *user_data)
+    void purple_account_request_change_password(PurpleAccount *account)
+    void purple_account_request_change_user_info(PurpleAccount *account)
+    void purple_account_set_username(PurpleAccount *account, char *username)
+    void purple_account_set_password(PurpleAccount *account, char *password)
+    void purple_account_set_alias(PurpleAccount *account, char *alias)
+    void purple_account_set_user_info(PurpleAccount *account, char *user_info)
+    void purple_account_set_buddy_icon_path(PurpleAccount *account, char *path)
+    void purple_account_set_protocol_id(PurpleAccount *account, \
+            char *protocol_id)
+    void purple_account_set_connection(PurpleAccount *account, \
+            PurpleConnection *gc)
+    void purple_account_set_remember_password(PurpleAccount *account, \
+            glib.gboolean value)
+    void purple_account_set_check_mail(PurpleAccount *account, \
+            glib.gboolean value)
+    void purple_account_set_enabled(PurpleAccount *account, \
+            char *ui, glib.gboolean value)
+    void purple_account_set_proxy_info(PurpleAccount *account, \
+            PurpleProxyInfo *info)
+    void purple_account_set_status_types(PurpleAccount *account, \
+            glib.GList *status_types)
+    void purple_account_set_status_list(PurpleAccount *account, \
+            char *status_id, glib.gboolean active, glib.GList *attrs)
+    void purple_account_set_status(PurpleAccount *account, \
+            char *status_id, glib.gboolean active, NULL) # FIXME
+    void purple_account_set_status_list(PurpleAccount *account, \
+            char *status_id, glib.gboolean active, glib.GList *attrs)
+    void purple_account_clear_settings(PurpleAccount *account)
+    void purple_account_set_int(PurpleAccount *account, char *name, \
+            int value)
+    void purple_account_set_string(PurpleAccount *account, char *name, \
+            char *value)
+    void purple_account_set_bool(PurpleAccount *account, char *name, \
+            glib.gboolean value)
+    void purple_account_set_ui_int(PurpleAccount *account, char *ui, \
+            char *name, int value)
+    void purple_account_set_ui_string(PurpleAccount *account, char *ui, \
+            char *name, char *value)
+    void purple_account_set_ui_bool(PurpleAccount *account, char *ui, \
+            char *name, glib.gboolean value)
+    glib.gboolean purple_account_is_connected(PurpleAccount *account)
+    glib.gboolean purple_account_is_connecting(PurpleAccount *account)
+    glib.gboolean purple_account_is_disconnected(PurpleAccount *account)
+    char *purple_account_get_username(PurpleAccount *account)
+    char *purple_account_get_password(PurpleAccount *account)
+    char *purple_account_get_alias(PurpleAccount *account)
+    char *purple_account_get_user_info(PurpleAccount *account)
+    char *purple_account_get_buddy_icon_path(PurpleAccount *account)
+    char *purple_account_get_protocol_id(PurpleAccount *account)
+    char *purple_account_get_protocol_name(PurpleAccount *account)
+    PurpleConnection *purple_account_get_connection(PurpleAccount *account)
+    glib.gboolean purple_account_get_remember_password(PurpleAccount *account)
+    glib.gboolean purple_account_get_check_mail(PurpleAccount *account)
+    glib.gboolean purple_account_get_enabled(PurpleAccount *account, char *ui)
+    PurpleProxyInfo *purple_account_get_proxy_info(PurpleAccount *account)
+    PurpleStatus *purple_account_get_active_status(PurpleAccount *account)
+    PurpleStatus *purple_account_get_status(PurpleAccount *account, \
+            char *status_id)
+    PurpleStatusType *purple_account_get_status_type(PurpleAccount *account, \
+            char *id)
+    PurpleStatusType *purple_account_get_status_type_with_primitive( \
+            PurpleAccount *account, PurpleStatusPrimitive primitive)
+    PurplePresence *purple_account_get_presence(PurpleAccount *account)
+    glib.gboolean purple_account_is_status_active(PurpleAccount *account, \
+            char *status_id)
+    glib.GList *purple_account_get_status_types(PurpleAccount *account)
+    int purple_account_get_int(PurpleAccount *account, char *name, \
+            int default_value)
+    char *purple_account_get_string(PurpleAccount *account, \
+            char *name, char *default_value)
+    glib.gboolean purple_account_get_bool(PurpleAccount *account, \
+            char *name, glib.gboolean default_value)
+    int purple_account_get_ui_int(PurpleAccount *account, \
+            char *ui, char *name, int default_value)
+    char *purple_account_get_ui_string(PurpleAccount *account, \
+            char *ui, char *name, char *default_value)
+    glib.gboolean purple_account_get_ui_bool(PurpleAccount *account, \
+            char *ui, char *name, glib.gboolean default_value)
+    PurpleLog *purple_account_get_log(PurpleAccount *account, \
+            glib.gboolean create)
+    void purple_account_destroy_log(PurpleAccount *account)
+    void purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy)
+    void purple_account_add_buddies(PurpleAccount *account, \
+            glib.GList *buddies)
+    void purple_account_remove_buddy(PurpleAccount *account, \
+            PurpleBuddy *buddy, PurpleGroup *group)
+    void purple_account_remove_buddies(PurpleAccount *account, \
+            glib.GList *buddies, glib.GList *groups)
+    void purple_account_remove_group(PurpleAccount *account, \
+            PurpleGroup *group)
+    void purple_account_change_password(PurpleAccount *account, \
+            char *orig_pw, char *new_pw)
+    glib.gboolean purple_account_supports_offline_message( \
+            PurpleAccount *account, PurpleBuddy *buddy)
+    PurpleConnectionErrorInfo *purple_account_get_current_error( \
+            PurpleAccount *account)
+    void purple_account_clear_current_error(PurpleAccount *account)
 
-    glib.gboolean c_purple_account_get_enabled "purple_account_get_enabled" \
-            (PurpleAccount *account, char *ui)
-    char *c_purple_account_get_username "purple_account_get_username" \
-            (PurpleAccount *account)
-    char *c_purple_account_get_password "purple_account_get_password" \
-            (PurpleAccount *account)
-    char *c_purple_account_get_alias "purple_account_get_alias" \
-            (PurpleAccount *account)
-    char *c_purple_account_get_user_info "purple_account_get_user_info" \
-            (PurpleAccount *account)
-    char *c_purple_account_get_protocol_id "purple_account_get_protocol_id" \
-            (PurpleAccount *account)
-    char *c_purple_account_get_protocol_name \
-            "purple_account_get_protocol_name" (PurpleAccount *account)
-    glib.gboolean c_purple_account_get_remember_password \
-            "purple_account_get_remember_password" (PurpleAccount *account)
+    # Accounts API
+    void purple_accounts_add(PurpleAccount *account)
+    void purple_accounts_remove(PurpleAccount *account)
+    void purple_accounts_delete(PurpleAccount *account)
+    void purple_accounts_reorder(PurpleAccount *account, glib.gint new_index)
+    glib.GList *purple_accounts_get_all()
+    glib.GList *purple_accounts_get_all_active()
+    PurpleAccount *purple_accounts_find(char *name, char *protocol)
+    void purple_accounts_restore_current_statuses()
 
-    void c_purple_account_set_enabled "purple_account_set_enabled" \
-            (PurpleAccount *account, char *ui, glib.gboolean value)
-    void c_purple_account_set_username "purple_account_set_username" \
-            (PurpleAccount *account, char *username)
-    void c_purple_account_set_password "purple_account_set_password" \
-            (PurpleAccount *account, char *password)
-    void c_purple_account_set_alias "purple_account_set_alias" \
-            (PurpleAccount *account, char *alias)
-    void c_purple_account_set_user_info "purple_account_set_user_info" \
-            (PurpleAccount *account, char *user_info)
-    void c_purple_account_set_protocol_id "purple_account_set_protocol_id" \
-            (PurpleAccount *account, char *protocol_id)
-    void c_purple_account_set_remember_password \
-            "purple_account_set_remember_password" (PurpleAccount *account, \
-                                                    glib.gboolean value)
+    # UI Registration Functions
+    void purple_accounts_set_ui_ops(PurpleAccountUiOps *ops)
+    PurpleAccountUiOps *purple_accounts_get_ui_ops()
 
-    glib.GList *c_purple_accounts_get_all_active \
-            "purple_accounts_get_all_active" ()
-    void c_purple_accounts_set_ui_ops "purple_accounts_set_ui_ops" \
-            (PurpleAccountUiOps *ops)
-    void c_purple_account_connect "purple_account_connect" \
-        (PurpleAccount *account)
-    void c_purple_account_disconnect "purple_account_disconnect" \
-        (PurpleAccount *account)
-    glib.gboolean c_purple_account_is_connected "purple_account_is_connected" \
-            (PurpleAccount *account)
-    PurpleProxyInfo *c_purple_account_get_proxy_info \
-            "purple_account_get_proxy_info" (PurpleAccount *account)
-    void c_purple_account_set_proxy_info "purple_account_set_proxy_info" \
-            (PurpleAccount *account, PurpleProxyInfo *info)
-    char *c_purple_account_get_string "purple_account_get_string" \
-            (PurpleAccount *account, char *name, char *default_value)
-    int c_purple_account_get_int "purple_account_get_int" \
-            (PurpleAccount *account, char *name, int default_value)
-    glib.gboolean c_purple_account_get_bool "purple_account_get_bool" \
-            (PurpleAccount *account, char *name, glib.gboolean default_value)
-    void c_purple_account_clear_settings "purple_account_clear_settings" \
-            (PurpleAccount *account)
-    void c_purple_account_set_int "purple_account_set_int" \
-            (PurpleAccount *account, char *name, int value)
-    void c_purple_account_set_string "purple_account_set_string" \
-            (PurpleAccount *account, char *name, char *value)
-    void c_purple_account_set_bool "purple_account_set_bool" \
-            (PurpleAccount *account, char *name, glib.gboolean value)
-    PurpleAccount *c_purple_accounts_find "purple_accounts_find" \
-            (char *name, char *protocol)
-    glib.GList *c_purple_accounts_get_all "purple_accounts_get_all" ()
-    void c_purple_accounts_add "purple_accounts_add" (PurpleAccount *account)
-    void c_purple_accounts_delete "purple_accounts_delete" (PurpleAccount
-            *account)
+    # Accounts Subsystem
+    void *purple_accounts_get_handle()
+    void purple_accounts_init()
+    void purple_accounts_uninit()

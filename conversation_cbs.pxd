@@ -79,7 +79,7 @@ cdef void write_im(conversation.PurpleConversation *conv, const_char *who, \
     cdef char *c_username = NULL
     cdef char *c_sender_alias = NULL
 
-    c_username = <char *> account.c_purple_account_get_username(acc)
+    c_username = <char *> account.purple_account_get_username(acc)
     if c_username:
         username = c_username
     else:

@@ -31,13 +31,13 @@ cdef void signal_signed_on_cb(connection.PurpleConnection *gc, \
     cdef char *c_username = NULL
     cdef char *c_protocol_id = NULL
 
-    c_username = <char *> account.c_purple_account_get_username(acc)
+    c_username = <char *> account.purple_account_get_username(acc)
     if c_username == NULL:
         username = None
     else:
         username = c_username
 
-    c_protocol_id = <char *> account.c_purple_account_get_protocol_id(acc)
+    c_protocol_id = <char *> account.purple_account_get_protocol_id(acc)
     if c_protocol_id == NULL:
         protocol_id = None
     else:
@@ -56,13 +56,13 @@ cdef void signal_signed_off_cb(connection.PurpleConnection *gc, \
     cdef char *c_username = NULL
     cdef char *c_protocol_id = NULL
 
-    c_username = <char *> account.c_purple_account_get_username(acc)
+    c_username = <char *> account.purple_account_get_username(acc)
     if c_username == NULL:
         username = None
     else:
         username = c_username
 
-    c_protocol_id = <char *> account.c_purple_account_get_protocol_id(acc)
+    c_protocol_id = <char *> account.purple_account_get_protocol_id(acc)
     if c_protocol_id == NULL:
         protocol_id = None
     else:

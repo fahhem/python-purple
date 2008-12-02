@@ -98,7 +98,7 @@ cdef class Purple:
     cdef void __core_ui_ops_ui_init(self):
         debug.c_purple_debug_info("core_ui_ops", "%s", "ui_init\n")
 
-        account.c_purple_accounts_set_ui_ops(&c_account_ui_ops)
+        account.purple_accounts_set_ui_ops(&c_account_ui_ops)
         connection.c_purple_connections_set_ui_ops(&c_conn_ui_ops)
         blist.c_purple_blist_set_ui_ops(&c_blist_ui_ops)
         conversation.c_purple_conversations_set_ui_ops(&c_conv_ui_ops)
@@ -113,7 +113,7 @@ cdef class Purple:
 
         global c_ui_info
 
-        account.c_purple_accounts_set_ui_ops(NULL)
+        account.purple_accounts_set_ui_ops(NULL)
         connection.c_purple_connections_set_ui_ops(NULL)
         blist.c_purple_blist_set_ui_ops(NULL)
         conversation.c_purple_conversations_set_ui_ops(NULL)
@@ -324,20 +324,21 @@ cdef class Purple:
     def load_accounts(self):
         cdef glib.GList *iter
         cdef account.PurpleAccount *acc
-        iter = account.c_purple_accounts_get_all()
+        iter = account.purple_accounts_get_all()
         while iter:
             acc = <account.PurpleAccount *> iter.data
             if <account.PurpleAccount *>acc:
-                username = account.c_purple_account_get_username(acc)
-                protocol_id = account.c_purple_account_get_protocol_id(acc)
-                self.account_add(username.split("/")[0], protocol_id, "172.18.216.211", 8080)
+                username = <char *> account.purple_account_get_username(acc)
+                protocol_id = <char *> account.purple_account_get_protocol_id(acc)
+                self.account_add(username.split("/")[0], protocol_id, \
+                        "172.18.216.211", 8080)
             iter = iter.next
 
     def account_add(self, username, protocol_id, host, port):
         if not self.account_verify(username):
             acc = purple.Account(username, protocol_id)
             self.__accounts[username] = acc
-            if not account.c_purple_accounts_find(username, protocol_id):
+            if not account.purple_accounts_find(username, protocol_id):
                 acc.proxy.set_type(purple.ProxyInfoType().HTTP)
                 acc.proxy.set_host(host)
                 acc.proxy.set_port(port)
@@ -353,7 +354,9 @@ cdef class Purple:
 
 include "plugin.pyx"
 include "proxy.pyx"
+#include "protocol.pyx"
 include "account.pyx"
 include "buddy.pyx"
 #include "connection.pyx"
 include "conversation.pyx"
+

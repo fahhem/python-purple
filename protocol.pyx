@@ -17,45 +17,15 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cimport purple
-
-from protocol import Protocol
-
-cdef class Account:
+cdef class Protocol:
     """
-    Account class
-    @param username
+    Protocol class
     @param protocol_id
     """
 
-    def __init__(self, username, protocol_id):
-        self.__username = username
-        self.__protocol_id = Protocol(self, protocol_id)
-
-        if self.__get_structure() == NULL:
-            self.__exists = False
-        else:
-            self.__exists = True
-
-    def __get_username(self):
-        return self.__username
-    username = property(__get_username)
+    def __init__(self, protocol_id):
+        self.__protocol_id = protocol_id
 
     def __get_protocol_id(self):
         return self.__protocol_id.protocol_id
     protocol_id = property(__get_protocol_id)
-
-    def __get_exists(self):
-        return self.__exists
-    exists = property(__get_exists)
-
-    cdef purple.account.PurpleAccount *__get_structure(self):
-        return purple.account.purple_accounts_find(self.username, self.protocol_id)
-
-    def new(self):
-        if self.__exists:
-            return False
-
-        purple.account.purple_account_new(self.username, self.protocol_id)
-        self.__exists = True
-        return True

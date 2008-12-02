@@ -48,7 +48,7 @@ cdef class Conversation:
         self.__acc = acc
         self.__name = name
 
-        c_account = account.c_purple_accounts_find(acc[0], acc[1])
+        c_account = account.purple_accounts_find(<char *> acc[0], <char *> acc[1])
         if not c_account:
             return
 
