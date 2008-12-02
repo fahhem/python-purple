@@ -132,7 +132,8 @@ cdef class Plugin:
 
         return po
 
-    def set_options(self, id, username, po):
+    def set_options(self, acc, po):
+        #FIXME: account
         ''' @param id The protocol's id '''
         ''' @param username The account's username '''
         ''' @param po Dictionary {'setting type': str|int|bool value, ...} '''
@@ -151,7 +152,7 @@ cdef class Plugin:
 
         c_account = NULL
 
-        c_account = account.c_purple_accounts_find(username, id)
+        c_account = account.c_purple_accounts_find(acc[0], acc[1])
         if c_account == NULL:
             # FIXME: Message error or call a error handler
             return False
