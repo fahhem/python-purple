@@ -20,6 +20,7 @@
 cimport glib
 
 cimport account
+cimport buddyicon
 
 cdef extern from *:
     ctypedef char const_char "const char"
@@ -63,15 +64,31 @@ cdef extern from "libpurple/blist.h":
         char *alias
         char *server_alias
         void *proto_data
+        buddyicon.PurpleBuddyIcon *icon
+        account.PurpleAccount *account
+        PurplePresence *presence
 
     ctypedef struct PurpleContact:
-        pass
+        PurpleBlistNode node
+        char *alias
+        int totalsize
+        int currentsize
+        int online
+        PurpleBuddy *priority
+        glib.gboolean priority_valid
 
     ctypedef struct PurpleGroup:
-        pass
+        PurpleBlistNode node
+        char *name
+        int totalsize
+        int currentsize
+        int online
 
     ctypedef struct PurpleChat:
-        pass
+        PurpleBlistNode node
+        char *alias
+        glib.GHashTable *components
+        account.PurpleAccount *account
 
     ctypedef struct PurpleBuddyList:
         PurpleBlistNode *root
