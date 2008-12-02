@@ -28,7 +28,6 @@ cdef void connect_progress (connection.PurpleConnection *gc, const_char *text,
                             size_t step, size_t step_count):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "connection",
                          "connect_progress\n")
-    global connection_cbs
     try:
         (<object>connection_cbs["connect_progress"])("connect_progress")
     except KeyError:
@@ -37,7 +36,6 @@ cdef void connect_progress (connection.PurpleConnection *gc, const_char *text,
 cdef void connected (connection.PurpleConnection *gc):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "connection",
                          "connected\n")
-    global connection_cbs
     try:
         (<object>connection_cbs["connected"])("connected")
     except KeyError:
@@ -46,7 +44,6 @@ cdef void connected (connection.PurpleConnection *gc):
 cdef void disconnected (connection.PurpleConnection *gc):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "connection",
                          "disconnected\n")
-    global connection_cbs
     try:
         (<object>connection_cbs["disconnected"])("disconnected")
     except KeyError:
@@ -55,7 +52,6 @@ cdef void disconnected (connection.PurpleConnection *gc):
 cdef void notice (connection.PurpleConnection *gc, const_char *text):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "connection",
                          "notice\n")
-    global connection_cbs
     try:
         (<object>connection_cbs["notice"])("notice")
     except KeyError:
@@ -65,7 +61,6 @@ cdef void report_disconnect (connection.PurpleConnection *gc,
                              const_char *text):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "connection",
                          "report_disconnect\n")
-    global connection_cbs
     try:
         (<object>connection_cbs["report_disconnect"])("report_disconnect")
     except KeyError:
@@ -74,7 +69,6 @@ cdef void report_disconnect (connection.PurpleConnection *gc,
 cdef void network_connected ():
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "connection",
                          "network_connected\n")
-    global connection_cbs
     try:
         (<object>connection_cbs["network_connected"])("network_connected")
     except KeyError:
@@ -83,7 +77,6 @@ cdef void network_connected ():
 cdef void network_disconnected ():
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "connection",
                          "network_disconnected\n")
-    global connection_cbs
     try:
         (<object>connection_cbs["network_disconnected"])("network_disconnected")
     except KeyError:
@@ -94,7 +87,6 @@ cdef void report_disconnect_reason (connection.PurpleConnection *gc,
                                     const_char *text):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "connection",
                          "report_disconnect_reason\n")
-    global connection_cbs
     try:
         (<object>connection_cbs["report_disconnect_reason"])("report_disconnect_reason")
     except KeyError:

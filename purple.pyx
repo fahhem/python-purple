@@ -28,11 +28,16 @@ __DEFAULT_PATH__ = "/tmp"
 __APP_NAME__ = "carman-purple-python"
 __APP_VERSION__ = "0.1"
 
-cdef core.PurpleCoreUiOps c_core_ui_ops
 cdef account.PurpleAccountUiOps c_account_ui_ops
+#cdef blist.PurpleBlistUiOps c_blist_ui_ops
 cdef connection.PurpleConnectionUiOps c_conn_ui_ops
 cdef conversation.PurpleConversationUiOps c_conv_ui_ops
+cdef core.PurpleCoreUiOps c_core_ui_ops
 cdef eventloop.PurpleEventLoopUiOps c_eventloop_ui_ops
+#cdef ft.PurpleXferUiOps c_ft_ui_ops
+#cdef notify.PurpleNotifyUiOps c_notify_ui_ops
+#cdef request.PurpleRequestUiOps c_request_ui_ops
+#cdef roomlist.PurpleRoomlistUiOps c_rlist_ui_ops
 
 cdef glib.GHashTable *c_ui_info
 
@@ -79,9 +84,6 @@ cdef class Purple:
     cdef void __core_ui_ops_ui_init(self):
         debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "core_ui_ops", "ui_init\n")
 
-        global c_account_ui_ops
-        global c_conv_ui_ops
-
         account.c_purple_accounts_set_ui_ops(&c_account_ui_ops)
         connection.c_purple_connections_set_ui_ops(&c_conn_ui_ops)
         #blist.c_purple_blist_set_ui_ops(&c_blist_ui_ops)
@@ -124,12 +126,6 @@ cdef class Purple:
 
     def purple_init(self, callbacks_dict=None):
         """ Initializes libpurple """
-
-        global c_account_ui_ops
-        global c_conn_ui_ops
-        global c_conv_ui_ops
-        global c_core_ui_ops
-        global c_eventloop_ui_ops
 
         if callbacks_dict is not None:
             global account_cbs

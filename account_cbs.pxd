@@ -24,33 +24,44 @@ cdef extern from *:
 
 account_cbs = {}
 
-cdef void notify_added (account.PurpleAccount *account, const_char *remote_user, const_char *id, const_char *alias, const_char *message):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "account", "notify_added\n")
-    global account_cbs
+cdef void notify_added (account.PurpleAccount *account,
+                        const_char *remote_user, const_char *id,
+                        const_char *alias, const_char *message):
+    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "account",
+                         "notify_added\n")
     try:
         (<object>account_cbs["notify_added"])("notify_added")
     except KeyError:
         pass
 
-cdef void status_changed (account.PurpleAccount *account, status.PurpleStatus *status):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "account", "status_changed\n")
-    global account_cbs
+cdef void status_changed (account.PurpleAccount *account,
+                          status.PurpleStatus *status):
+    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "account",
+                         "status_changed\n")
     try:
         (<object>account_cbs["status_changed"])("status_changed")
     except KeyError:
         pass
 
-cdef void request_add (account.PurpleAccount *account, const_char *remote_user, const_char *id, const_char *alias, const_char *message):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "account", "request_add\n")
-    global account_cbs
+cdef void request_add (account.PurpleAccount *account,
+                       const_char *remote_user, const_char *id,
+                       const_char *alias, const_char *message):
+    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "account",
+                         "request_add\n")
     try:
         (<object>account_cbs["request_add"])("request_add")
     except KeyError:
         pass
 
-cdef void *request_authorize (account.PurpleAccount *account, const_char *remote_user, const_char *id, const_char *alias, const_char *message, glib.gboolean on_list, account.PurpleAccountRequestAuthorizationCb authorize_cb, account.PurpleAccountRequestAuthorizationCb deny_cb, void *user_data):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "account", "request_authorize\n")
-    global account_cbs
+cdef void *request_authorize (account.PurpleAccount *account,
+                              const_char *remote_user, const_char *id,
+                              const_char *alias, const_char *message,
+                              glib.gboolean on_list,
+                              account.PurpleAccountRequestAuthorizationCb authorize_cb,
+                              account.PurpleAccountRequestAuthorizationCb deny_cb,
+                              void *user_data):
+    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "account",
+                         "request_authorize\n")
     try:
         (<object>account_cbs["request_authorize"])("request_authorize")
         return NULL
@@ -58,8 +69,8 @@ cdef void *request_authorize (account.PurpleAccount *account, const_char *remote
         pass
 
 cdef void close_account_request (void *ui_handle):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "account", "close_account_request\n")
-    global account_cbs
+    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "account",
+                         "close_account_request\n")
     try:
         (<object>account_cbs["close_account_request"])("close_account_request")
     except KeyError:
