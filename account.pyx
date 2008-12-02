@@ -41,6 +41,28 @@ cdef class Account:
         return account.purple_accounts_find(self.username, \
                 self.protocol_id)
 
+    def __is_connected(self):
+        if self.__exists:
+            return account.purple_account_is_connected(self._get_structure())
+        else:
+            return None
+    is_connected = property(__is_connected)
+
+    def __is_connecting(self):
+        if self.__exists:
+            return account.purple_account_is_connecting(self._get_structure())
+        else:
+            return None
+    is_connecting = property(__is_connecting)
+
+    def __is_disconnected(self):
+        if self.__exists:
+            return account.purple_account_is_disconnected( \
+                    self._get_structure())
+        else:
+            return None
+    is_disconnected = property(__is_disconnected)
+
     def __get_exists(self):
         return self.__exists
     exists = property(__get_exists)
