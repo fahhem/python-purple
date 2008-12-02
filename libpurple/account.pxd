@@ -152,7 +152,7 @@ cdef extern from "libpurple/account.h":
     void purple_account_set_status_list(PurpleAccount *account, \
             char *status_id, glib.gboolean active, glib.GList *attrs)
     void purple_account_set_status(PurpleAccount *account, \
-            char *status_id, glib.gboolean active, NULL) # FIXME
+            char *status_id, glib.gboolean active, ...)
     void purple_account_set_status_list(PurpleAccount *account, \
             char *status_id, glib.gboolean active, glib.GList *attrs)
     void purple_account_clear_settings(PurpleAccount *account)
