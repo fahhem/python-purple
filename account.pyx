@@ -33,17 +33,25 @@ cdef class Account:
 
     def __init__(self, char *username, char *protocol_id):
         cdef proxy.PurpleProxyInfo *c_proxyinfo
-        self.c_account = account.c_purple_account_new(username, protocol_id)
-        self.c_plugin = plugin.c_purple_plugins_find_with_id(protocol_id)
-        self.c_prpl_info = plugin.c_PURPLE_PLUGIN_PROTOCOL_INFO(self.c_plugin)
+        cdef account.PurpleAccount *acc = NULL
 
-        c_proxyinfo = account.c_purple_account_get_proxy_info(self.c_account)
-        if c_proxyinfo == NULL:
-            c_proxyinfo = proxy.c_purple_proxy_info_new()
-            proxy.c_purple_proxy_info_set_type(c_proxyinfo, proxy.PURPLE_PROXY_NONE)
-        account.c_purple_account_set_proxy_info(self.c_account, c_proxyinfo)
+        acc = account.c_purple_accounts_find(username, protocol_id)
+        if acc:
+            self.c_account = acc
+            c_proxyinfo = account.c_purple_account_get_proxy_info(self.c_account)
+        else:
+            self.c_account = account.c_purple_account_new(username, protocol_id)
+            c_proxyinfo = account.c_purple_account_get_proxy_info(self.c_account)
+            if c_proxyinfo == NULL:
+                c_proxyinfo = proxy.c_purple_proxy_info_new()
+                proxy.c_purple_proxy_info_set_type(c_proxyinfo, proxy.PURPLE_PROXY_NONE)
+                account.c_purple_account_set_proxy_info(self.c_account, c_proxyinfo)
         self.__proxy = ProxyInfo()
         self.__proxy.c_proxyinfo = c_proxyinfo
+        acc = NULL
+
+        self.c_plugin = plugin.c_purple_plugins_find_with_id(protocol_id)
+        self.c_prpl_info = plugin.c_PURPLE_PLUGIN_PROTOCOL_INFO(self.c_plugin)
 
     def __get_username(self):
         if self.c_account:
@@ -190,3 +198,6 @@ cdef class Account:
                     str_value = account.c_purple_account_get_string(self.c_account, setting, str_value)
 
             iter = iter.next
+
+    def save_into_xml(self):
+        account.c_purple_accounts_add(self.c_account)

@@ -108,6 +108,7 @@ class MainWindow:
         global conv_cbs
         global signal_cbs
         self.bt_cbs = {}
+        self.new_acc_bt_cbs = {}
         self.send_cbs = {}
         self.quit_cb = quit_cb
         conv_cbs["write_im"] = self._write_im_cb
@@ -122,13 +123,24 @@ class MainWindow:
         hbox_cmd.append(self.lcmd, etk.HBox.START, etk.HBox.START, 0)
         hbox_cmd.append(self.cmd_entry, etk.HBox.START, etk.HBox.EXPAND_FILL, 0)
 
+        vbox_accs = etk.VBox()
+        self.accslistmodel = etk.ListModel()
+        self.accslist = etk.List(model=self.accslistmodel,\
+                columns=[(10, etk.TextRenderer(slot=0),\
+                False)], selectable=True,\
+                animated_changes=True)
+        vbox_accs.append(self.accslist, etk.VBox.START, etk.VBox.EXPAND_FILL, 0)
+
         hbox_buttons = etk.HBox(homogeneous=False)
         send_bt = etk.Button(label="Send")
         send_bt.on_clicked(self._send_bt_cb)
         conn_bt = etk.Button(label="Connect")
-        conn_bt.on_clicked(self._conn_bt_cb)
+        conn_bt.on_clicked(self.login_window)
+        new_account_bt = etk.Button(label="New Account")
+        new_account_bt.on_clicked(self._new_account)
         hbox_buttons.append(send_bt, etk.HBox.START, etk.HBox.NONE, 0)
         hbox_buttons.append(conn_bt, etk.HBox.START, etk.HBox.NONE, 0)
+        hbox_buttons.append(new_account_bt, etk.HBox.START, etk.HBox.NONE, 0)
 
         hbox_panel = etk.HBox()
 
@@ -147,6 +159,7 @@ class MainWindow:
 
         hbox_panel.append(vbox_txt_area, etk.HBox.START, etk.HBox.EXPAND_FILL, 0)
         hbox_panel.append(vbox_buddies, etk.HBox.END, etk.HBox.EXPAND_FILL, 0)
+        hbox_panel.append(vbox_accs, etk.HBox.END, etk.HBox.EXPAND_FILL, 0)
 
         self.lstatus = etk.Label(text="Connection status")
 
@@ -160,6 +173,17 @@ class MainWindow:
         self.set_global_callbacks()
         self._window.show_all()
 
+    def login_window(self, pointer):
+        self.login_password = etk.Entry()
+        confirm_login_bt = etk.Button(label="Ok")
+        confirm_login_bt.on_clicked(self._conn_bt_cb)
+        vbox_login =  etk.VBox()
+        vbox_login.append(self.login_password, etk.VBox.START, etk.VBox.FILL, 0)
+        vbox_login.append(confirm_login_bt, etk.VBox.END, etk.VBox.NONE, 0)
+        self.login_win = etk.Window(title="Password", size_request=(190, 80),
+                child=vbox_login)
+        self.login_win.show_all()
+
     def set_global_callbacks(self):
         global cbs
         cbs["connection"]["connect_progress"] = self._purple_conn_status_cb
@@ -168,7 +192,8 @@ class MainWindow:
 
     def _conn_bt_cb(self, pointer):
         if self.bt_cbs.has_key("on_clicked"):
-            self.bt_cbs["on_clicked"]()
+            self.bt_cbs["on_clicked"](self.login_password.text)
+            self.login_win.destroy()
 
     def _send_bt_cb(self, pointer):
         bname = self.blist.selected_rows[0][0]
@@ -179,6 +204,20 @@ class MainWindow:
         else:
             print "Buddy not selected!"
         self.cmd_entry.text = ""
+
+    def selected_accs(self):
+        try:
+            acc = self.accslist.selected_rows[0][0]
+            if acc:
+                return acc
+            else:
+                return "None"
+        except:
+            return "None"
+
+    def _new_account(self, pointer):
+        if self.new_acc_bt_cbs.has_key("on_clicked"):
+            self.new_acc_bt_cbs["on_clicked"]()
 
     def _purple_conn_status_cb(self, txt, step, step_count):
             self.lstatus.text = txt
@@ -193,6 +232,10 @@ class MainWindow:
     def remove_buddy(self, bname):
         self.blistmodel.remove([bname])
 
+    def new_account(self, a):
+        if [a] not in self.accslistmodel.elements:
+            self.accslistmodel.append([a])
+
     def _purple_disconnected_status_cb(self):
         self.lstatus.text = "Disconnected"
 
@@ -202,6 +245,10 @@ class MainWindow:
     def add_bt_conn_cb(self, cb):
         if callable(cb):
             self.bt_cbs["on_clicked"] = cb
+
+    def add_account_cb(self, cb):
+        if callable(cb):
+            self.new_acc_bt_cbs["on_clicked"] = cb
 
     def add_send_cb(self, cb):
         if callable(cb):
@@ -226,18 +273,18 @@ class NullClientPurple:
         self.window = MainWindow(self.quit)
         self.buddies = {} #all buddies
         self.conversations = {}
-        self.account = None
         self.protocol_id = "prpl-jabber"
-        self.username = "carmanplugintest@gmail.com"
-        self.password = "abc123def"
+        self.accs = None
 
         global cbs
         cbs["blist"]["update"] = self._purple_update_blist_cb
         self.p.purple_init(cbs)
+        self.p.accounts_init()
 
         #Initializing UI
         self.window.add_bt_conn_cb(self.connect)
         self.window.add_send_cb(self.send_msg)
+        self.window.add_account_cb(self.add_account)
         self.window.init_window()
 
     def _purple_update_blist_cb(self, type, name=None, alias=None, totalsize=None,\
@@ -264,19 +311,23 @@ class NullClientPurple:
             conv.initialize(self.account, "IM", bname)
             self.conversations[bname] = conv
 
-    def connect(self):
-        self.account = purple.Account(self.username, self.protocol_id)
-        self.account.password = self.password
-
-        self.account.proxy.set_type(purple.ProxyInfoType().HTTP)
-        self.account.proxy.set_host("172.18.216.211")
-        self.account.proxy.set_port(8080)
-
+    def connect(self, password):
+        username_acc = self.window.selected_accs()
+        self.account = self.p.account_verify(username_acc)
         self.account.get_protocol_options()
-
         self.account.set_enabled("carman-purple-python", True)
+        self.account.password = password
         self.p.connect()
         self.p.signal_connect("buddy-signed-off", self._purple_signal_sign_off_cb)
+
+    def add_account(self):
+        username = "carmanplugintest@gmail.com"
+        host = "172.18.216.211"
+        port = 8080
+        self.p.account_add(username, self.protocol_id, host, port)
+        self.accs = self.p.accounts_get_dict()
+        for acc in self.accs.keys():
+            self.window.new_account(acc)
 
     def send_msg(self, name, msg):
         if not self.conversations.has_key(name):

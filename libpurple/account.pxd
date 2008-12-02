@@ -152,3 +152,7 @@ cdef extern from "libpurple/account.h":
             (PurpleAccount *account, char *name, char *value)
     void c_purple_account_set_bool "purple_account_set_bool" \
             (PurpleAccount *account, char *name, glib.gboolean value)
+    PurpleAccount *c_purple_accounts_find "purple_accounts_find" \
+            (char *name, char *protocol)
+    glib.GList *c_purple_accounts_get_all "purple_accounts_get_all" ()
+    void c_purple_accounts_add "purple_accounts_add" (PurpleAccount *account)
