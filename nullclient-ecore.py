@@ -61,7 +61,6 @@ def conv_callback(name):
 conv_cbs["create_conversation"] = conv_callback
 conv_cbs["destroy_conversation"] = conv_callback
 conv_cbs["write_chat"] = conv_callback
-conv_cbs["write_im"] = conv_callback
 conv_cbs["write_conv"] = conv_callback
 conv_cbs["chat_add_users"] = conv_callback
 conv_cbs["chat_rename_user"] = conv_callback
@@ -117,8 +116,10 @@ signal_cbs["receiving_im_msg"] = receiving_im_msg_cb
 
 class MainWindow:
     def __init__(self, quit_cb):
+        global conv_cbs
         self.bt_cbs = {}
         self.quit_cb = quit_cb
+        conv_cbs["write_im"] = self._write_im_cb
 
     def init_window(self):
         # Main vbox
@@ -149,6 +150,8 @@ class MainWindow:
 
         vbox_txt_area = etk.VBox()
         self.txt_area = etk.Label()
+        self.txt_area.text = "<br> "
+
         vbox_txt_area.append(self.txt_area, etk.VBox.START, etk.VBox.EXPAND_FILL, 0)
 
         hbox_panel.append(vbox_txt_area, etk.HBox.START, etk.HBox.EXPAND_FILL, 0)
@@ -208,6 +211,10 @@ class MainWindow:
         if callable(cb):
             self.quit_cb = cb
 
+    def _write_im_cb(self, name, message):
+        self.txt_area.text +=  str(name) + ": " + str(message) + "<br> "
+        self._window.show_all()
+
 
 class NullClientPurple:
     def __init__(self):
@@ -218,6 +225,7 @@ class NullClientPurple:
         self.protocol = None
         self.username = "carmanplugintest@gmail.com"
         self.password = "abc123def"
+
 
         global cbs
         global signal_cbs

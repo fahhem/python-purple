@@ -57,7 +57,7 @@ cdef void write_im (conversation.PurpleConversation *conv, const_char *who,
                     time_t mtime):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "conversation", "write_im\n")
     try:
-        (<object>conversation_cbs["write_im"])("write_im")
+        (<object>conversation_cbs["write_im"])(conv.account.username, <char *> message)
     except KeyError:
         pass
 
