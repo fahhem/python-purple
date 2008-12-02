@@ -305,3 +305,21 @@ cdef class Account:
             iter = iter.next
         return buddies
 
+    def get_all(self):
+        cdef glib.GList *iter
+        cdef account.PurpleAccount *acc
+
+        accounts = []
+
+        iter = account.c_purple_accounts_get_all()
+        while iter:
+            acc = <account.PurpleAccount *> iter.data
+            if <account.PurpleAccount *>acc:
+                username = account.c_purple_account_get_username(acc)
+                protocol_id = account.c_purple_account_get_protocol_id(acc)
+
+                accounts.append((username, protocol_id))
+            iter = iter.next
+
+        return accounts
+
