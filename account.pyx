@@ -279,13 +279,20 @@ cdef class Account:
         self.__sstatus = savedstatuses.c_purple_savedstatus_new(NULL, status.PURPLE_STATUS_AVAILABLE)
         savedstatuses.c_purple_savedstatus_activate(self.__sstatus)
 
-    def get_buddies_online(self):
+    def get_buddies_online(self, acc):
+        cdef account.PurpleAccount *c_account
         cdef glib.GSList *iter
         cdef blist.PurpleBuddy *buddy
         cdef char *c_name = NULL
         cdef char *c_alias = NULL
+
+        c_account = account.c_purple_accounts_find(acc[0], acc[1])
+        if c_account:
+            iter = blist.c_purple_find_buddies(c_account, NULL)
+        else:
+            return None
+
         buddies = []
-        iter = blist.c_purple_find_buddies(self.c_account, NULL)
         while iter:
             c_name = NULL
             c_alias = NULL
