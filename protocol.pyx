@@ -29,14 +29,14 @@ cdef class Protocol:
         self.__account = account
         self.__protocol_id = protocol_id
 
+    cdef account.PurpleAccount *__account_get_structure(self):
+        return account.purple_accounts_find(self.__account.username, \
+                self.__account.protocol_id)
+
     def __get_protocol_id(self):
         return self.__protocol_id.protocol_id
     protocol_id = property(__get_protocol_id)
 
-    def __get_account(self):
-        return self.__account
-    account = property(__get_account)
-
     def _set_protocol_id(self, protocol_id):
         account.purple_account_set_protocol_id( \
-                self.__account._get_structure(), protocol_id)
+                self.__account_get_structure(), protocol_id)

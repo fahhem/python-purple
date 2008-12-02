@@ -378,7 +378,8 @@ cdef class Purple:
 
         return account_list
 
-include "plugin.pyx"
+include "protocol.pyx"
+#include "plugin.pyx"
 include "proxy.pyx"
 #include "protocol.pyx"
 include "account.pyx"

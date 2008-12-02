@@ -19,8 +19,6 @@
 
 cimport purple
 
-from protocol import Protocol
-
 cdef class Account:
     """
     Account class
