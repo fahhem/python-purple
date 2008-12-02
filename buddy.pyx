@@ -125,3 +125,10 @@ cdef class Buddy:
         else:
             return None
     idle = property(__get_idle)
+
+    def set_alias(self, alias):
+        if self.__exists:
+            blist.purple_blist_alias_buddy(self._get_structure(), alias)
+            return True
+        else:
+            return False

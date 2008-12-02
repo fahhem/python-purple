@@ -505,13 +505,13 @@ cdef class Account:
                                 blist.purple_buddy_get_presence(c_buddy)):
                     name = <char *> blist.purple_buddy_get_name(c_buddy)
 
-                    c_alias = <char *> blist.purple_buddy_get_alias_only(c_buddy)
-                    if c_alias == NULL:
-                        alias = None
-                    else:
-                        alias = c_alias
+                    new_buddy = Buddy(name, self)
 
-                    buddies_list.append((name, alias))
+                    c_alias = <char *> blist.purple_buddy_get_alias_only(c_buddy)
+                    if c_alias:
+                        new_buddy.set_alias(c_alias)
+
+                    buddies_list.append(new_buddy)
                 iter = iter.next
             return buddies_list
         else:
