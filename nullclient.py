@@ -8,6 +8,7 @@ acc_cbs = {}
 blist_cbs = {}
 conn_cbs = {}
 conv_cbs = {}
+notify_cbs = {}
 
 def account_callback(name):
     print "---- account callback example: %s" % name
@@ -71,9 +72,24 @@ conv_cbs["send_confirm"] = conv_callback
 
 cbs["conversation"] = conv_cbs
 
+def notify_callback(name):
+    print "----  notify callback example: %s" % name
+
+notify_cbs["notify_message"] = notify_callback
+notify_cbs["notify_email"] = notify_callback
+notify_cbs["notify_emails"] = notify_callback
+notify_cbs["notify_formatted"] = notify_callback
+notify_cbs["notify_searchresults"] = notify_callback
+notify_cbs["notify_searchresults_new_rows"] = notify_callback
+notify_cbs["notify_userinfo"] = notify_callback
+notify_cbs["notify_uri"] = notify_callback
+notify_cbs["close_notify"] = notify_callback
+
+cbs["notify"] = notify_cbs
+
 class NullClient:
     def __init__(self):
-        self.p = purple.Purple()
+        self.p = purple.Purple(debug_enabled=False)
         self.account = None
 
     def execute(self):

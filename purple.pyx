@@ -35,7 +35,7 @@ cdef conversation.PurpleConversationUiOps c_conv_ui_ops
 cdef core.PurpleCoreUiOps c_core_ui_ops
 cdef eventloop.PurpleEventLoopUiOps c_eventloop_ui_ops
 #cdef ft.PurpleXferUiOps c_ft_ui_ops
-#cdef notify.PurpleNotifyUiOps c_notify_ui_ops
+cdef notify.PurpleNotifyUiOps c_notify_ui_ops
 #cdef request.PurpleRequestUiOps c_request_ui_ops
 #cdef roomlist.PurpleRoomlistUiOps c_rlist_ui_ops
 
@@ -47,6 +47,7 @@ include "account_cbs.pxd"
 include "blist_cbs.pxd"
 include "connection_cbs.pxd"
 include "conversation_cbs.pxd"
+include "notify_cbs.pxd"
 
 cdef class Purple:
     """ Purple class.
@@ -89,7 +90,7 @@ cdef class Purple:
         connection.c_purple_connections_set_ui_ops(&c_conn_ui_ops)
         blist.c_purple_blist_set_ui_ops(&c_blist_ui_ops)
         conversation.c_purple_conversations_set_ui_ops(&c_conv_ui_ops)
-        #notify.c_purple_notify_set_ui_ops(&c_notify_ui_ops)
+        notify.c_purple_notify_set_ui_ops(&c_notify_ui_ops)
         #request.c_purple_request_set_ui_ops(&c_request_ui_ops)
         #ft.c_purple_xfers_set_ui_ops(&c_ft_ui_ops)
         #roomlist.c_purple_roomlist_set_ui_ops(&c_rlist_ui_ops)
@@ -104,9 +105,9 @@ cdef class Purple:
         blist.c_purple_blist_set_ui_ops(NULL)
         conversation.c_purple_conversations_set_ui_ops(NULL)
         notify.c_purple_notify_set_ui_ops(NULL)
-        request.c_purple_request_set_ui_ops(NULL)
-        ft.c_purple_xfers_set_ui_ops(NULL)
-        roomlist.c_purple_roomlist_set_ui_ops(NULL)
+        #request.c_purple_request_set_ui_ops(NULL)
+        #ft.c_purple_xfers_set_ui_ops(NULL)
+        #roomlist.c_purple_roomlist_set_ui_ops(NULL)
 
         if c_ui_info:
             glib.g_hash_table_destroy(c_ui_info)
@@ -133,11 +134,13 @@ cdef class Purple:
             global blist_cbs
             global connection_cbs
             global conversation_cbs
+            global notify_cbs
 
             account_cbs = callbacks_dict["account"]
             blist_cbs = callbacks_dict["blist"]
             connection_cbs = callbacks_dict["connection"]
             conversation_cbs = callbacks_dict["conversation"]
+            notify_cbs = callbacks_dict["notify"]
 
         c_account_ui_ops.notify_added = notify_added
         c_account_ui_ops.status_changed = status_changed
@@ -180,6 +183,16 @@ cdef class Purple:
         c_conv_ui_ops.custom_smiley_write = custom_smiley_write
         c_conv_ui_ops.custom_smiley_close = custom_smiley_close
         c_conv_ui_ops.send_confirm = send_confirm
+
+        c_notify_ui_ops.notify_message = notify_message
+        c_notify_ui_ops.notify_email = notify_email
+        c_notify_ui_ops.notify_emails = notify_emails
+        c_notify_ui_ops.notify_formatted = notify_formatted
+        c_notify_ui_ops.notify_searchresults = notify_searchresults
+        c_notify_ui_ops.notify_searchresults_new_rows = notify_searchresults_new_rows
+        c_notify_ui_ops.notify_userinfo = notify_userinfo
+        c_notify_ui_ops.notify_uri = notify_uri
+        c_notify_ui_ops.close_notify = close_notify
 
         c_core_ui_ops.ui_prefs_init = <void (*)()> self.__core_ui_ops_ui_prefs_init
         c_core_ui_ops.debug_ui_init = <void (*)()> self.__core_ui_ops_debug_init
