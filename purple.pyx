@@ -19,6 +19,8 @@
 
 include "glib.pxd"
 
+import ecore
+
 cdef extern from *:
     ctypedef char* const_char_ptr "const char *"
 
@@ -39,7 +41,7 @@ cdef extern from "libpurple/core.h":
         void (*debug_ui_init) ()
         void (*ui_init) ()
         void (*quit) ()
-        GHashTable (*get_ui_info) ()
+        GHashTable* (*get_ui_info) ()
 
     gboolean c_purple_core_init "purple_core_init" (const_char_ptr ui_name)
     void c_purple_core_quit "purple_core_quit" ()
@@ -119,6 +121,9 @@ cdef class Purple:
         c_purple_debug_set_enabled(debug_enabled)
         c_purple_util_set_user_dir(default_path)
         c_purple_plugins_add_search_path(default_path)
+
+        # adds glib iteration inside ecore main loop
+        ecore.idler_add(self.__glib_iteration_when_idle)
      # __cinit__
 
     def __del__(self):
@@ -146,7 +151,6 @@ cdef class Purple:
     # __core_ui_ops_quit
 
     cdef GHashTable *__core_ui_ops_get_ui_info(self):
-        # FIXME: warning: assignment from incompatible pointer type
         if self.c_ui_info == NULL:
             self.c_ui_info = g_hash_table_new(g_str_hash, g_str_equal)
 
@@ -155,6 +159,11 @@ cdef class Purple:
         return self.c_ui_info
     # __core_ui_ops_get_ui_info
 
+    def __glib_iteration_when_idle(self):
+        g_main_context_iteration(NULL, False)
+        return True
+    # __glib_iteration_when_idle
+
     def purple_init(self):
         """ Initializes libpurple """
         # initialize c_core_ui_ops structure
@@ -162,7 +171,7 @@ cdef class Purple:
         self.c_core_ui_ops.debug_ui_init = <void (*)()> self.__core_ui_ops_debug_init
         self.c_core_ui_ops.ui_init = <void (*)()> self.__core_ui_ops_ui_init
         self.c_core_ui_ops.quit = <void (*)()> self.__core_ui_ops_quit
-        self.c_core_ui_ops.get_ui_info = <GHashTable (*)()> self.__core_ui_ops_get_ui_info
+        self.c_core_ui_ops.get_ui_info = <GHashTable* (*)()> self.__core_ui_ops_get_ui_info
 
         c_purple_core_set_ui_ops(&self.c_core_ui_ops)
 
@@ -194,6 +203,7 @@ cdef class Purple:
 
         # load pounces
         c_purple_pounces_load()
+
         return ret
     # core_init
 

@@ -25,8 +25,10 @@ cdef extern from "glib.h":
     ctypedef gint gboolean
     ctypedef gboolean (*GSourceFunc) (gpointer data)
 
-    # GHashTable is an opaque data structure
     ctypedef struct GHashTable:
+        pass
+
+    ctypedef struct GMainContext:
         pass
 
     struct _GSList:
@@ -51,5 +53,7 @@ cdef extern from "glib.h":
 
     guint g_timeout_add(guint interval, GSourceFunc function, gpointer data)
     guint g_timeout_add_seconds(guint interval, GSourceFunc function, gpointer data)
+
+    gboolean g_main_context_iteration (GMainContext *context, gboolean may_block)
 
     gboolean g_source_remove(guint tag)
