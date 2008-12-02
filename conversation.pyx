@@ -24,35 +24,48 @@ cdef class Conversation:
     cdef conversation.PurpleConversation *__conv
     cdef Account __acc
 
-    cdef object name
+    cdef object __name
 
     def __init__(self):
         conversation.c_purple_conversations_init()
-        self.name = None
+        self.__name = None
+
+    def __get_account(self):
+        return self.__acc
+    def __set_account(self, acc):
+        self.__acc = acc
+    account = property(__get_account, __set_account)
+
+    def __get_name(self):
+        return self.__name
+    def __set_name(self, name):
+        self.__name = name
+    name = property(__get_name, __set_name)
 
     def initialize(self, acc, type, char *name):
         self.__acc = acc
+        self.__name = name
+
         if type == "UNKNOWN":
             self.__conv =\
             conversation.c_purple_conversation_new(conversation.PURPLE_CONV_TYPE_UNKNOWN,\
-                <account.PurpleAccount*>self.__acc.c_account, name)
+                <account.PurpleAccount*>self.__acc.c_account, self.__name)
         elif type == "IM":
             self.__conv =\
             conversation.c_purple_conversation_new(conversation.PURPLE_CONV_TYPE_IM,\
-                <account.PurpleAccount*>self.__acc.c_account, name)
+                <account.PurpleAccount*>self.__acc.c_account, self.__name)
         elif type == "CHAT":
             self.__conv =\
             conversation.c_purple_conversation_new(conversation.PURPLE_CONV_TYPE_CHAT,\
-                <account.PurpleAccount*>self.__acc.c_account, name)
+                <account.PurpleAccount*>self.__acc.c_account, self.__name)
         elif type == "MISC":
             self.__conv =\
             conversation.c_purple_conversation_new(conversation.PURPLE_CONV_TYPE_MISC,\
-                <account.PurpleAccount*>self.__acc.c_account, name)
+                <account.PurpleAccount*>self.__acc.c_account, self.__name)
         elif type == "ANY":
             self.__conv =\
             conversation.c_purple_conversation_new(conversation.PURPLE_CONV_TYPE_ANY,\
-                <account.PurpleAccount*>self.__acc.c_account, name)
-        self.name = name
+                <account.PurpleAccount*>self.__acc.c_account, self.__name)
 
     def conversation_set_ui_ops(self):
         cdef conversation.PurpleConversationUiOps c_conv_ui_ops
@@ -81,5 +94,5 @@ cdef class Conversation:
         conversation.c_purple_conversations_get_handle()
 
     def destroy(self):
-        print "[DEBUG]: Destroy conversation: %s" % self.name
+        print "[DEBUG]: Destroy conversation: %s" % self.__name
         conversation.c_purple_conversation_destroy(self.__conv)

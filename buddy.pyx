@@ -22,7 +22,7 @@ cimport purple
 cdef class Buddy:
     """ Buddy class """
     cdef blist.PurpleBuddy *c_buddy
-    cdef Account _acc
+    cdef Account __acc
 
     def __init__(self):
         self.c_buddy = NULL
@@ -30,7 +30,7 @@ cdef class Buddy:
     def __get_account(self):
         return self.__acc
     def __set_account(self, acc):
-        self._acc = acc
+        self.__acc = acc
     account = property(__get_account, __set_account)
 
     def __get_alias(self):
@@ -49,7 +49,7 @@ cdef class Buddy:
 
     def __get_online(self): # FIXME
         name = self.name
-        self.c_buddy = blist.c_purple_find_buddy(self._acc.c_account, name)
+        self.c_buddy = blist.c_purple_find_buddy(self.__acc.c_account, name)
         return status.c_purple_presence_is_online(blist.c_purple_buddy_get_presence(self.c_buddy))
     online = property(__get_online)
 
