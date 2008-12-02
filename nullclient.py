@@ -230,7 +230,6 @@ if __name__ == '__main__':
     client.p.signal_connect("jabber-receiving-xmlnode", jabber_received_xmlnode_cb)
     username = getuser()
     password = getpassword()
-    client.new_account(username, password)
 
     client.p.connect()
     ecore.timer_add(20, client.get_buddies)

@@ -63,10 +63,10 @@ cdef class Purple:
     @parm default_path: Full path for libpurple user files.
     """
 
-    cdef object accounts
+    cdef object __accounts
 
     def __init__(self, debug_enabled=True, app_name=__APP_NAME__, default_path=__DEFAULT_PATH__):
-        self.accounts = {}
+        self.__accounts = {}
         if app_name is not __APP_NAME__:
             __APP_NAME__ = app_name
 
@@ -248,6 +248,9 @@ cdef class Purple:
         # load pounces
         pounce.c_purple_pounces_load()
 
+        # initialize accounts
+        self.load_accounts()
+
         return ret
 
     def add_account_cb(self, name, func):
@@ -287,44 +290,43 @@ cdef class Purple:
                     jabber, "jabber-receiving-xmlnode", &handle,
                     <signals.PurpleCallback> jabber_receiving_xmlnode_cb, NULL)
 
+    def __get_accounts(self):
+        return self.__accounts
+    accounts = property(__get_accounts)
+
     def new_account(self, username, protocol_id):
         acc = Account(username, protocol_id)
         return acc
 
-    def accounts_init(self):
+    def load_accounts(self):
         cdef glib.GList *iter
         cdef account.PurpleAccount *acc
         iter = account.c_purple_accounts_get_all()
         while iter:
             acc = <account.PurpleAccount *> iter.data
             if <account.PurpleAccount *>acc:
-                self.account_add(acc.username.split("/")[0], acc.protocol_id, "172.18.216.211", 8080)
+                username = account.c_purple_account_get_username(acc)
+                protocol_id = account.c_purple_account_get_protocol_id(acc)
+                self.account_add(username.split("/")[0], protocol_id, "172.18.216.211", 8080)
             iter = iter.next
 
     def account_add(self, username, protocol_id, host, port):
         if not self.account_verify(username):
             acc = purple.Account(username, protocol_id)
-            self.accounts_add_dict(username, acc)
+            self.__accounts[username] = acc
             if not account.c_purple_accounts_find(username, protocol_id):
                 acc.proxy.set_type(purple.ProxyInfoType().HTTP)
                 acc.proxy.set_host(host)
                 acc.proxy.set_port(port)
                 acc.save_into_xml()
-        else:
-            print "Exists account"
 
     def account_verify(self, acc_username):
-        if self.accounts:
-            for username in self.accounts.keys():
+        if self.__accounts:
+            for username in self.__accounts.keys():
                 if acc_username == username:
-                    return self.accounts[username]
-        return None
-
-    def accounts_add_dict(self, username, acc):
-        self.accounts[username] = acc
-
-    def accounts_get_dict(self):
-        return self.accounts
+                    return self.__accounts[username]
+        else:
+            return None
 
 include "proxy.pyx"
 include "account.pyx"

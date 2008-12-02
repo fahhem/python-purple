@@ -203,9 +203,9 @@ class MainWindow:
             if acc:
                 return acc
             else:
-                return "None"
+                return None
         except:
-            return "None"
+            return None
 
     def _new_account(self, pointer):
         if self.new_acc_bt_cbs.has_key("on_clicked"):
@@ -277,9 +277,7 @@ class NullClientPurple:
         self.p.add_account_cb("request_authorize", account_callback)
         self.p.add_account_cb("close_account_request", account_callback)
 
-
         self.p.purple_init(cbs)
-        self.p.accounts_init()
 
         #Initializing UI
         self.window.add_bt_conn_cb(self.connect)
@@ -294,7 +292,7 @@ class NullClientPurple:
                 b = purple.Buddy()
                 b.new_buddy(self.account, name, alias)
                 self.buddies[name] = b
-            elif self.buddies[name].online is True:
+            elif self.buddies[name].online:
                 self.window.new_buddy(name)
 
     def _purple_signal_sign_off_cb(self, name, bname):
@@ -313,19 +311,20 @@ class NullClientPurple:
 
     def connect(self, password):
         username_acc = self.window.selected_accs()
-        self.account = self.p.account_verify(username_acc)
-        self.account.get_protocol_options()
-        self.account.set_enabled("carman-purple-python", True)
-        self.account.password = password
-        self.p.connect()
-        self.p.signal_connect("buddy-signed-off", self._purple_signal_sign_off_cb)
+        if username_acc:
+            self.account = self.p.account_verify(username_acc)
+            self.account.get_protocol_options()
+            self.account.set_enabled("carman-purple-python", True)
+            self.account.password = password
+            self.p.connect()
+            self.p.signal_connect("buddy-signed-off", self._purple_signal_sign_off_cb)
 
     def add_account(self):
         username = "carmanplugintest@gmail.com"
         host = "172.18.216.211"
         port = 8080
         self.p.account_add(username, self.protocol_id, host, port)
-        self.accs = self.p.accounts_get_dict()
+        self.accs = self.p.accounts
         for acc in self.accs.keys():
             self.window.new_account(acc)
 
@@ -346,6 +345,5 @@ class NullClientPurple:
         ecore.main_loop_quit()
 
 if __name__ == '__main__':
-
     nullpurple = NullClientPurple()
     ecore.main_loop_begin()
