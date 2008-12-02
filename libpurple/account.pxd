@@ -21,39 +21,24 @@ cimport glib
 
 # hack to avoid recursive loops by cython
 cdef extern from "libpurple/blist.h":
-    ctypedef struct PurpleBuddy:
-        pass
-
-    ctypedef struct PurpleGroup:
-        pass
+    ctypedef struct PurpleBuddy
+    ctypedef struct PurpleGroup
 
 cdef extern from "libpurple/connection.h":
-    ctypedef struct PurpleConnection:
-        pass
-
-    ctypedef struct PurpleConnectionErrorInfo:
-        pass
+    ctypedef struct PurpleConnection
+    ctypedef struct PurpleConnectionErrorInfo
 
 cdef extern from "libpurple/log.h":
-    ctypedef struct PurpleLog:
-        pass
+    ctypedef struct PurpleLog
 
 cdef extern from "libpurple/proxy.h":
-    ctypedef struct PurpleProxyInfo:
-        pass
+    ctypedef struct PurpleProxyInfo
 
 cdef extern from "libpurple/status.h":
-    ctypedef struct PurpleStatus:
-        pass
-
-    ctypedef struct PurpleStatusType:
-        pass
-
-    ctypedef struct PurpleStatusPrimitive:
-        pass
-
-    ctypedef struct PurplePresence:
-        pass
+    ctypedef struct PurpleStatus
+    ctypedef struct PurpleStatusType
+    ctypedef struct PurpleStatusPrimitive
+    ctypedef struct PurplePresence
 
 cdef extern from "libpurple/account.h":
     ctypedef struct PurpleAccountUiOps
