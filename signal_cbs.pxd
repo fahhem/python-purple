@@ -21,6 +21,9 @@ cimport purple
 
 signal_cbs = {}
 
+cdef extern from *:
+    ctypedef char const_gchar "const gchar"
+
 cdef void signal_signed_on_cb(connection.PurpleConnection *gc, \
         glib.gpointer null):
     """
@@ -72,13 +75,28 @@ cdef void signal_signed_off_cb(connection.PurpleConnection *gc, \
         (<object> signal_cbs["signed-off"])(username, protocol_id)
 
 cdef void signal_connection_error_cb(connection.PurpleConnection *gc, \
-        connection.PurpleConnectionError err, char *c_desc):
+        connection.PurpleConnectionError err, const_gchar *c_desc):
     """
     Emitted when a connection error occurs, before signed-off.
     @params gc   The connection on which the error has occured
     @params err  The error that occured
     @params desc A description of the error, giving more information
     """
+    cdef account.PurpleAccount *acc = connection.purple_connection_get_account(gc)
+    cdef char *c_username = NULL
+    cdef char *c_protocol_id = NULL
+
+    c_username = <char *> account.purple_account_get_username(acc)
+    if c_username:
+        username = <char *> c_username
+    else:
+        username = None
+
+    c_protocol_id = <char *> account.purple_account_get_protocol_id(acc)
+    if c_protocol_id:
+        protocol_id = <char *> c_protocol_id
+    else:
+        protocol_id = None
 
     short_desc = {
         0: "Network error",
@@ -97,15 +115,16 @@ cdef void signal_connection_error_cb(connection.PurpleConnection *gc, \
         13: "SSL certificate fingerprint mismatch",
         14: "SSL certificate self signed",
         15: "SSL certificate other error",
-        16: "Other error" }[<int>err]
+        16: "Other error" }[<int> err]
 
-    if c_desc == NULL:
-        desc = None
+    if c_desc:
+        desc = str(<char *> c_desc)
     else:
-        desc = c_desc
+        desc = None
 
     if signal_cbs.has_key("connection-error"):
-        (<object> signal_cbs["connection-error"])(short_desc, desc)
+        (<object> signal_cbs["connection-error"])(username, protocol_id, \
+                short_desc, desc)
 
 cdef void signal_buddy_signed_on_cb(blist.PurpleBuddy *buddy):
     """
