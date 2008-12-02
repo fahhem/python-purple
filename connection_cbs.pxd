@@ -98,7 +98,7 @@ cdef void network_disconnected():
         (<object> connection_cbs["network-disconnected"])()
 
 cdef void report_disconnect_reason(connection.PurpleConnection *gc, \
-        connection.PurpleConnectionError reason, const_char *text):
+        connection.PurpleConnectionError reason, const_char *c_text):
     """
     Called when an error causes a connection to be disconnected. Called
     before disconnected. This op is intended to replace report_disconnect.
@@ -131,6 +131,11 @@ cdef void report_disconnect_reason(connection.PurpleConnection *gc, \
         14: 'Certificate self signed',
         15: 'Certificate error (other)',
         16: 'Other error' }[reason]
+
+    if c_text:
+        text = <char *> c_text
+    else:
+        text = None
 
     if connection_cbs.has_key("report-disconnect-reason"):
         (<object> connection_cbs["report-disconnect-reason"])(reason_string, <char *> text)
