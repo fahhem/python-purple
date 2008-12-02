@@ -337,6 +337,29 @@ cdef class Purple:
 
         return account_list
 
+    def accounts_get_all_active(self):
+        cdef glib.GList *iter
+        cdef account.PurpleAccount *acc
+        cdef char *username
+        cdef char *protocol_id
+
+        iter = account.purple_accounts_get_all_active()
+        account_list = []
+
+        while iter:
+            acc = <account.PurpleAccount *> iter.data
+
+            if <account.PurpleAccount *>acc:
+                username = <char *> account.purple_account_get_username(acc)
+                protocol_id = <char *> account.purple_account_get_protocol_id(acc)
+
+                if username != NULL and protocol_id != NULL:
+                    account_list.append(Account(username, \
+                            Protocol(protocol_id), self))
+            iter = iter.next
+
+        return account_list
+
     def protocols_get_all(self):
         cdef glib.GList *iter
         cdef plugin.PurplePlugin *pp
