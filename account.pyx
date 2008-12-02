@@ -82,14 +82,7 @@ cdef class Account:
                 return None
         else:
             return None
-    def __set_password(self, password):
-        if self.__exists:
-            account.purple_account_set_password(self._get_structure(), \
-                    password)
-            return True
-        else:
-            return False
-    password = property(__get_password, __set_password)
+    password = property(__get_password)
 
     def __get_alias(self):
         cdef char *alias = NULL
@@ -101,14 +94,7 @@ cdef class Account:
                 return None
         else:
             return None
-    def __set_alias(self, alias):
-        if self.__exists:
-            account.purple_account_set_alias(self._get_structure(), \
-                    alias)
-            return True
-        else:
-            return False
-    alias = property(__get_alias, __set_alias)
+    alias = property(__get_alias)
 
     def __get_user_info(self):
         cdef char *user_info = NULL
@@ -120,14 +106,7 @@ cdef class Account:
                 return None
         else:
             return None
-    def __set_user_info(self, user_info):
-        if self.__exists:
-            account.purple_account_set_user_info(self._get_structure(), \
-                    user_info)
-            return True
-        else:
-            return False
-    user_info = property(__get_user_info, __set_user_info)
+    user_info = property(__get_user_info)
 
     def __get_remember_password(self):
         if self.__exists:
@@ -135,15 +114,7 @@ cdef class Account:
                     self._get_structure())
         else:
             return None
-    def __set_remember_password(self, remember_password):
-        if self.__exists:
-            account.purple_account_set_remember_password( \
-                self._get_structure(), remember_password)
-            return True
-        else:
-            return False
-    remember_password = property(__get_remember_password, \
-            __set_remember_password)
+    remember_password = property(__get_remember_password)
 
     def set_username(self, username):
         if self.__exists:
@@ -156,6 +127,38 @@ cdef class Account:
     def set_protocol_id(self, protocol_id):
         if self.__exists:
             self.__protocol._set_protocol_id(protocol_id)
+            return True
+        else:
+            return False
+
+    def set_password(self, password):
+        if self.__exists:
+            account.purple_account_set_password(self._get_structure(), \
+                    password)
+            return True
+        else:
+            return False
+
+    def set_alias(self, alias):
+        if self.__exists:
+            account.purple_account_set_alias(self._get_structure(), \
+                    alias)
+            return True
+        else:
+            return False
+
+    def set_user_info(self, user_info):
+        if self.__exists:
+            account.purple_account_set_user_info(self._get_structure(), \
+                    user_info)
+            return True
+        else:
+            return False
+
+    def set_remember_password(self, remember_password):
+        if self.__exists:
+            account.purple_account_set_remember_password( \
+                self._get_structure(), remember_password)
             return True
         else:
             return False
