@@ -20,10 +20,14 @@
 cimport glib
 
 cimport account
-cimport status
 
 cdef extern from *:
     ctypedef char const_char "const char"
+
+# hack to avoid recursive loops by cython
+cdef extern from "libpurple/status.h":
+    ctypedef struct PurplePresence:
+        pass
 
 cdef extern from "libpurple/blist.h":
     ctypedef struct PurpleBuddyList
@@ -99,4 +103,4 @@ cdef extern from "libpurple/blist.h":
     void c_purple_set_blist "purple_set_blist" (PurpleBuddyList *list)
     glib.GSList *c_purple_find_buddies "purple_find_buddies" (account.PurpleAccount *account, char *name)
     account.PurpleAccount *c_purple_buddy_get_account "purple_buddy_get_account" (PurpleBuddy *buddy)
-    status.PurplePresence *c_purple_buddy_get_presence "purple_buddy_get_presence" (PurpleBuddy *buddy)
+    PurplePresence *c_purple_buddy_get_presence "purple_buddy_get_presence" (PurpleBuddy *buddy)
