@@ -20,16 +20,47 @@
 cimport glib
 
 cimport account
+cimport connection
+cimport buddyicon
 
 cdef extern from "time.h":
     ctypedef long int time_t
 
 cdef extern from "libpurple/conversation.h":
-    ctypedef struct PurpleConversation:
-        pass
+    ctypedef struct PurpleConversationUiOps
+    ctypedef struct PurpleConversation
+    ctypedef struct PurpleConvIm
+    ctypedef struct PurpleConvChat
+    ctypedef struct PurpleConvChatBuddy
+    ctypedef struct PurpleConvMessage
 
-    ctypedef struct PurpleConvIm:
-        pass
+    ctypedef enum PurpleConversationType:
+        PURPLE_CONV_TYPE_UNKNOWN = 0
+        PURPLE_CONV_TYPE_IM
+        PURPLE_CONV_TYPE_CHAT
+        PURPLE_CONV_TYPE_MISC
+        PURPLE_CONV_TYPE_ANY
+
+    ctypedef enum PurpleConvUpdateType:
+        PURPLE_CONV_UPDATE_ADD = 0
+        PURPLE_CONV_UPDATE_REMOVE
+        PURPLE_CONV_UPDATE_ACCOUNT
+        PURPLE_CONV_UPDATE_TYPING
+        PURPLE_CONV_UPDATE_UNSEEN
+        PURPLE_CONV_UPDATE_LOGGING
+        PURPLE_CONV_UPDATE_TOPIC
+        PURPLE_CONV_ACCOUNT_ONLINE
+        PURPLE_CONV_ACCOUNT_OFFLINE
+        PURPLE_CONV_UPDATE_AWAY
+        PURPLE_CONV_UPDATE_ICON
+        PURPLE_CONV_UPDATE_TITLE
+        PURPLE_CONV_UPDATE_CHATLEFT
+        PURPLE_CONV_UPDATE_FEATURES
+
+    ctypedef enum PurpleTypingState:
+        PURPLE_NOT_TYPING = 0
+        PURPLE_TYPING
+        PURPLE_TYPED
 
     ctypedef enum PurpleMessageFlags:
         PURPLE_MESSAGE_SEND = 0x0001
@@ -48,6 +79,14 @@ cdef extern from "libpurple/conversation.h":
         PURPLE_MESSAGE_NO_LINKIFY = 0x4000
         PURPLE_MESSAGE_INVISIBLE = 0x8000
 
+    ctypedef enum PurpleConvChatBuddyFlags:
+        PURPLE_CBFLAGS_NONE = 0x0000
+        PURPLE_CBFLAGS_VOICE = 0x0001
+        PURPLE_CBFLAGS_HALFOP = 0x0002
+        PURPLE_CBFLAGS_OP = 0x0004
+        PURPLE_CBFLAGS_FOUNDER = 0x0008
+        PURPLE_CBFLAGS_TYPING = 0x0010
+
     ctypedef struct PurpleConversationUiOps:
         void (*create_conversation) (PurpleConversation *conv)
         void (*destroy_conversation) (PurpleConversation *conv)
@@ -64,6 +103,58 @@ cdef extern from "libpurple/conversation.h":
         void (*custom_smiley_write) (PurpleConversation *conv, char *smile, glib.guchar *data, glib.gsize size)
         void (*custom_smiley_close) (PurpleConversation *conv, char *smile)
         void (*send_confirm) (PurpleConversation *conv, char *message)
+
+    ctypedef struct PurpleConvIm:
+        PurpleConversation *conv
+        PurpleTypingState typing_state
+        glib.guint typing_timeout
+        time_t type_again
+        glib.guint send_typed_timeout
+        buddyicon.PurpleBuddyIcon *icon
+
+    ctypedef struct PurpleConvChat:
+        PurpleConversation *conv
+        glib.GList *in_room
+        glib.GList *ignored
+        char *who
+        char *topic
+        int id
+        char *nick
+        glib.gboolean left
+
+    ctypedef struct PurpleConvChatBuddy:
+        char *name
+        char *alias
+        char *alias_key
+        glib.gboolean buddy
+        PurpleConvChatBuddyFlags flags
+
+    ctypedef struct PurpleConvMessage:
+        char *who
+        char *what
+        PurpleMessageFlags flags
+        time_t when
+        PurpleConversation *conv
+        char *alias
+
+    ctypedef union UnionType:
+        PurpleConvIm *im
+        PurpleConvChat *chat
+        void *misc
+
+    ctypedef struct PurpleConversation:
+        PurpleConversationType type
+        account.PurpleAccount *account
+        char *name
+        char *title
+        glib.gboolean logging
+        glib.GList *logs
+        UnionType u
+        PurpleConversationUiOps *ui_ops
+        void *ui_data
+        glib.GHashTable *data
+        connection.PurpleConnectionFlags features
+        glib.GList *message_history
 
     void c_purple_conversations_init "purple_conversations_init" ()
     void *c_purple_conversations_get_handle "purple_conversations_get_handle" ()
