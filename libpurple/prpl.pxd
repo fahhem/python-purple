@@ -27,6 +27,9 @@ cimport plugin
 cimport roomlist
 cimport status
 #cimport whiteboard
+cimport glib
 
 cdef extern from "libpurple/prpl.h":
+    ctypedef struct PurplePluginProtocolInfo:
+        glib.GList *protocol_options
     plugin.PurplePlugin *c_purple_find_prpl "purple_find_prpl" (char *id)
