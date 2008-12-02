@@ -379,3 +379,14 @@ cdef class Account:
         if c_account:
             account.c_purple_account_set_protocol_id(c_account, protocol_id)
 
+    def get_protocol_id(self, acc):
+        ''' @param acc Tuple (username, protocol id) '''
+        ''' @return account's protocol id '''
+        cdef account.PurpleAccount *c_account
+
+        c_account = account.c_purple_accounts_find(acc[0], acc[1])
+        if c_account:
+            return account.c_purple_account_get_protocol_id(c_account)
+        else:
+            return None
+
