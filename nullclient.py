@@ -149,17 +149,9 @@ class NullClient:
         self.account = purple.Account(username, protocol.get_id())
         self.account.set_password(password)
 
-        proxy = self.account.get_proxyinfo()
-        if proxy is None:
-            print "None"
-            proxy = purple.ProxyInfo()
-            proxy.cnew()
-
-        proxy.set_type(purple.ProxyInfoType().HTTP())
-        proxy.set_host("172.18.216.211")
-        proxy.set_port(8080)
-
-        self.account.set_proxyinfo(proxy)
+        self.account.proxy.set_type(purple.ProxyInfoType().HTTP)
+        self.account.proxy.set_host("172.18.216.211")
+        self.account.proxy.set_port(8080)
 
         self.account.get_protocol_options()
 

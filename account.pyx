@@ -28,13 +28,22 @@ cdef class Account:
     cdef plugin.PurplePlugin *c_plugin
     cdef prpl.PurplePluginProtocolInfo *c_prpl_info
     cdef plugin.PurplePluginInfo *c_plugin_info
-
     cdef savedstatuses.PurpleSavedStatus *__sstatus
+    cdef ProxyInfo __proxy
 
     def __init__(self, char *username, char *protocol_id):
+        cdef proxy.PurpleProxyInfo *c_proxyinfo
         self.__account = account.c_purple_account_new(username, protocol_id)
         self.c_plugin = plugin.c_purple_plugins_find_with_id(protocol_id)
         self.c_prpl_info = plugin.c_PURPLE_PLUGIN_PROTOCOL_INFO(self.c_plugin)
+
+        c_proxyinfo = account.c_purple_account_get_proxy_info(self.__account)
+        if c_proxyinfo == NULL:
+            c_proxyinfo = proxy.c_purple_proxy_info_new()
+            proxy.c_purple_proxy_info_set_type(c_proxyinfo, proxy.PURPLE_PROXY_NONE)
+        account.c_purple_account_set_proxy_info(self.__account, c_proxyinfo)
+        self.__proxy = ProxyInfo()
+        self.__proxy.c_proxyinfo = c_proxyinfo
 
 
     def set_password(self, password):
@@ -55,6 +64,11 @@ cdef class Account:
         self.__sstatus = savedstatuses.c_purple_savedstatus_new(NULL, status.PURPLE_STATUS_AVAILABLE)
         savedstatuses.c_purple_savedstatus_activate(self.__sstatus)
 
+    def get_proxy(self):
+        return self.__proxy
+
+    proxy = property(get_proxy)
+
     def get_buddies_online(self):
         cdef glib.GSList *iter
         cdef blist.PurpleBuddy *buddy
@@ -68,19 +82,6 @@ cdef class Account:
                 buddies += [buddy.name]
             iter = iter.next
         return buddies
-
-    def get_proxyinfo(self):
-        cdef proxy.PurpleProxyInfo *c_proxyinfo
-        c_proxyinfo = account.c_purple_account_get_proxy_info(self.__account)
-        if c_proxyinfo == NULL:
-            return None
-        cdef ProxyInfo proxyinfo
-        proxyinfo = proxy.ProxyInfo()
-        proxyinfo.c_proxyinfo = c_proxyinfo
-        return proxyinfo
-
-    def set_proxyinfo(self, ProxyInfo proxyinf):
-        account.c_purple_account_set_proxy_info(self.__account, proxyinf.c_proxyinfo)
 
     def get_protocol_options(self):
         ''' FIXME: It is just a hack, to set the XMPP's options. '''

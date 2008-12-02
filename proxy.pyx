@@ -20,31 +20,38 @@
 cimport proxy
 
 cdef class ProxyInfoType:
-
-    cdef proxy.PurpleProxyType c_proxyinfotype
+    cdef proxy.PurpleProxyType c_type
 
     def __init__(self):
-        self.c_proxyinfotype = proxy.PURPLE_PROXY_NONE
+        self.c_type = proxy.PURPLE_PROXY_NONE
 
-    def USE_GLOBAL(self):
-        self.c_proxyinfotype = proxy.PURPLE_PROXY_USE_GLOBAL
+    def get_NONE(self):
+        self.c_type = proxy.PURPLE_PROXY_NONE
+        return self
+    NONE = property(get_NONE)
+
+    def get_USE_GLOBAL(self):
+        self.c_type = proxy.PURPLE_PROXY_USE_GLOBAL
+        return self
+    USE_GLOBAL = property(get_USE_GLOBAL)
+
+    def get_HTTP(self):
+        self.c_type = proxy.PURPLE_PROXY_HTTP
+        return self
+    HTTP = property(get_HTTP)
+
+    def get_SOCKS4(self):
+        self.c_type = proxy.PURPLE_PROXY_SOCKS4
         return self
 
-    def HTTP(self):
-        self.c_proxyinfotype = proxy.PURPLE_PROXY_HTTP
+    def get_SOCKS5(self):
+        self.c_type = proxy.PURPLE_PROXY_SOCKS5
         return self
 
-    def SOCKS4(self):
-        self.c_proxyinfotype = proxy.PURPLE_PROXY_SOCKS4
+    def get_USE_ENVVAR (self):
+        self.c_type = proxy.PURPLE_PROXY_USE_ENVVAR
         return self
-
-    def SOCKS5(self):
-        self.c_proxyinfotype = proxy.PURPLE_PROXY_SOCKS5
-        return self
-
-    def USE_ENVVAR(self):
-        self.c_proxyinfotype = proxy.PURPLE_PROXY_USE_ENVVAR
-        return self
+    USE_ENVVAR = property(get_USE_ENVVAR)
 
 cdef class ProxyInfo:
 
@@ -53,13 +60,9 @@ cdef class ProxyInfo:
     def __init__(self):
         self.c_proxyinfo = NULL
 
-    def cnew(self):
-        if self.c_proxyinfo == NULL:
-            self.c_proxyinfo = proxy.c_purple_proxy_info_new()
-
     def set_type(self, ProxyInfoType type):
         if self.c_proxyinfo:
-            proxy.c_purple_proxy_info_set_type(self.c_proxyinfo, type.c_proxyinfotype)
+            proxy.c_purple_proxy_info_set_type(self.c_proxyinfo, type.c_type)
 
     def set_host(self, char *host):
         if self.c_proxyinfo:
