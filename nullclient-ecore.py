@@ -235,12 +235,11 @@ class MainWindow:
         if callable(cb):
             self.quit_cb = cb
 
-    def _write_im_cb(self, name, who, message):
-        if who:
-            w = who.split("/")[0]
-            self.txt_area.text +=  w + ": " + str(message) + "<br> "
+    def _write_im_cb(self, sender, alias, message):
+        if alias:
+            self.txt_area.text += alias + ": " + message + "<br> "
         else:
-            self.txt_area.text += str(name) + ": " + str(message) + "<br> "
+            self.txt_area.text += sender + ": " + message + "<br> "
         self._window.show_all()
 
 
@@ -251,6 +250,7 @@ class NullClientPurple:
         self.buddies = {} #all buddies
         self.conversations = {}
         self.protocol_id = "prpl-jabber"
+        self.account = None
         self.accs = None
 
 
@@ -274,9 +274,10 @@ class NullClientPurple:
         self.window.add_account_cb(self.add_account)
         self.window.init_window()
 
-    def _purple_update_blist_cb(self, type, name=None, alias=None, totalsize=None,\
-                             currentsize=None, online=None):
-        if type == 2:
+    def _purple_update_blist_cb(self, type, name=None, alias=None, \
+                                totalsize=None, currentsize=None, \
+                                online=None):
+        if self.account and name != None and type == 2:
             if not self.buddies.has_key(name):
                 b = purple.Buddy()
                 b.new_buddy(self.account, name, alias)
@@ -284,12 +285,12 @@ class NullClientPurple:
             elif self.buddies[name].online:
                 self.window.new_buddy(name)
 
-    def _purple_signal_sign_off_cb(self, name, bname):
-        if self.buddies.has_key(bname):
-            self.buddies[bname] = None
-            self.buddies.pop(bname)
+    def _purple_signal_buddy_signed_off_cb(self, name, alias):
+        if self.buddies.has_key(name):
+            self.buddies[name] = None
+            self.buddies.pop(name)
             print "[DEBUG]: Buddy removed!"
-        self.window.remove_buddy(bname)
+        self.window.remove_buddy(name)
 
     def _purple_create_conv_cb(self, name, type):
         bname = name.split("/")[0]
@@ -306,7 +307,7 @@ class NullClientPurple:
             self.account.set_enabled("carman-purple-python", True)
             self.account.password = password
             self.p.connect()
-            self.p.signal_connect("buddy-signed-off", self._purple_signal_sign_off_cb)
+            self.p.signal_connect("buddy-signed-off", self._purple_signal_buddy_signed_off_cb)
 
     def add_account(self):
         username = "carmanplugintest@gmail.com"

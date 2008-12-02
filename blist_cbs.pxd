@@ -26,11 +26,13 @@ blist_cbs = {}
 
 cdef void __group_node_cb(blist.PurpleBlistNode *node, object callback):
     cdef blist.PurpleGroup *group = <blist.PurpleGroup *>node
-    cdef char *name = NULL
+    cdef char *c_name = NULL
 
-    name = <char *> blist.c_purple_group_get_name(group)
-    if name == NULL:
-        name = ""
+    c_name = <char *> blist.c_purple_group_get_name(group)
+    if c_name == NULL:
+        name = None
+    else:
+        name = c_name
 
     currentsize = blist.c_purple_blist_get_group_size(group, False)
     totalsize = blist.c_purple_blist_get_group_size(group, True)
@@ -43,11 +45,13 @@ cdef void __group_node_cb(blist.PurpleBlistNode *node, object callback):
 
 cdef void __contact_node_cb(blist.PurpleBlistNode *node, object callback):
     cdef blist.PurpleContact *contact = <blist.PurpleContact *>node
-    cdef char *alias = NULL
+    cdef char *c_alias = NULL
 
-    alias = <char *> blist.c_purple_contact_get_alias(contact)
-    if alias == NULL:
-        alias = ""
+    c_alias = <char *> blist.c_purple_contact_get_alias(contact)
+    if c_alias == NULL:
+        alias = None
+    else:
+        alias = c_alias
 
     try:
         callback(node.type, alias, contact.totalsize, contact.currentsize, \
@@ -57,15 +61,20 @@ cdef void __contact_node_cb(blist.PurpleBlistNode *node, object callback):
 
 cdef void __buddy_node_cb(blist.PurpleBlistNode *node, object callback):
     cdef blist.PurpleBuddy *buddy = <blist.PurpleBuddy *>node
-    cdef char *name = NULL
-    cdef char *alias = NULL
+    cdef char *c_name = NULL
+    cdef char *c_alias = NULL
 
-    name = <char *> blist.c_purple_buddy_get_name(buddy)
-    if name == NULL:
-        name = ""
-    alias = <char *> blist.c_purple_buddy_get_alias_only(buddy)
-    if alias == NULL:
-        alias = ""
+    c_name = <char *> blist.c_purple_buddy_get_name(buddy)
+    if c_name == NULL:
+        name = None
+    else:
+        name = c_name
+
+    c_alias = <char *> blist.c_purple_buddy_get_alias_only(buddy)
+    if c_alias == NULL:
+        alias = None
+    else:
+        alias = c_alias
 
     try:
         callback(node.type, name, alias)
@@ -74,11 +83,13 @@ cdef void __buddy_node_cb(blist.PurpleBlistNode *node, object callback):
 
 cdef void __chat_node_cb(blist.PurpleBlistNode *node, object callback):
     cdef blist.PurpleChat *chat = <blist.PurpleChat *>node
-    cdef char *name = NULL
+    cdef char *c_name = NULL
 
-    name = <char *> blist.c_purple_chat_get_name(chat)
-    if name == NULL:
-        name = ""
+    c_name = <char *> blist.c_purple_chat_get_name(chat)
+    if c_name == NULL:
+        name = None
+    else:
+        name = c_name
 
     try:
         callback(node.type, name)

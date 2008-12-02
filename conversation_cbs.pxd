@@ -29,8 +29,18 @@ conversation_cbs = {}
 cdef void create_conversation (conversation.PurpleConversation *conv):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "conversation",
                          "create_conversation\n")
+    cdef char *c_name = NULL
+
+    c_name = <char *> conversation.c_purple_conversation_get_name(conv)
+    if c_name == NULL:
+        name = None
+    else:
+        name = c_name
+
+    type = conversation.c_purple_conversation_get_type(conv)
+
     try:
-        (<object>conversation_cbs["create_conversation"])(conv.name, conv.type)
+        (<object>conversation_cbs["create_conversation"])(name, type)
     except KeyError:
         pass
 
@@ -56,12 +66,22 @@ cdef void write_im (conversation.PurpleConversation *conv, const_char *who,
                     const_char *message, conversation.PurpleMessageFlags flags,
                     time_t mtime):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "conversation", "write_im\n")
+    cdef account.PurpleAccount *acc = conversation.c_purple_conversation_get_account(conv)
+    cdef char *c_username = NULL
+
+    c_username = <char *> account.c_purple_account_get_username(acc)
+    if c_username == NULL:
+        username = None
+    else:
+        username = c_username
+
     if who:
         sender = <char *> who
     else:
         sender = None
+
     try:
-        (<object>conversation_cbs["write_im"])(conv.account.username, sender, <char *> message)
+        (<object>conversation_cbs["write_im"])(username, sender, <char *> message)
     except KeyError:
         pass
 

@@ -22,15 +22,23 @@ cimport purple
 signal_cbs = {}
 
 cdef void signal_buddy_signed_off_cb (blist.PurpleBuddy *buddy):
-    if buddy.server_alias:
-        name = buddy.server_alias
-    elif buddy.alias:
-        name = buddy.alias
+    cdef char *c_name = NULL
+    cdef char *c_alias = NULL
+
+    c_name = <char *> blist.c_purple_buddy_get_name(buddy)
+    if c_name == NULL:
+        name = None
     else:
-        name = buddy.name
+        name = c_name
+
+    c_alias = <char *> blist.c_purple_buddy_get_alias_only(buddy)
+    if c_alias == NULL:
+        alias = None
+    else:
+        alias = c_alias
 
     try:
-        (<object> signal_cbs["buddy-signed-off"])(name, buddy.name)
+        (<object> signal_cbs["buddy-signed-off"])(name, alias)
     except KeyError:
         pass
 
@@ -38,18 +46,18 @@ cdef glib.gboolean signal_receiving_im_msg_cb (account.PurpleAccount *account,
         char **sender, char **message, conversation.PurpleConversation *conv,
         conversation.PurpleMessageFlags *flags):
     cdef blist.PurpleBuddy *buddy = blist.c_purple_find_buddy(account, sender[0])
+    cdef char *c_alias = NULL
 
-    if buddy.server_alias:
-        name = buddy.server_alias
-    elif buddy.alias:
-        name = buddy.alias
+    c_alias = <char *> blist.c_purple_buddy_get_alias_only(buddy)
+    if c_alias == NULL:
+        alias = None
     else:
-        name = buddy.name
+        alias = c_alias
 
     stripped = util.c_purple_markup_strip_html(message[0])
 
     try:
-        return (<object> signal_cbs["receiving-im-msg"])(sender[0], name, stripped)
+        return (<object> signal_cbs["receiving-im-msg"])(sender[0], alias, stripped)
     except KeyError:
         return False
 

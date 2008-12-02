@@ -53,7 +53,16 @@ cdef class Buddy:
         return status.c_purple_presence_is_online(blist.c_purple_buddy_get_presence(self.c_buddy))
     online = property(__get_online)
 
-    def new_buddy(self, acc, char *scr, char *alias):
+    def new_buddy(self, acc, name, alias):
         self.__acc = acc
+        cdef char *c_name = NULL
+        cdef char *c_alias = NULL
+
+        if name is not None:
+            c_name = name
+
+        if alias is not None:
+            c_alias = alias
+
         self.c_buddy = blist.c_purple_buddy_new(<account.PurpleAccount *>\
-                self.__acc.c_account, scr, alias)
+                self.__acc.c_account, c_name, c_alias)
