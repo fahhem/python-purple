@@ -9,6 +9,7 @@ blist_cbs = {}
 conn_cbs = {}
 conv_cbs = {}
 notify_cbs = {}
+request_cbs = {}
 
 def account_callback(name):
     print "---- account callback example: %s" % name
@@ -86,6 +87,19 @@ notify_cbs["notify_uri"] = notify_callback
 notify_cbs["close_notify"] = notify_callback
 
 cbs["notify"] = notify_cbs
+
+def request_callback(name):
+    print "---- request callback example: %s" % name
+
+request_cbs["request_input"] = request_callback
+request_cbs["request_choice"] = request_callback
+request_cbs["request_action"] = request_callback
+request_cbs["request_fields"] = request_callback
+request_cbs["request_file"] = request_callback
+request_cbs["close_request"] = request_callback
+request_cbs["request_folder"] = request_callback
+
+cbs["request"] = request_cbs
 
 class NullClient:
     def __init__(self):

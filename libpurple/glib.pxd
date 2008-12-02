@@ -29,6 +29,8 @@ cdef extern from "glib.h":
     ctypedef char gchar
     ctypedef unsigned char guchar
 
+    ctypedef void (*GCallback) ()
+
     ctypedef struct GHashTable:
         pass
 

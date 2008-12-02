@@ -36,7 +36,7 @@ cdef core.PurpleCoreUiOps c_core_ui_ops
 cdef eventloop.PurpleEventLoopUiOps c_eventloop_ui_ops
 #cdef ft.PurpleXferUiOps c_ft_ui_ops
 cdef notify.PurpleNotifyUiOps c_notify_ui_ops
-#cdef request.PurpleRequestUiOps c_request_ui_ops
+cdef request.PurpleRequestUiOps c_request_ui_ops
 #cdef roomlist.PurpleRoomlistUiOps c_rlist_ui_ops
 
 cdef glib.GHashTable *c_ui_info
@@ -47,7 +47,10 @@ include "account_cbs.pxd"
 include "blist_cbs.pxd"
 include "connection_cbs.pxd"
 include "conversation_cbs.pxd"
+#include "xfer_cbs.pxd"
 include "notify_cbs.pxd"
+include "request_cbs.pxd"
+#include "roomlist_cbs.pxd"
 
 cdef class Purple:
     """ Purple class.
@@ -91,7 +94,7 @@ cdef class Purple:
         blist.c_purple_blist_set_ui_ops(&c_blist_ui_ops)
         conversation.c_purple_conversations_set_ui_ops(&c_conv_ui_ops)
         notify.c_purple_notify_set_ui_ops(&c_notify_ui_ops)
-        #request.c_purple_request_set_ui_ops(&c_request_ui_ops)
+        request.c_purple_request_set_ui_ops(&c_request_ui_ops)
         #ft.c_purple_xfers_set_ui_ops(&c_ft_ui_ops)
         #roomlist.c_purple_roomlist_set_ui_ops(&c_rlist_ui_ops)
 
@@ -105,7 +108,7 @@ cdef class Purple:
         blist.c_purple_blist_set_ui_ops(NULL)
         conversation.c_purple_conversations_set_ui_ops(NULL)
         notify.c_purple_notify_set_ui_ops(NULL)
-        #request.c_purple_request_set_ui_ops(NULL)
+        request.c_purple_request_set_ui_ops(NULL)
         #ft.c_purple_xfers_set_ui_ops(NULL)
         #roomlist.c_purple_roomlist_set_ui_ops(NULL)
 
@@ -135,12 +138,14 @@ cdef class Purple:
             global connection_cbs
             global conversation_cbs
             global notify_cbs
+            global request_cbs
 
             account_cbs = callbacks_dict["account"]
             blist_cbs = callbacks_dict["blist"]
             connection_cbs = callbacks_dict["connection"]
             conversation_cbs = callbacks_dict["conversation"]
             notify_cbs = callbacks_dict["notify"]
+            request_cbs = callbacks_dict["request"]
 
         c_account_ui_ops.notify_added = notify_added
         c_account_ui_ops.status_changed = status_changed
@@ -193,6 +198,14 @@ cdef class Purple:
         c_notify_ui_ops.notify_userinfo = notify_userinfo
         c_notify_ui_ops.notify_uri = notify_uri
         c_notify_ui_ops.close_notify = close_notify
+
+        c_request_ui_ops.request_input = request_input
+        c_request_ui_ops.request_choice = request_choice
+        c_request_ui_ops.request_action = request_action
+        c_request_ui_ops.request_fields = request_fields
+        c_request_ui_ops.request_file = request_file
+        c_request_ui_ops.close_request = close_request
+        c_request_ui_ops.request_folder = request_folder
 
         c_core_ui_ops.ui_prefs_init = <void (*)()> self.__core_ui_ops_ui_prefs_init
         c_core_ui_ops.debug_ui_init = <void (*)()> self.__core_ui_ops_debug_init
