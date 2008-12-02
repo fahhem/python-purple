@@ -24,8 +24,17 @@ signal_cbs = {}
 cdef void signal_buddy_signed_off_cb (blist.PurpleBuddy *buddy):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "signal",
                          "buddy_signed_off\n")
+
+    if buddy.server_alias:
+        name = buddy.server_alias
+    else:
+        if buddy.alias:
+            name = buddy.alias
+        else:
+            name = buddy.name
+
     try:
-        (<object>signal_cbs["buddy_signed_off"])(buddy.name)
+        (<object>signal_cbs["buddy_signed_off"])(name)
     except KeyError:
         pass
 
@@ -36,7 +45,20 @@ cdef glib.gboolean signal_receiving_im_msg_cb (account.PurpleAccount *account,
                                         conversation.PurpleMessageFlags *flags):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "signal",
                          "receivinv_im_msg_cb\n")
+
+    cdef blist.PurpleBuddy *buddy = blist.c_purple_find_buddy(account, sender[0])
+
+    if buddy.server_alias:
+        name = buddy.server_alias
+    else:
+        if buddy.alias:
+            name = buddy.alias
+        else:
+            name = buddy.name
+
+    stripped_msg = util.c_purple_markup_strip_html(message[0])
+
     try:
-        (<object>signal_cbs["receiving_im_msg"])(sender[0], message[0])
+        return (<object>signal_cbs["receiving_im_msg"])(sender[0], name, stripped_msg)
     except KeyError:
-        pass
+        return False

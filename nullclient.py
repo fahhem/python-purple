@@ -103,11 +103,11 @@ request_cbs["request_folder"] = request_callback
 cbs["request"] = request_cbs
 
 def buddy_signed_off_cb(name):
-    print "---- signal callback example: sign off from buddy %s" % name
+    print "---- sign off from buddy %s" % name
 
-def receiving_im_msg_cb(sender, message):
-    print "---- signal callback example: receiving im message from %s" % sender
-    print "---- message: %s" % message
+def receiving_im_msg_cb(sender, name, message):
+    print "---- receiving IM message from %s: %s" % (name, message)
+    return False
 
 signal_cbs["buddy_signed_off"] = buddy_signed_off_cb
 signal_cbs["receiving_im_msg"] = receiving_im_msg_cb
