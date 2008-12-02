@@ -20,51 +20,125 @@
 cimport purple
 
 cdef class Buddy:
-    """ Buddy class """
-    cdef blist.PurpleBuddy *c_buddy
-    cdef Account __acc
+    """
+    Buddy class
+    @param name
+    @param account
+    """
 
-    def __init__(self):
-        self.c_buddy = NULL
+    cdef object __account
+    cdef object __name
+    cdef object __exists
+
+    def __init__(self, name, account):
+        self.__name = name
+        self.__account = account
+
+        if self._get_structure() != NULL:
+            self.__exists = True
+        else:
+            self.__exists = False
+
+    cdef blist.PurpleBuddy *_get_structure(self):
+        return blist.purple_find_buddy(account.purple_accounts_find( \
+                self.__account.username, self.__account.protocol.id), \
+                self.__name)
+
+    def __get_name(self):
+        if self.__exists:
+            return <char *> blist.purple_buddy_get_name(self._get_structure())
+        else:
+            return self.__name
+    name = property(__get_name)
 
     def __get_account(self):
-        return self.__acc
-    def __set_account(self, acc):
-        self.__acc = acc
-    account = property(__get_account, __set_account)
+        if self.__exists:
+            return self.__account
+        else:
+            return None
+    account = property(__get_account)
 
     def __get_alias(self):
-        if self.c_buddy:
-            return <char *>blist.purple_buddy_get_alias_only(self.c_buddy)
+        cdef char *c_alias = NULL
+        c_alias = <char *> blist.purple_buddy_get_alias_only( \
+                self._get_structure())
+        if c_alias:
+            return c_alias
         else:
             return None
     alias = property(__get_alias)
 
-    def __get_name(self):
-        if self.c_buddy:
-            return <char *>blist.purple_buddy_get_name(self.c_buddy)
+    def __get_server_alias(self):
+        cdef char *c_server_alias = NULL
+        c_server_alias = <char *> blist.purple_buddy_get_server_alias( \
+                self._get_structure())
+        if c_server_alias:
+            return c_server_alias
         else:
             return None
-    name = property(__get_name)
+    server_alias = property(__get_server_alias)
 
-    """
-    def __get_online(self): # FIXME
-        name = self.name
-        self.c_buddy = blist.purple_find_buddy(self.__acc.c_account, name)
-        return status.purple_presence_is_online(blist.purple_buddy_get_presence(self.c_buddy))
+    def __get_contact_alias(self):
+        cdef char *c_contact_alias = NULL
+        c_contact_alias = <char *> blist.purple_buddy_get_contact_alias( \
+                self._get_structure())
+        if c_contact_alias:
+            return c_contact_alias
+        else:
+            return None
+    contact_alias = property(__get_contact_alias)
+
+    def __get_local_alias(self):
+        cdef char *c_local_alias = NULL
+        c_local_alias = <char *> blist.purple_buddy_get_local_alias( \
+                self._get_structure())
+        if c_local_alias:
+            return c_local_alias
+        else:
+            return None
+    local_alias = property(__get_local_alias)
+
+    def __get_available(self):
+        if self.__exists:
+            return status.purple_presence_is_available( \
+                    blist.purple_buddy_get_presence(self._get_structure()))
+        else:
+            return None
+    available = property(__get_available)
+
+    def __get_online(self):
+        if self.__exists:
+            return status.purple_presence_is_online( \
+                    blist.purple_buddy_get_presence(self._get_structure()))
+        else:
+            return None
     online = property(__get_online)
-    """
 
-    def new_buddy(self, acc, name, alias):
-        self.__acc = acc
-        cdef char *c_name = NULL
+    def __get_idle(self):
+        if self.__exists:
+            return status.purple_presence_is_idle( \
+                    blist.purple_buddy_get_presence(self._get_structure()))
+        else:
+            return None
+    idle = property(__get_idle)
+
+    def new(self, alias=None):
+        """
+        Created a new buddy.
+
+        @param alias (optional)
+        @return True if successful, False if buddy already exists
+        """
         cdef char *c_alias = NULL
 
-        if name is not None:
-            c_name = name
-
-        if alias is not None:
+        if alias:
             c_alias = alias
+        else:
+            c_alias = NULL
 
-        self.c_buddy = blist.purple_buddy_new(<account.PurpleAccount *>\
-                self.__acc.c_account, c_name, c_alias)
+        if self.__exists:
+            return False
+        else:
+            blist.purple_buddy_new(account.purple_accounts_find( \
+                    self.__account.username, self.__account.protocol.id), \
+                    self.__name, c_alias)
