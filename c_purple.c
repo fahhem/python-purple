@@ -1,3 +1,23 @@
+/*
+ * Copyright (c) 2008 INdT - Instituto Nokia de Tecnologia
+ *
+ * This file is part of python-purple.
+ *
+ * python-purple is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * python-purple is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include <purple.h>
 
 #include <glib.h>
@@ -16,11 +36,6 @@ typedef struct _PurpleGLibIOClosure {
 	guint result;
 	gpointer data;
 } PurpleGLibIOClosure;
-
-static void purple_glib_io_destroy(gpointer data)
-{
-	g_free(data);
-}
 
 static gboolean purple_glib_io_invoke(GIOChannel *source, GIOCondition condition, gpointer data)
 {
@@ -55,7 +70,7 @@ static guint glib_input_add(gint fd, PurpleInputCondition condition, PurpleInput
 
 	channel = g_io_channel_unix_new(fd);
 	closure->result = g_io_add_watch_full(channel, 0, cond,
-			purple_glib_io_invoke, closure, purple_glib_io_destroy);
+			purple_glib_io_invoke, closure, g_free);
 
 	g_io_channel_unref(channel);
 	return closure->result;
@@ -106,7 +121,7 @@ static PurpleConversationUiOps conv_uiops =
 	NULL,                      /* destroy_conversation */
 	NULL,                      /* write_chat           */
 	NULL,                      /* write_im             */
-	write_conv,           /* write_conv           */
+	write_conv,                /* write_conv           */
 	NULL,                      /* chat_add_users       */
 	NULL,                      /* chat_rename_user     */
 	NULL,                      /* chat_remove_users    */
@@ -148,27 +163,19 @@ static PurpleCoreUiOps core_uiops =
 	NULL
 };
 
-void init_libpurple(void)
+void init_libpurple(const char *ui_id)
 {
-	/* Set a custom user directory (optional) */
-	/* FIXME: Put a valid carman directory here*/
-	purple_util_set_user_dir(CUSTOM_USER_DIRECTORY);
-
-	/* We do not want any debugging for now to keep the noise to a minimum. */
-	purple_debug_set_enabled(FALSE);
-
 	purple_core_set_ui_ops(&core_uiops);
 
 	purple_eventloop_set_ui_ops(&glib_eventloops);
 
-	purple_plugins_add_search_path(CUSTOM_PLUGIN_PATH);
-
-	if (!purple_core_init(UI_ID)) {
+	if (!purple_core_init(ui_id)) {
 		/* Initializing the core failed. Terminate. */
 		fprintf(stderr,
 				"libpurple initialization failed. Dumping core.\n"
 				"Please report this!\n");
 		abort();
 	}
+
 	printf("libpurple initialized");
 }
