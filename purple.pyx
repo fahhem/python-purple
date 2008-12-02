@@ -228,7 +228,7 @@ cdef class Purple:
         c_eventloop_ui_ops.input_add = glib_input_add
         c_eventloop_ui_ops.input_remove = glib.g_source_remove
         c_eventloop_ui_ops.input_get_error = NULL
-        c_eventloop_ui_ops.timeout_add_seconds = glib.g_timeout_add_seconds
+        c_eventloop_ui_ops.timeout_add_seconds = NULL
 
         core.c_purple_core_set_ui_ops(&c_core_ui_ops)
         eventloop.c_purple_eventloop_set_ui_ops(&c_eventloop_ui_ops)
