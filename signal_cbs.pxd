@@ -34,7 +34,7 @@ cdef void signal_buddy_signed_off_cb (blist.PurpleBuddy *buddy):
             name = buddy.name
 
     try:
-        (<object>signal_cbs["buddy_signed_off"])(name)
+        (<object>signal_cbs["buddy_signed_off"])(name, buddy.name)
     except KeyError:
         pass
 

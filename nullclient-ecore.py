@@ -104,14 +104,14 @@ request_cbs["request_folder"] = request_callback
 
 cbs["request"] = request_cbs
 
-def buddy_signed_off_cb(name):
-    print "---- sign off from buddy %s" % name
+def buddy_signed_off_cb(name, bname):
+    print "---- sign off from buddy %s" % bname
 
 def receiving_im_msg_cb(sender, name, message):
     print "---- receiving IM message from %s: %s" % (name, message)
     return False
 
-signal_cbs["buddy_signed_off"] = buddy_signed_off_cb
+#signal_cbs["buddy_signed_off"] = buddy_signed_off_cb
 signal_cbs["receiving_im_msg"] = receiving_im_msg_cb
 
 
@@ -191,6 +191,9 @@ class MainWindow:
             if [b] not in self.blistmodel.elements:
                 self.blistmodel.append([b])
 
+    def remove_buddy(self, bname):
+        self.blistmodel.remove([bname])
+
     def _purple_disconnected_status_cb(self, pointer):
         self.lstatus.text = "Disconnected"
 
@@ -217,7 +220,9 @@ class NullClientPurple:
         self.password = "abc123def"
 
         global cbs
+        global signal_cbs
         cbs["blist"]["update"] = self._purple_blist_new_cb
+        signal_cbs["buddy_signed_off"] = self._purple_signal_sign_off_cb
         self.p.purple_init(cbs)
 
         #Initializing UI
@@ -231,6 +236,10 @@ class NullClientPurple:
             if i not in self.buddies:
                 self.buddies.append(i)
                 self.window.new_buddy(i)
+
+    def _purple_signal_sign_off_cb(self, name, bname):
+        self.buddies.remove(bname)
+        self.window.remove_buddy(bname)
 
     def set_protocol(self, protocol):
         for p in self.p.get_protocols():
