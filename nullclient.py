@@ -1,5 +1,7 @@
 import purple
 import ecore
+import getpass
+import sys
 
 class NullClient:
     def __init__(self):
@@ -22,12 +24,22 @@ class NullClient:
         self.account.set_password(password)
         self.account.set_enabled("carman-purple-python", True)
 
+def getuser():
+    sys.stdout.write("GTalk account: ")
+    username = sys.stdin.readline()
+    return username[:-1]
+
+def getpassword():
+    return getpass.getpass()
+
 if __name__ == '__main__':
 
     client = NullClient()
     client.execute()
     client.set_protocol("XMPP")
-    client.new_account("seu_email@email.com", client.protocol,"sua_senha_aqui")
+    username = getuser()
+    password = getpassword()
+    client.new_account(username, client.protocol, password)
 
     client.p.connect()
     ecore.main_loop_begin()
