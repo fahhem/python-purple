@@ -19,6 +19,7 @@
 
 cdef extern from "glib.h":
     ctypedef void *gpointer
+    ctypedef void *gconstpointer
     ctypedef int gint
     ctypedef unsigned int guint
     ctypedef gint gboolean
@@ -39,5 +40,15 @@ cdef extern from "glib.h":
         _GList *prev
     ctypedef _GList GList
 
+    ctypedef guint GHashFunc (gconstpointer)
+
+    gboolean g_str_equal (gconstpointer, gconstpointer)
+    guint g_str_hash (gconstpointer)
+
+    GHashTable *g_hash_table_new (GHashFunc, GEqualFunc)
+    void g_hash_table_insert (GHashTable*, gpointer, gpointer )
+
     guint g_timeout_add(guint interval, GSourceFunc function, gpointer data)
+    guint g_timeout_add_seconds(guint interval, GSourceFunc function, gpointer data)
+
     gboolean g_source_remove(guint tag)

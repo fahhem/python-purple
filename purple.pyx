@@ -82,17 +82,72 @@ cdef extern from "c_purple.h":
      void set_uiops()
      guint glib_input_add(gint fd, PurpleInputCondition condition, PurpleInputFunction function, gpointer data)
 
-cdef void ui_init():
-    pass
+__DEFAULT_PATH__ = "/home/user/MyDocs/Carman"
+__APP_NAME__ = "carman-purple-python"
+__APP_VERSION__ = "0.1"
 
-class Purple(object):
-    def __init__(self):
+global __DEFAULT_PATH__
+global __APP_NAME__
+
+def debug_misc(category, format):
+    if category == None:
+        c_purple_debug(PURPLE_DEBUG_MISC, NULL, format)
+    else:
+        c_purple_debug(PURPLE_DEBUG_MISC, category, format)
+# debug_misc
+
+def debug_info(category, format):
+    if category == None:
+        c_purple_debug(PURPLE_DEBUG_INFO, NULL, format)
+    else:
+        c_purple_debug(PURPLE_DEBUG_INFO, category, format)
+# debug_info
+
+def debug_warning(category, format):
+    if category == None:
+        c_purple_debug(PURPLE_DEBUG_WARNING, NULL, format)
+    else:
+        c_purple_debug(PURPLE_DEBUG_WARNING, category, format)
+# debug_warning
+
+def debug_error(category, format):
+    if category == None:
+        c_purple_debug(PURPLE_DEBUG_ERROR, NULL, format)
+    else:
+        c_purple_debug(PURPLE_DEBUG_ERROR, category, format)
+# debug_error
+
+def debug_fatal(category, format):
+    if category == None:
+        c_purple_debug(PURPLE_DEBUG_FATAL, NULL, format)
+    else:
+        c_purple_debug(PURPLE_DEBUG_FATAL, category, format)
+# debug_fatal
+
+cdef void core_ui_ops_ui_prefs_init():
+    debug_info("core_ui_ops", "ui_prefs_init")
+# core_ui_ops_ui_prefs_init
+
+cdef void core_ui_ops_debug_ui_init():
+    debug_info("core_ui_ops", "debug_ui_init")
+# core_ui_ops_debug_ui_init
+
+cdef void core_ui_ops_ui_init():
+    debug_info("core_ui_ops", "ui_init")
+# core_ui_ops_ui_init
+
+cdef void core_ui_ops_quit():
+    debug_info("core_ui_ops", "quit")
+# core_ui_ops_quit
+
+cdef class Purple:
+    def __cinit__(self):
         cdef PurpleCoreUiOps c_core_ui_ops
-        c_core_ui_ops.ui_prefs_init = NULL
-        c_core_ui_ops.debug_ui_init = NULL
-        c_core_ui_ops.ui_init = ui_init
-        c_core_ui_ops.quit = NULL
-        c_core_ui_ops.get_ui_info = NULL
+        c_core_ui_ops.ui_prefs_init = core_ui_ops_ui_prefs_init
+        c_core_ui_ops.debug_ui_init = core_ui_ops_debug_ui_init
+        c_core_ui_ops.ui_init = core_ui_ops_ui_init
+        c_core_ui_ops.quit = core_ui_ops_quit
+        c_core_ui_ops.get_ui_info = NULL # FIXME
 
         cdef PurpleEventLoopUiOps c_eventloop_ui_ops
         c_eventloop_ui_ops.timeout_add = g_timeout_add
@@ -100,26 +155,23 @@ class Purple(object):
         c_eventloop_ui_ops.input_add = glib_input_add
         c_eventloop_ui_ops.input_remove = g_source_remove
         c_eventloop_ui_ops.input_get_error = NULL
-        c_eventloop_ui_ops.timeout_add_seconds = NULL
-
-        self.DEFAULT_PATH = "/home/user/MyDocs/Carman"
-        self.APP_NAME = "carman-purple-python"
+        c_eventloop_ui_ops.timeout_add_seconds = g_timeout_add_seconds
 
         self.debug_set_enabled(True)
-        self.util_set_user_dir(self.DEFAULT_PATH)
-        self.plugin_add_search_path(self.DEFAULT_PATH)
+        self.util_set_user_dir(__DEFAULT_PATH__)
+        self.plugin_add_search_path(__DEFAULT_PATH__)
 
         c_purple_core_set_ui_ops(&c_core_ui_ops)
         c_purple_eventloop_set_ui_ops(&c_eventloop_ui_ops)
 
-        ret = self.core_init(self.APP_NAME)
+        ret = self.core_init(__APP_NAME__)
         if ret is False:
-            self.debug_info("main", "Exiting because libpurple initialization failed.")
+            debug_info("main", "Exiting because libpurple initialization failed.")
             return
 
         # check if there is another instance of libpurple running
         if self.core_ensure_single_instance() == False:
-            self.debug_info("main", "Exiting because another instance of libpurple is already running.")
+            debug_info("main", "Exiting because another instance of libpurple is already running.")
             self.core_quit()
             return
     # __init__
@@ -139,41 +191,6 @@ class Purple(object):
     def core_quit(self):
         c_purple_core_quit()
     # core_quit
-
-    def debug_misc(self, category, format):
-        if category == None:
-            c_purple_debug(PURPLE_DEBUG_MISC, NULL, format)
-        else:
-            c_purple_debug(PURPLE_DEBUG_MISC, category, format)
-    # debug_misc
-
-    def debug_info(self, category, format):
-        if category == None:
-            c_purple_debug(PURPLE_DEBUG_INFO, NULL, format)
-        else:
-            c_purple_debug(PURPLE_DEBUG_INFO, category, format)
-    # debug_info
-
-    def debug_warning(self, category, format):
-        if category == None:
-            c_purple_debug(PURPLE_DEBUG_WARNING, NULL, format)
-        else:
-            c_purple_debug(PURPLE_DEBUG_WARNING, category, format)
-    # debug_warning
-
-    def debug_error(self, category, format):
-        if category == None:
-            c_purple_debug(PURPLE_DEBUG_ERROR, NULL, format)
-        else:
-            c_purple_debug(PURPLE_DEBUG_ERROR, category, format)
-    # debug_error
-
-    def debug_fatal(self, category, format):
-        if category == None:
-            c_purple_debug(PURPLE_DEBUG_FATAL, NULL, format)
-        else:
-            c_purple_debug(PURPLE_DEBUG_FATAL, category, format)
-    # debug_fatal
 
     def debug_set_enabled(self, debug_enabled):
         c_purple_debug_set_enabled(debug_enabled)
