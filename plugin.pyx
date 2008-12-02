@@ -51,6 +51,88 @@ cdef class Plugin:
 
         return protocols
 
+    def get_options(self, id, username=None):
+        ''' @param id The protocol's id '''
+        ''' @param username The account's username '''
+        ''' @return {'setting type': ('UI label', str|int|bool value)} '''
+
+        cdef plugin.PurplePlugin *c_plugin
+        cdef prpl.PurplePluginProtocolInfo *c_prpl_info
+        cdef account.PurpleAccount *c_account
+        cdef glib.GList *iter
+        cdef accountopt.PurpleAccountOption *option
+        cdef prefs.PurplePrefType type
+        cdef const_char *label_name
+        cdef const_char *str_value
+        cdef const_char *setting
+        cdef int int_value
+        cdef glib.gboolean bool_value
+
+        c_account = NULL
+
+        if username:
+            c_account = account.c_purple_accounts_find(username, id)
+            if c_account == NULL:
+                # FIXME: Message error or call a error handler
+                return None
+
+        c_plugin = plugin.c_purple_plugins_find_with_id(id)
+        c_prpl_info = plugin.c_PURPLE_PLUGIN_PROTOCOL_INFO(c_plugin)
+
+        po = {}
+
+        iter = c_prpl_info.protocol_options
+
+        while iter:
+
+            option = <accountopt.PurpleAccountOption *> iter.data
+            type = accountopt.c_purple_account_option_get_type(option)
+            label_name = accountopt.c_purple_account_option_get_text(option)
+            setting = accountopt.c_purple_account_option_get_setting(option)
+
+            sett = str(<char *> setting)
+            label = str(<char *> lanel_name)
+
+            if type == prefs.PURPLE_PREF_STRING:
+                str_value = accountopt.c_purple_account_option_get_default_string(option)
+                # Google Talk default domain hackery!
+                if str_value == NULL and label == "Connect server":
+                    str_value = "talk.google.com"
+                if c_account != NULL:
+                    str_value = account.c_purple_account_get_string(c_account, setting, str_value)
+
+                val = str(<char *> str_value)
+
+            elif type == prefs.PURPLE_PREF_INT:
+                int_value = accountopt.c_purple_account_option_get_default_int(option)
+                if sett == "port":
+                        int_value = int(443)
+                if c_account != NULL:
+                    int_value = account.c_purple_account_get_int(c_account, setting, int_value)
+
+                val = int(int_value)
+
+            elif type == prefs.PURPLE_PREF_BOOLEAN:
+                bool_value = accountopt.c_purple_account_option_get_default_bool(option)
+                if c_account != NULL:
+                    bool_value = account.c_purple_account_get_bool(c_account, setting, bool_value)
+
+                val = bool(bool_value)
+
+            elif type == prefs.PURPLE_PREF_STRING_LIST:
+                str_value = accountopt.c_purple_account_option_get_default_list_value(option)
+                if c_account != NULL:
+                    str_value = account.c_purple_account_get_string(c_account, setting, str_value)
+
+                val = str(<char *> str_value)
+
+            iter = iter.next
+
+            po[sett] = (label, val)
+
+        return po
+
+
 cdef class Plugins:
 
     cdef protocols
