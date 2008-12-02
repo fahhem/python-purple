@@ -29,5 +29,19 @@ cdef extern from "libpurple/debug.h":
         PURPLE_DEBUG_ERROR
         PURPLE_DEBUG_FATAL
 
-    void c_purple_debug "purple_debug" (PurpleDebugLevel level, char *category, char *format)
-    void c_purple_debug_set_enabled "purple_debug_set_enabled" (glib.gboolean debug_enabled)
+    void c_purple_debug "purple_debug" (PurpleDebugLevel level, \
+            char *category, char *format_type, char *format)
+    void c_purple_debug_misc "purple_debug_misc" (char *category, \
+            char *format_type, char *format)
+    void c_purple_debug_info "purple_debug_info" (char *category, \
+            char *format_type, char *format)
+    void c_purple_debug_warning "purple_debug_warning" (char *category, \
+            char *format_type, char *format)
+    void c_purple_debug_error "purple_debug_error" (char *category, \
+            char *format_type, char *format)
+    void c_purple_debug_fatal "purple_debug_fatal" (char *category, \
+            char *format_type, char *format)
+
+    void c_purple_debug_set_enabled "purple_debug_set_enabled" \
+            (glib.gboolean debug_enabled)
+    glib.gboolean c_purple_debug_is_enabled "purple_debug_is_enabled" ()

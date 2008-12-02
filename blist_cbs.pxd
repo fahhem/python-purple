@@ -103,14 +103,14 @@ cdef void __other_node_cb(blist.PurpleBlistNode *node, object callback):
         pass
 
 cdef void new_list (blist.PurpleBuddyList *list):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "new_list\n")
+    debug.c_purple_debug_info("blist", "%s", "new_list\n")
     try:
         (<object>blist_cbs["new_list"])("new_list")
     except KeyError:
         pass
 
 cdef void new_node (blist.PurpleBlistNode *node):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "new_node\n")
+    debug.c_purple_debug_info("blist", "%s", "new_node\n")
     try:
         if node.type == blist.PURPLE_BLIST_GROUP_NODE:
             __group_node_cb(node, blist_cbs["new_node"])
@@ -126,14 +126,14 @@ cdef void new_node (blist.PurpleBlistNode *node):
         pass
 
 cdef void show (blist.PurpleBuddyList *list):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "show\n")
+    debug.c_purple_debug_info("blist", "%s", "show\n")
     try:
         (<object>blist_cbs["show"])("show: TODO")
     except KeyError:
         pass
 
 cdef void update (blist.PurpleBuddyList *list, blist.PurpleBlistNode *node):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "update\n")
+    debug.c_purple_debug_info("blist", "%s", "update\n")
     try:
         if node.type == blist.PURPLE_BLIST_GROUP_NODE:
             __group_node_cb(node, blist_cbs["update"])
@@ -149,8 +149,7 @@ cdef void update (blist.PurpleBuddyList *list, blist.PurpleBlistNode *node):
         pass
 
 cdef void remove (blist.PurpleBuddyList *list, blist.PurpleBlistNode *node):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "remove\n")
-
+    debug.c_purple_debug_info("blist", "%s", "remove\n")
     try:
         if node.type == blist.PURPLE_BLIST_GROUP_NODE:
             __group_node_cb(node, blist_cbs["remove"])
@@ -166,14 +165,14 @@ cdef void remove (blist.PurpleBuddyList *list, blist.PurpleBlistNode *node):
         pass
 
 cdef void destroy (blist.PurpleBuddyList *list):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "destroy\n")
+    debug.c_purple_debug_info("blist", "%s", "destroy\n")
     try:
         (<object>blist_cbs["destroy"])("destroy: TODO")
     except KeyError:
         pass
 
 cdef void set_visible (blist.PurpleBuddyList *list, glib.gboolean show):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "set-visible\n")
+    debug.c_purple_debug_info("blist", "%s", "set-visible\n")
     try:
         (<object>blist_cbs["set_visible"])("set-visible: TODO")
     except KeyError:
@@ -182,7 +181,7 @@ cdef void set_visible (blist.PurpleBuddyList *list, glib.gboolean show):
 cdef void request_add_buddy (account.PurpleAccount *acc,
                              const_char *username, const_char *group,
                              const_char *alias):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "request-add-buddy\n")
+    debug.c_purple_debug_info("blist", "%s", "request-add-buddy\n")
     try:
         (<object>blist_cbs["request-add-buddy"])("request-add-buddy: TODO")
     except KeyError:
@@ -191,14 +190,14 @@ cdef void request_add_buddy (account.PurpleAccount *acc,
 cdef void request_add_chat (account.PurpleAccount *acc,
                             blist.PurpleGroup *group, const_char *alias,
                             const_char *name):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "request_add_chat\n")
+    debug.c_purple_debug_info("blist", "%s", "request_add_chat\n")
     try:
         (<object>blist_cbs["request-add-chat"])("request-add-chat: TODO")
     except KeyError:
         pass
 
 cdef void request_add_group ():
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "request_add_group\n")
+    debug.c_purple_debug_info("blist", "%s", "request_add_group\n")
     try:
         (<object>blist_cbs["request-add-chat"])("request-add-group: TODO")
     except KeyError:

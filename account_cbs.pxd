@@ -27,8 +27,7 @@ account_cbs = {}
 cdef void notify_added (account.PurpleAccount *account,
                         const_char *remote_user, const_char *id,
                         const_char *alias, const_char *message):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "account",
-                         "notify-added\n")
+    debug.c_purple_debug_info("account", "%s", "notify-added\n")
     try:
         (<object>account_cbs["notify-added"])("notify-added: TODO")
     except KeyError:
@@ -36,8 +35,7 @@ cdef void notify_added (account.PurpleAccount *account,
 
 cdef void status_changed (account.PurpleAccount *account,
                           status.PurpleStatus *status):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "account",
-                         "status-changed\n")
+    debug.c_purple_debug_info("account", "%s", "status-changed\n")
     try:
         (<object>account_cbs["status-changed"])("status-changed: TODO")
     except KeyError:
@@ -46,8 +44,7 @@ cdef void status_changed (account.PurpleAccount *account,
 cdef void request_add (account.PurpleAccount *account,
                        const_char *remote_user, const_char *id,
                        const_char *alias, const_char *message):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "account",
-                         "request-add\n")
+    debug.c_purple_debug_info("account", "%s", "request-add\n")
     try:
         (<object>account_cbs["request-add"])("request-add: TODO")
     except KeyError:
@@ -60,8 +57,7 @@ cdef void *request_authorize (account.PurpleAccount *account,
                               account.PurpleAccountRequestAuthorizationCb authorize_cb,
                               account.PurpleAccountRequestAuthorizationCb deny_cb,
                               void *user_data):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "account",
-                         "request-authorize\n")
+    debug.c_purple_debug_info("account", "%s", "request-authorize\n")
     try:
         (<object>account_cbs["request-authorize"])("request-authorize: TODO")
         return NULL
@@ -69,8 +65,7 @@ cdef void *request_authorize (account.PurpleAccount *account,
         pass
 
 cdef void close_account_request (void *ui_handle):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "account",
-                         "close-account-request\n")
+    debug.c_purple_debug_info("account", "%s", "close-account-request\n")
     try:
         (<object>account_cbs["close-account-request"])("close-account-request: TODO")
     except KeyError:

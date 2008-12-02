@@ -27,8 +27,7 @@ cdef extern from *:
 conversation_cbs = {}
 
 cdef void create_conversation (conversation.PurpleConversation *conv):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "conversation",
-                         "create-conversation\n")
+    debug.c_purple_debug_info("conversation", "%s", "create-conversation\n")
     cdef char *c_name = NULL
 
     c_name = <char *> conversation.c_purple_conversation_get_name(conv)
@@ -45,8 +44,7 @@ cdef void create_conversation (conversation.PurpleConversation *conv):
         pass
 
 cdef void destroy_conversation (conversation.PurpleConversation *conv):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "conversation",
-                         "destroy-conversation\n")
+    debug.c_purple_debug_info("conversation", "%s", "destroy-conversation\n")
     try:
         (<object>conversation_cbs["destroy-conversation"])("destroy-conversation: TODO")
     except KeyError:
@@ -55,8 +53,7 @@ cdef void destroy_conversation (conversation.PurpleConversation *conv):
 cdef void write_chat (conversation.PurpleConversation *conv, const_char *who,
                       const_char *message, conversation.PurpleMessageFlags flags,
                       time_t mtime):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "conversation",
-                         "write-chat\n")
+    debug.c_purple_debug_info("conversation", "%s", "write-chat\n")
     try:
         (<object>conversation_cbs["write-chat"])("write-chat: TODO")
     except KeyError:
@@ -65,7 +62,7 @@ cdef void write_chat (conversation.PurpleConversation *conv, const_char *who,
 cdef void write_im (conversation.PurpleConversation *conv, const_char *who,
                     const_char *c_message, conversation.PurpleMessageFlags flags,
                     time_t mtime):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "conversation", "write-im\n")
+    debug.c_purple_debug_info("conversation", "%s", "write-im\n")
     cdef account.PurpleAccount *acc = conversation.c_purple_conversation_get_account(conv)
     cdef blist.PurpleBuddy *buddy = NULL
     cdef char *c_username = NULL
@@ -103,8 +100,7 @@ cdef void write_im (conversation.PurpleConversation *conv, const_char *who,
 cdef void write_conv (conversation.PurpleConversation *conv, const_char *name,
                       const_char *alias, const_char *message,
                       conversation.PurpleMessageFlags flags, time_t mtime):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "conversation",
-                         "write-conv\n")
+    debug.c_purple_debug_info("conversation", "%s", "write-conv\n")
     try:
         (<object>conversation_cbs["write-conv"])("write-conv: TODO")
     except KeyError:
@@ -112,8 +108,7 @@ cdef void write_conv (conversation.PurpleConversation *conv, const_char *name,
 
 cdef void chat_add_users (conversation.PurpleConversation *conv,
                           glib.GList *cbuddies, glib.gboolean new_arrivals):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "conversation",
-                         "chat-add-users\n")
+    debug.c_purple_debug_info("conversation", "%s", "chat-add-users\n")
     try:
         (<object>conversation_cbs["chat-add-users"])("chat-add-users: TODO")
     except KeyError:
@@ -122,8 +117,7 @@ cdef void chat_add_users (conversation.PurpleConversation *conv,
 cdef void chat_rename_user (conversation.PurpleConversation *conv,
                             const_char *old_name, const_char *new_name,
                             const_char *new_alias):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "conversation",
-                         "chat-rename-user\n")
+    debug.c_purple_debug_info("conversation", "%s", "chat-rename-user\n")
     try:
         (<object>conversation_cbs["chat-rename-user"])("chat-rename-user: TODO")
     except KeyError:
@@ -131,8 +125,7 @@ cdef void chat_rename_user (conversation.PurpleConversation *conv,
 
 cdef void chat_remove_users (conversation.PurpleConversation *conv,
                              glib.GList *users):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "conversation",
-                         "chat-remove-users\n")
+    debug.c_purple_debug_info("conversation", "%s", "chat-remove-users\n")
     try:
         (<object>conversation_cbs["chat-remove-users"])("chat-remove-users: TODO")
     except KeyError:
@@ -140,24 +133,21 @@ cdef void chat_remove_users (conversation.PurpleConversation *conv,
 
 cdef void chat_update_user (conversation.PurpleConversation *conv,
                             const_char *user):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "conversation",
-                         "chat-update-user\n")
+    debug.c_purple_debug_info("conversation", "%s", "chat-update-user\n")
     try:
         (<object>conversation_cbs["chat-update-user"])("chat-update-user: TODO")
     except KeyError:
         pass
 
 cdef void present (conversation.PurpleConversation *conv):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "conversation",
-                         "present\n")
+    debug.c_purple_debug_info("conversation", "%s", "present\n")
     try:
         (<object>conversation_cbs["present"])("present: TODO")
     except KeyError:
         pass
 
 cdef glib.gboolean has_focus (conversation.PurpleConversation *conv):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "conversation",
-                         "has-focus\n")
+    debug.c_purple_debug_info("conversation", "%s", "has-focus\n")
     try:
         (<object>conversation_cbs["has-focus"])("has-focus: TODO")
         return False
@@ -166,8 +156,7 @@ cdef glib.gboolean has_focus (conversation.PurpleConversation *conv):
 
 cdef glib.gboolean custom_smiley_add (conversation.PurpleConversation *conv,
                                       const_char *smile, glib.gboolean remote):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "conversation",
-                         "custom-smiley-add\n")
+    debug.c_purple_debug_info("conversation", "%s", "custom-smiley-add\n")
     try:
         (<object>conversation_cbs["custom-smiley-add"])("custom-smiley-add: TODO")
         return False
@@ -177,8 +166,7 @@ cdef glib.gboolean custom_smiley_add (conversation.PurpleConversation *conv,
 cdef void custom_smiley_write (conversation.PurpleConversation *conv,
                                const_char *smile, const_guchar *data,
                                glib.gsize size):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "conversation",
-                         "custom-smiley-write\n")
+    debug.c_purple_debug_info("conversation", "%s", "custom-smiley-write\n")
     try:
         (<object>conversation_cbs["custom-smiley-write"])("custom-smiley-write: TODO")
     except KeyError:
@@ -187,8 +175,7 @@ cdef void custom_smiley_write (conversation.PurpleConversation *conv,
 
 cdef void custom_smiley_close (conversation.PurpleConversation *conv,
                                const_char *smile):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "conversation",
-                         "custom-smiley-close\n")
+    debug.c_purple_debug_info("conversation", "%s", "custom-smiley-close\n")
     try:
         (<object>conversation_cbs["custom-smiley-close"])("custom-smiley-close: TODO")
     except KeyError:
@@ -196,8 +183,7 @@ cdef void custom_smiley_close (conversation.PurpleConversation *conv,
 
 cdef void send_confirm (conversation.PurpleConversation *conv,
                         const_char *message):
-    debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "conversation",
-                         "send-confirm\n")
+    debug.c_purple_debug_info("conversation", "%s", "send-confirm\n")
     try:
         (<object>conversation_cbs["send-confirm"])("send-confirm: TODO")
     except KeyError:
