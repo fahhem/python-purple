@@ -38,10 +38,7 @@ cdef void __group_node_cb(blist.PurpleBlistNode *node, object callback):
     totalsize = blist.c_purple_blist_get_group_size(group, True)
     online = blist.c_purple_blist_get_group_online_count(group)
 
-    try:
-        callback(node.type, name, totalsize, currentsize, online)
-    except KeyError:
-        pass
+    callback(node.type, name, totalsize, currentsize, online)
 
 cdef void __contact_node_cb(blist.PurpleBlistNode *node, object callback):
     cdef blist.PurpleContact *contact = <blist.PurpleContact *>node
@@ -53,11 +50,8 @@ cdef void __contact_node_cb(blist.PurpleBlistNode *node, object callback):
     else:
         alias = c_alias
 
-    try:
-        callback(node.type, alias, contact.totalsize, contact.currentsize, \
-                 contact.online)
-    except KeyError:
-        pass
+    callback(node.type, alias, contact.totalsize, contact.currentsize, \
+             contact.online)
 
 cdef void __buddy_node_cb(blist.PurpleBlistNode *node, object callback):
     cdef blist.PurpleBuddy *buddy = <blist.PurpleBuddy *>node
@@ -76,10 +70,7 @@ cdef void __buddy_node_cb(blist.PurpleBlistNode *node, object callback):
     else:
         alias = c_alias
 
-    try:
-        callback(node.type, name, alias)
-    except KeyError:
-        pass
+    callback(node.type, name, alias)
 
 cdef void __chat_node_cb(blist.PurpleBlistNode *node, object callback):
     cdef blist.PurpleChat *chat = <blist.PurpleChat *>node
@@ -91,50 +82,50 @@ cdef void __chat_node_cb(blist.PurpleBlistNode *node, object callback):
     else:
         name = c_name
 
-    try:
-        callback(node.type, name)
-    except KeyError:
-        pass
+    callback(node.type, name)
 
 cdef void __other_node_cb(blist.PurpleBlistNode *node, object callback):
-    try:
-        callback(node.type)
-    except KeyError:
-        pass
+    callback(node.type)
 
-cdef void new_list (blist.PurpleBuddyList *list):
-    debug.c_purple_debug_info("blist", "%s", "new_list\n")
-    try:
-        (<object>blist_cbs["new_list"])("new_list")
-    except KeyError:
-        pass
+cdef void new_list(blist.PurpleBuddyList *list):
+    """
+    Sets UI-specific data on a buddy list.
+    """
+    debug.c_purple_debug_info("blist", "%s", "new-list\n")
+    if blist_cbs.has_key("new-list"):
+        (<object> blist_cbs["new-list"])("new-list: TODO")
 
-cdef void new_node (blist.PurpleBlistNode *node):
-    debug.c_purple_debug_info("blist", "%s", "new_node\n")
-    try:
+cdef void new_node(blist.PurpleBlistNode *node):
+    """
+    Sets UI-specific data on a node.
+    """
+    debug.c_purple_debug_info("blist", "%s", "new-node\n")
+    if blist_cbs.has_key("new-node"):
         if node.type == blist.PURPLE_BLIST_GROUP_NODE:
-            __group_node_cb(node, blist_cbs["new_node"])
+            __group_node_cb(node, blist_cbs["new-node"])
         elif node.type == blist.PURPLE_BLIST_CONTACT_NODE:
-            __contact_node_cb(node, blist_cbs["new_node"])
+            __contact_node_cb(node, blist_cbs["new-node"])
         elif node.type == blist.PURPLE_BLIST_BUDDY_NODE:
-            __buddy_node_cb(node, blist_cbs["new_node"])
+            __buddy_node_cb(node, blist_cbs["new-node"])
         elif node.type == blist.PURPLE_BLIST_CHAT_NODE:
-            __chat_node_cb(node, blist_cbs["new_node"])
+            __chat_node_cb(node, blist_cbs["new-node"])
         elif node.type == blist.PURPLE_BLIST_OTHER_NODE:
-            __other_node_cb(node, blist_cbs["new_node"])
-    except KeyError:
-        pass
+            __other_node_cb(node, blist_cbs["new-node"])
 
-cdef void show (blist.PurpleBuddyList *list):
+cdef void show(blist.PurpleBuddyList *list):
+    """
+    The core will call this when it's finished doing its core stuff.
+    """
     debug.c_purple_debug_info("blist", "%s", "show\n")
-    try:
-        (<object>blist_cbs["show"])("show: TODO")
-    except KeyError:
-        pass
+    if blist_cbs.has_key("show"):
+        (<object> blist_cbs["show"])("show: TODO")
 
-cdef void update (blist.PurpleBuddyList *list, blist.PurpleBlistNode *node):
+cdef void update(blist.PurpleBuddyList *list, blist.PurpleBlistNode *node):
+    """
+    This will update a node in the buddy list.
+    """
     debug.c_purple_debug_info("blist", "%s", "update\n")
-    try:
+    if blist_cbs.has_key("update"):
         if node.type == blist.PURPLE_BLIST_GROUP_NODE:
             __group_node_cb(node, blist_cbs["update"])
         elif node.type == blist.PURPLE_BLIST_CONTACT_NODE:
@@ -145,12 +136,13 @@ cdef void update (blist.PurpleBuddyList *list, blist.PurpleBlistNode *node):
             __chat_node_cb(node, blist_cbs["update"])
         elif node.type == blist.PURPLE_BLIST_OTHER_NODE:
             __other_node_cb(node, blist_cbs["update"])
-    except KeyError:
-        pass
 
-cdef void remove (blist.PurpleBuddyList *list, blist.PurpleBlistNode *node):
+cdef void remove(blist.PurpleBuddyList *list, blist.PurpleBlistNode *node):
+    """
+    This removes a node from the list.
+    """
     debug.c_purple_debug_info("blist", "%s", "remove\n")
-    try:
+    if blist_cbs.has_key("remove"):
         if node.type == blist.PURPLE_BLIST_GROUP_NODE:
             __group_node_cb(node, blist_cbs["remove"])
         elif node.type == blist.PURPLE_BLIST_CONTACT_NODE:
@@ -161,44 +153,45 @@ cdef void remove (blist.PurpleBuddyList *list, blist.PurpleBlistNode *node):
             __chat_node_cb(node, blist_cbs["remove"])
         elif node.type == blist.PURPLE_BLIST_OTHER_NODE:
             __other_node_cb(node, blist_cbs["remove"])
-    except KeyError:
-        pass
 
-cdef void destroy (blist.PurpleBuddyList *list):
+cdef void destroy(blist.PurpleBuddyList *list):
+    """
+    When the list gets destroyed, this gets called to destroy the UI.
+    """
     debug.c_purple_debug_info("blist", "%s", "destroy\n")
-    try:
-        (<object>blist_cbs["destroy"])("destroy: TODO")
-    except KeyError:
-        pass
+    if blist_cbs.has_key("destroy"):
+        (<object> blist_cbs["destroy"])("destroy: TODO")
 
-cdef void set_visible (blist.PurpleBuddyList *list, glib.gboolean show):
+cdef void set_visible(blist.PurpleBuddyList *list, glib.gboolean show):
+    """
+    Hides or unhides the buddy list.
+    """
     debug.c_purple_debug_info("blist", "%s", "set-visible\n")
-    try:
-        (<object>blist_cbs["set_visible"])("set-visible: TODO")
-    except KeyError:
-        pass
+    if blist_cbs.has_key("set-visible"):
+        (<object> blist_cbs["set-visible"])("set-visible: TODO")
 
-cdef void request_add_buddy (account.PurpleAccount *acc,
-                             const_char *username, const_char *group,
-                             const_char *alias):
+cdef void request_add_buddy(account.PurpleAccount *acc, \
+        const_char *username, const_char *group, const_char *alias):
+    """
+    TODO
+    """
     debug.c_purple_debug_info("blist", "%s", "request-add-buddy\n")
-    try:
-        (<object>blist_cbs["request-add-buddy"])("request-add-buddy: TODO")
-    except KeyError:
-        pass
+    if blist_cbs.has_key("request-add-buddy"):
+        (<object> blist_cbs["request-add-buddy"])("request-add-buddy: TODO")
 
-cdef void request_add_chat (account.PurpleAccount *acc,
-                            blist.PurpleGroup *group, const_char *alias,
-                            const_char *name):
-    debug.c_purple_debug_info("blist", "%s", "request_add_chat\n")
-    try:
-        (<object>blist_cbs["request-add-chat"])("request-add-chat: TODO")
-    except KeyError:
-        pass
+cdef void request_add_chat(account.PurpleAccount *acc, \
+        blist.PurpleGroup *group, const_char *alias, const_char *name):
+    """
+    TODO
+    """
+    debug.c_purple_debug_info("blist", "%s", "request-add-chat\n")
+    if blist_cbs.has_key("request-add-chat"):
+        (<object> blist_cbs["request-add-chat"])("request-add-chat: TODO")
 
-cdef void request_add_group ():
-    debug.c_purple_debug_info("blist", "%s", "request_add_group\n")
-    try:
+cdef void request_add_group():
+    """
+    TODO
+    """
+    debug.c_purple_debug_info("blist", "%s", "request-add-group\n")
+    if blist_cbs.has_key("request-add-chat"):
         (<object>blist_cbs["request-add-chat"])("request-add-group: TODO")
-    except KeyError:
-        pass
