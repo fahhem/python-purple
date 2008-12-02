@@ -110,9 +110,15 @@ cdef extern from "libpurple/blist.h":
     void *c_purple_blist_get_handle "purple_blist_get_handle" ()
     void c_purple_blist_load "purple_blist_load" ()
     PurpleBuddyList* c_purple_blist_new "purple_blist_new" ()
-    PurpleBlistNodeType c_purple_blist_node_get_type "purple_blist_node_get_type" (PurpleBlistNode *node)
+    PurpleBlistNodeType c_purple_blist_node_get_type \
+            "purple_blist_node_get_type" (PurpleBlistNode *node)
+    int c_purple_blist_get_group_size "purple_blist_get_group_size" \
+            (PurpleGroup *group, glib.gboolean offline)
+    int c_purple_blist_get_group_online_count \
+            "purple_blist_get_group_online_count" (PurpleGroup *group)
     void c_purple_blist_set_ui_ops "purple_blist_set_ui_ops" (PurpleBlistUiOps *ops)
     const_char *c_purple_chat_get_name "purple_chat_get_name" (PurpleChat *chat)
+    const_char *c_purple_contact_get_alias "purple_contact_get_alias" (PurpleContact *contact)
     const_char *c_purple_group_get_name "purple_group_get_name" (PurpleGroup *group)
     PurpleBuddy *c_purple_buddy_new "purple_buddy_new" (account.PurpleAccount *account,
             char *screenname, char *alias)

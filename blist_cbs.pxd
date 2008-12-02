@@ -26,48 +26,46 @@ blist_cbs = {}
 
 cdef void __group_node_cb(blist.PurpleBlistNode *node, object callback):
     cdef blist.PurpleGroup *group = <blist.PurpleGroup *>node
+    cdef char *name = NULL
 
-    if group.name:
-        name = group.name
-    else:
+    name = <char *> blist.c_purple_group_get_name(group)
+    if name == NULL:
         name = ""
 
+    currentsize = blist.c_purple_blist_get_group_size(group, False)
+    totalsize = blist.c_purple_blist_get_group_size(group, True)
+    online = blist.c_purple_blist_get_group_online_count(group)
+
     try:
-        callback(node.type, name, group.totalsize, group.currentsize, \
-                 group.online)
+        callback(node.type, name, totalsize, currentsize, online)
     except KeyError:
         pass
 
 cdef void __contact_node_cb(blist.PurpleBlistNode *node, object callback):
     cdef blist.PurpleContact *contact = <blist.PurpleContact *>node
+    cdef char *alias = NULL
 
-    if contact.alias:
-        alias = contact.alias
-    else:
+    alias = <char *> blist.c_purple_contact_get_alias(contact)
+    if alias == NULL:
         alias = ""
 
-    name = ""
-
     try:
-        callback(node.type, name, alias, contact.totalsize, contact.currentsize, \
+        callback(node.type, alias, contact.totalsize, contact.currentsize, \
                  contact.online)
     except KeyError:
         pass
 
 cdef void __buddy_node_cb(blist.PurpleBlistNode *node, object callback):
     cdef blist.PurpleBuddy *buddy = <blist.PurpleBuddy *>node
+    cdef char *name = NULL
+    cdef char *alias = NULL
 
-    if buddy.server_alias:
-        alias = buddy.server_alias
-    elif buddy.alias:
-        alias = buddy.alias
-    else:
-        alias = ""
-
-    if buddy.name:
-        name = buddy.name
-    else:
+    name = <char *> blist.c_purple_buddy_get_name(buddy)
+    if name == NULL:
         name = ""
+    alias = <char *> blist.c_purple_buddy_get_alias_only(buddy)
+    if alias == NULL:
+        alias = ""
 
     try:
         callback(node.type, name, alias)
@@ -76,14 +74,14 @@ cdef void __buddy_node_cb(blist.PurpleBlistNode *node, object callback):
 
 cdef void __chat_node_cb(blist.PurpleBlistNode *node, object callback):
     cdef blist.PurpleChat *chat = <blist.PurpleChat *>node
+    cdef char *name = NULL
 
-    if chat.alias:
-        alias = chat.alias
-    else:
-        alias = ""
+    name = <char *> blist.c_purple_chat_get_name(chat)
+    if name == NULL:
+        name = ""
 
     try:
-        callback(node.type, alias)
+        callback(node.type, name)
     except KeyError:
         pass
 
@@ -102,7 +100,6 @@ cdef void new_list (blist.PurpleBuddyList *list):
 
 cdef void new_node (blist.PurpleBlistNode *node):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "new_node\n")
-
     try:
         if node.type == blist.PURPLE_BLIST_GROUP_NODE:
             __group_node_cb(node, blist_cbs["new_node"])
@@ -114,8 +111,6 @@ cdef void new_node (blist.PurpleBlistNode *node):
             __chat_node_cb(node, blist_cbs["new_node"])
         elif node.type == blist.PURPLE_BLIST_OTHER_NODE:
             __other_node_cb(node, blist_cbs["new_node"])
-        else:
-            (<object>blist_cbs["new_node"])(node.type)
     except KeyError:
         pass
 
@@ -128,7 +123,6 @@ cdef void show (blist.PurpleBuddyList *list):
 
 cdef void update (blist.PurpleBuddyList *list, blist.PurpleBlistNode *node):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "update\n")
-
     try:
         if node.type == blist.PURPLE_BLIST_GROUP_NODE:
             __group_node_cb(node, blist_cbs["update"])
@@ -140,8 +134,6 @@ cdef void update (blist.PurpleBuddyList *list, blist.PurpleBlistNode *node):
             __chat_node_cb(node, blist_cbs["update"])
         elif node.type == blist.PURPLE_BLIST_OTHER_NODE:
             __other_node_cb(node, blist_cbs["update"])
-        else:
-            (<object>blist_cbs["update"])(node.type)
     except KeyError:
         pass
 
@@ -159,8 +151,6 @@ cdef void remove (blist.PurpleBuddyList *list, blist.PurpleBlistNode *node):
             __chat_node_cb(node, blist_cbs["remove"])
         elif node.type == blist.PURPLE_BLIST_OTHER_NODE:
             __other_node_cb(node, blist_cbs["remove"])
-        else:
-            (<object>blist_cbs["remove"])(node.type)
     except KeyError:
         pass
 
@@ -178,7 +168,7 @@ cdef void set_visible (blist.PurpleBuddyList *list, glib.gboolean show):
     except KeyError:
         pass
 
-cdef void request_add_buddy (account.PurpleAccount *account,
+cdef void request_add_buddy (account.PurpleAccount *acc,
                              const_char *username, const_char *group,
                              const_char *alias):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "request_add_buddy\n")
@@ -187,7 +177,7 @@ cdef void request_add_buddy (account.PurpleAccount *account,
     except KeyError:
         pass
 
-cdef void request_add_chat (account.PurpleAccount *account,
+cdef void request_add_chat (account.PurpleAccount *acc,
                             blist.PurpleGroup *group, const_char *alias,
                             const_char *name):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "request_add_chat\n")
