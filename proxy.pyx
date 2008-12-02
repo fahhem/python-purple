@@ -106,27 +106,29 @@ cdef class ProxyInfo:
             return False
 
         c_proxyinfo = account.c_purple_account_get_proxy_info(c_account)
+        if c_proxyinfo == NULL:
+                c_proxyinfo = proxy.c_purple_proxy_info_new()
+                account.c_purple_account_set_proxy_info(c_account, c_proxyinfo)
 
-        if info.has_key('type'):
+        if info.has_key('type') and info['type']:
             type = info['type']
             if not type in self.types.keys():
-                #FIXME: Message error or call a callback handle to error
-                return False
+                type = 'HTTP'
             proxy.c_purple_proxy_info_set_type(c_proxyinfo, self.types[type])
 
-        if info.has_key('host'):
+        if info.has_key('host') and info['host']:
             host = info['host']
             proxy.c_purple_proxy_info_set_host(c_proxyinfo, host)
 
-        if info.has_key('port'):
+        if info.has_key('port') and info['port']:
             port = int(info['port'])
             proxy.c_purple_proxy_info_set_port(c_proxyinfo, port)
 
-        if info.has_key('username'):
+        if info.has_key('username') and info['username']:
             username = info['username']
             proxy.c_purple_proxy_info_set_username(c_proxyinfo, username)
 
-        if info.has_key('password'):
+        if info.has_key('password') and info['password']:
             password = info['password']
             proxy.c_purple_proxy_info_set_password(c_proxyinfo, password)
 
