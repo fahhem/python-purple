@@ -212,3 +212,27 @@ cdef class Account:
             account.purple_account_new(self.username, self.protocol_id)
             self.__exists = True
             return True
+
+    def connect(self):
+        """
+        Connects to an account.
+
+        @return True if successful, False if account doesn't exists
+        """
+        if self.__exists:
+            account.purple_account_connect(self._get_structure())
+            return True
+        else:
+            return False
+
+    def disconnect(self):
+        """
+        Disconnects from an account.
+
+        @return True if successful, False if account doesn't exists
+        """
+        if self.__exists:
+            account.purple_account_disconnect(self._get_structure())
+            return True
+        else:
+            return False
