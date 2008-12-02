@@ -45,7 +45,6 @@ cdef class Account:
         self.__proxy = ProxyInfo()
         self.__proxy.c_proxyinfo = c_proxyinfo
 
-
     def set_password(self, password):
         account.c_purple_account_set_password(self.c_account, password)
 

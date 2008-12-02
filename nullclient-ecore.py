@@ -27,10 +27,10 @@ def blist_callback(name):
 
 #blist_cbs["new_list"] = blist_callback
 #blist_cbs["new_node"] = blist_callback
-blist_cbs["show"] = blist_callback
+#blist_cbs["show"] = blist_callback
 #blist_cbs["update"] = blist_callback
-blist_cbs["remove"] = blist_callback
-blist_cbs["destroy"] = blist_callback
+#blist_cbs["remove"] = blist_callback
+#blist_cbs["destroy"] = blist_callback
 blist_cbs["set_visible"] = blist_callback
 blist_cbs["request_add_buddy"] = blist_callback
 blist_cbs["request_add_chat"] = blist_callback
@@ -58,10 +58,11 @@ cbs["connection"] = conn_cbs
 def conv_callback(name):
     print "---- conversation callback example: %s" % name
 
-conv_cbs["create_conversation"] = conv_callback
-conv_cbs["destroy_conversation"] = conv_callback
+#conv_cbs["create_conversation"] = conv_callback
+#conv_cbs["destroy_conversation"] = conv_callback
 conv_cbs["write_chat"] = conv_callback
 conv_cbs["write_conv"] = conv_callback
+#conv_cbs["write_im"] = conv_callback
 conv_cbs["chat_add_users"] = conv_callback
 conv_cbs["chat_rename_user"] = conv_callback
 conv_cbs["chat_remove_users"] = conv_callback
@@ -117,7 +118,9 @@ signal_cbs["receiving_im_msg"] = receiving_im_msg_cb
 class MainWindow:
     def __init__(self, quit_cb):
         global conv_cbs
+        global signal_cbs
         self.bt_cbs = {}
+        self.send_cbs = {}
         self.quit_cb = quit_cb
         conv_cbs["write_im"] = self._write_im_cb
 
@@ -127,8 +130,8 @@ class MainWindow:
 
         hbox_cmd = etk.HBox(homogeneous=False)
         self.cmd_entry = etk.Entry()
-        lcmd = etk.Label(text="Type your message: ")
-        hbox_cmd.append(lcmd, etk.HBox.START, etk.HBox.START, 0)
+        self.lcmd = etk.Label(text="Type your message: ")
+        hbox_cmd.append(self.lcmd, etk.HBox.START, etk.HBox.START, 0)
         hbox_cmd.append(self.cmd_entry, etk.HBox.START, etk.HBox.EXPAND_FILL, 0)
 
         hbox_buttons = etk.HBox(homogeneous=False)
@@ -181,8 +184,13 @@ class MainWindow:
 
     def _send_bt_cb(self, pointer):
         bname = self.blist.selected_rows[0][0]
-        if bname:
-            print "ITEM: %s" % bname
+        msg = self.cmd_entry.text
+        if bname and msg != "":
+            if self.send_cbs.has_key("on_clicked"):
+                self.send_cbs["on_clicked"](bname, msg)
+        else:
+            print "Buddy not selected!"
+        self.cmd_entry.text = ""
 
     def _purple_conn_status_cb(self, txt, step, step_count):
             self.lstatus.text = txt
@@ -197,7 +205,7 @@ class MainWindow:
     def remove_buddy(self, bname):
         self.blistmodel.remove([bname])
 
-    def _purple_disconnected_status_cb(self, pointer):
+    def _purple_disconnected_status_cb(self):
         self.lstatus.text = "Disconnected"
 
     def set_panel_text(self, txt):
@@ -206,6 +214,10 @@ class MainWindow:
     def add_bt_conn_cb(self, cb):
         if callable(cb):
             self.bt_cbs["on_clicked"] = cb
+
+    def add_send_cb(self, cb):
+        if callable(cb):
+            self.send_cbs["on_clicked"] = cb
 
     def add_quit_cb(self, cb):
         if callable(cb):
@@ -221,6 +233,7 @@ class NullClientPurple:
         self.p = purple.Purple(debug_enabled=False)
         self.window = MainWindow(self.quit)
         self.buddies = [] #online buddies
+        self.conversations = {}
         self.account = None
         self.protocol_id = "prpl-jabber"
         self.username = "carmanplugintest@gmail.com"
@@ -231,10 +244,12 @@ class NullClientPurple:
         global signal_cbs
         cbs["blist"]["update"] = self._purple_update_blist_cb
         signal_cbs["buddy_signed_off"] = self._purple_signal_sign_off_cb
+        cbs["conversation"]["create_conversation"] = self._purple_create_conv_cb
         self.p.purple_init(cbs)
 
         #Initializing UI
         self.window.add_bt_conn_cb(self.connect)
+        self.window.add_send_cb(self.send_msg)
         self.window.init_window()
 
     def _purple_update_blist_cb(self, type, name=None, totalsize=None,\
@@ -248,6 +263,13 @@ class NullClientPurple:
     def _purple_signal_sign_off_cb(self, name, bname):
         self.buddies.remove(bname)
         self.window.remove_buddy(bname)
+
+    def _purple_create_conv_cb(self, name, type):
+        bname = name.split("/")[0]
+        if bname in self.buddies and not self.conversations.has_key(name):
+            conv = purple.Conversation()
+            conv.initialize(self.account, "IM", bname)
+            self.conversations[bname] = conv
 
     def connect(self):
         self.account = purple.Account(self.username, self.protocol_id)
@@ -263,9 +285,20 @@ class NullClientPurple:
         self.p.connect()
         self.p.attach_signals(signal_cbs)
 
+    def send_msg(self, name, msg):
+        if not self.conversations.has_key(name):
+            conv = purple.Conversation()
+            conv.initialize(self.account, "IM", name)
+            self.conversations[name] = conv
+        self.conversations[name].write(msg)
+
     def quit(self, o):
-        print "quitting"
-        self.p = None
+        print "[DEBUG]: quitting"
+        for i in self.conversations:
+            self.conversations[i].destroy()
+            self.conversations[i] = None
+        self.conversations = None
+        self.p.destroy()
         ecore.main_loop_quit()
 
 if __name__ == '__main__':

@@ -162,5 +162,7 @@ cdef extern from "libpurple/conversation.h":
     void c_purple_conversation_set_ui_ops "purple_conversation_set_ui_ops" (PurpleConversation *conv, PurpleConversationUiOps *ops)
     void c_purple_conversations_set_ui_ops "purple_conversations_set_ui_ops" (PurpleConversationUiOps *ops)
     PurpleConvIm *c_purple_conversation_get_im_data "purple_conversation_get_im_data" (PurpleConversation *conv)
+    char *c_purple_conversation_get_name "purple_conversation_get_name" (PurpleConversation *conv)
+    account.PurpleAccount *c_purple_conversation_get_account "purple_conversation_get_account" (PurpleConversation *conv)
     void c_purple_conv_im_send "purple_conv_im_send" (PurpleConvIm *im, char *message)
     void c_purple_conversation_destroy "purple_conversation_destroy" (PurpleConversation *conv)

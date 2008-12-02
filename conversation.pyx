@@ -22,12 +22,37 @@ cimport purple
 cdef class Conversation:
     """ Conversation class """
     cdef conversation.PurpleConversation *__conv
+    cdef Account __acc
+
+    cdef object name
 
     def __init__(self):
         conversation.c_purple_conversations_init()
+        self.name = None
 
-    def conversation_new(self, type, acc, char *name):
-        self.__conv = conversation.c_purple_conversation_new(type, <account.PurpleAccount*>acc.__account, name)
+    def initialize(self, acc, type, char *name):
+        self.__acc = acc
+        if type == "UNKNOWN":
+            self.__conv =\
+            conversation.c_purple_conversation_new(conversation.PURPLE_CONV_TYPE_UNKNOWN,\
+                <account.PurpleAccount*>self.__acc.c_account, name)
+        elif type == "IM":
+            self.__conv =\
+            conversation.c_purple_conversation_new(conversation.PURPLE_CONV_TYPE_IM,\
+                <account.PurpleAccount*>self.__acc.c_account, name)
+        elif type == "CHAT":
+            self.__conv =\
+            conversation.c_purple_conversation_new(conversation.PURPLE_CONV_TYPE_CHAT,\
+                <account.PurpleAccount*>self.__acc.c_account, name)
+        elif type == "MISC":
+            self.__conv =\
+            conversation.c_purple_conversation_new(conversation.PURPLE_CONV_TYPE_MISC,\
+                <account.PurpleAccount*>self.__acc.c_account, name)
+        elif type == "ANY":
+            self.__conv =\
+            conversation.c_purple_conversation_new(conversation.PURPLE_CONV_TYPE_ANY,\
+                <account.PurpleAccount*>self.__acc.c_account, name)
+        self.name = name
 
     def conversation_set_ui_ops(self):
         cdef conversation.PurpleConversationUiOps c_conv_ui_ops
@@ -49,16 +74,11 @@ cdef class Conversation:
 
         conversation.c_purple_conversation_set_ui_ops(self.__conv, &c_conv_ui_ops)
 
-    def conversation_write(self, char *message):
+    def write(self, char *message):
         conversation.c_purple_conv_im_send(conversation.c_purple_conversation_get_im_data(self.__conv), message)
 
-    def conversation_destroy(self):
-        conversation.c_purple_conversation_destroy(self.__conv)
-
-    def conversation_get_handle(self):
+    def get_handle(self):
         conversation.c_purple_conversations_get_handle()
 
-    def send_message(self, buddy, char *message):
-        self.conversation_new(1, buddy.account, buddy.name)
-        self.conversation_set_ui_ops()
-        self.conversation_write(message)
+    def destroy(self):
+        conversation.c_purple_conversation_destroy(self.__conv)

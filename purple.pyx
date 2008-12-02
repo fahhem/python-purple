@@ -62,7 +62,6 @@ cdef class Purple:
     @parm app_name: Set application name.
     @parm default_path: Full path for libpurple user files.
     """
-
     def __init__(self, debug_enabled=True, app_name=__APP_NAME__, default_path=__DEFAULT_PATH__):
         if app_name is not __APP_NAME__:
             __APP_NAME__ = app_name
@@ -77,7 +76,7 @@ cdef class Purple:
         # adds glib iteration inside ecore main loop
         ecore.timer_add(0.001, self.__glib_iteration_when_idle)
 
-    def __del__(self):
+    def destroy(self):
         core.c_purple_core_quit()
 
     cdef void __core_ui_ops_ui_prefs_init(self):
@@ -268,6 +267,10 @@ cdef class Purple:
                 conversation.c_purple_conversations_get_handle(),
                 "receiving-im-msg", &handle,
                 <signals.PurpleCallback> signal_receiving_im_msg_cb, NULL)
+
+    def new_account(self, username, protocol_id):
+        acc = Account(username, protocol_id)
+        return acc
 
 include "proxy.pyx"
 include "account.pyx"

@@ -30,7 +30,7 @@ cdef void create_conversation (conversation.PurpleConversation *conv):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "conversation",
                          "create_conversation\n")
     try:
-        (<object>conversation_cbs["create_conversation"])("create_conversation")
+        (<object>conversation_cbs["create_conversation"])(conv.name, conv.type)
     except KeyError:
         pass
 
