@@ -396,20 +396,20 @@ cdef class Account:
 
             self.__exists = True
             return True
-	
-	def remove(self):
-		"""
+    
+    def remove(self):
+        """
         Removes as existing account.
 
         @return True if successful, False if account doesnt exists
         """
-		if self.__exists:
-			account.purple_accounts_remove(self._get_structure())
-			
-			self__exists = False
-			return True
-		else:
-			return False
+        if self.__exists:
+            account.purple_accounts_remove(self._get_structure())
+        
+            self__exists = False
+            return True
+        else:
+            return False
 
     def connect(self):
         """
