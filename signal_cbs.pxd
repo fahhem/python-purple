@@ -67,6 +67,38 @@ cdef void signal_signed_off_cb (connection.PurpleConnection *gc, \
     except KeyError:
         pass
 
+cdef void signal_connection_error_cb (connection.PurpleConnection *gc, \
+        connection.PurpleConnectionError err, char *c_desc):
+
+    short_desc = {
+        0: "Network error",
+        1: "Invalid username",
+        2: "Authentication failed",
+        3: "Authentication impossible",
+        4: "No SSL support",
+        5: "Encryption error",
+        6: "Name in use",
+        7: "Invalid settings",
+        8: "SSL certificate not provided",
+        9: "SSL certificate untrusted",
+        10: "SSL certificate expired",
+        11: "SSL certificate not activated",
+        12: "SSL certificate hostname mismatch",
+        13: "SSL certificate fingerprint mismatch",
+        14: "SSL certificate self signed",
+        15: "SSL certificate other error",
+        16: "Other error" }[<int>err]
+
+    if c_desc == NULL:
+        desc = None
+    else:
+        desc = c_desc
+
+    try:
+        (<object> signal_cbs["connection-error"])(short_desc, desc)
+    except KeyError:
+        pass
+
 cdef void signal_buddy_signed_on_cb (blist.PurpleBuddy *buddy):
     cdef char *c_name = NULL
     cdef char *c_alias = NULL

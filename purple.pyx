@@ -284,6 +284,11 @@ cdef class Purple:
                     connection.c_purple_connections_get_handle(),
                     "signed-off", &handle,
                     <signals.PurpleCallback> signal_signed_off_cb, NULL)
+        elif name == "connection-error":
+            signals.c_purple_signal_connect(
+                    connection.c_purple_connections_get_handle(),
+                    "connection-error", &handle,
+                    <signals.PurpleCallback> signal_connection_error_cb, NULL)
         elif name == "buddy-signed-on":
             signals.c_purple_signal_connect(
                     blist.c_purple_blist_get_handle(),
