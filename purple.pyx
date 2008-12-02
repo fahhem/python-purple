@@ -80,7 +80,6 @@ cdef class Purple:
         # adds glib iteration inside ecore main loop
         ecore.timer_add(0.001, self.__glib_iteration_when_idle)
 
-
     def destroy(self):
         core.c_purple_core_quit()
 
@@ -142,14 +141,12 @@ cdef class Purple:
         """ Initializes libpurple """
 
         if callbacks_dict is not None:
-            # global account_cbs
             global blist_cbs
             global connection_cbs
             global conversation_cbs
             global notify_cbs
             global request_cbs
 
-            # account_cbs = callbacks_dict["account"]
             blist_cbs = callbacks_dict["blist"]
             connection_cbs = callbacks_dict["connection"]
             conversation_cbs = callbacks_dict["conversation"]

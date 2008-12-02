@@ -13,14 +13,6 @@ request_cbs = {}
 def account_callback(name):
     print "---- account callback example: %s" % name
 
-acc_cbs["notify_added"] = account_callback
-acc_cbs["status_changed"] = account_callback
-acc_cbs["request_add"] = account_callback
-acc_cbs["request_authorize"] = account_callback
-acc_cbs["close_account_request"] = account_callback
-
-cbs["account"] = acc_cbs
-
 def blist_callback(name):
     print "---- blist callback example: %s" % name
 
@@ -278,6 +270,14 @@ class NullClientPurple:
 
         global cbs
         cbs["blist"]["update"] = self._purple_update_blist_cb
+
+        self.p.add_account_cb("notify_added", account_callback)
+        self.p.add_account_cb("status_changed", account_callback)
+        self.p.add_account_cb("request_add", account_callback)
+        self.p.add_account_cb("request_authorize", account_callback)
+        self.p.add_account_cb("close_account_request", account_callback)
+
+
         self.p.purple_init(cbs)
         self.p.accounts_init()
 
