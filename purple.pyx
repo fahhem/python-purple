@@ -158,6 +158,7 @@ cdef class Purple:
         conn = Connection()
         conn.connect()
 
+include "proxy.pyx"
 include "account.pyx"
 include "buddy.pyx"
 include "connection.pyx"
