@@ -5,6 +5,7 @@ import sys
 
 cbs = {}
 acc_cbs = {}
+conn_cbs = {}
 conv_cbs = {}
 
 def account_callback(name):
@@ -17,6 +18,20 @@ acc_cbs["request_authorize"] = account_callback
 acc_cbs["close_account_request"] = account_callback
 
 cbs["account"] = acc_cbs
+
+def conn_callback(name):
+    print "---- connection callback example: %s" % name
+
+conn_cbs["connect_progress"] = conn_callback
+conn_cbs["connected"] = conn_callback
+conn_cbs["disconnected"] = conn_callback
+conn_cbs["notice"] = conn_callback
+conn_cbs["report_disconnect"] = conn_callback
+conn_cbs["network_connected"] = conn_callback
+conn_cbs["network_disconnected"] = conn_callback
+conn_cbs["report_disconnect_reason"] = conn_callback
+
+cbs["connection"] = conn_cbs
 
 def conv_callback(name):
     print "---- conversation callback example: %s" % name

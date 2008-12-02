@@ -30,13 +30,16 @@ __APP_VERSION__ = "0.1"
 
 cdef core.PurpleCoreUiOps c_core_ui_ops
 cdef account.PurpleAccountUiOps c_account_ui_ops
+cdef connection.PurpleConnectionUiOps c_conn_ui_ops
 cdef conversation.PurpleConversationUiOps c_conv_ui_ops
 cdef eventloop.PurpleEventLoopUiOps c_eventloop_ui_ops
+
 cdef glib.GHashTable *c_ui_info
 
 c_ui_info = NULL
 
 include "account_cbs.pxd"
+include "connection_cbs.pxd"
 include "conversation_cbs.pxd"
 
 cdef class Purple:
@@ -80,8 +83,13 @@ cdef class Purple:
         global c_conv_ui_ops
 
         account.c_purple_accounts_set_ui_ops(&c_account_ui_ops)
+        connection.c_purple_connections_set_ui_ops(&c_conn_ui_ops)
+        #blist.c_purple_blist_set_ui_ops(&c_blist_ui_ops)
         conversation.c_purple_conversations_set_ui_ops(&c_conv_ui_ops)
-        # FIXME: Add core ui initialization here
+        #notify.c_purple_notify_set_ui_ops(&c_notify_ui_ops)
+        #request.c_purple_request_set_ui_ops(&c_request_ui_ops)
+        #ft.c_purple_xfers_set_ui_ops(&c_ft_ui_ops)
+        #roomlist.c_purple_roomlist_set_ui_ops(&c_rlist_ui_ops)
 
     cdef void __core_ui_ops_quit(self):
         debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "core_ui_ops", "quit\n")
@@ -118,15 +126,18 @@ cdef class Purple:
         """ Initializes libpurple """
 
         global c_account_ui_ops
+        global c_conn_ui_ops
         global c_conv_ui_ops
         global c_core_ui_ops
         global c_eventloop_ui_ops
 
         if callbacks_dict is not None:
             global account_cbs
+            global connection_cbs
             global conversation_cbs
 
             account_cbs = callbacks_dict["account"]
+            connection_cbs = callbacks_dict["connection"]
             conversation_cbs = callbacks_dict["conversation"]
 
         c_account_ui_ops.notify_added = notify_added
@@ -134,6 +145,15 @@ cdef class Purple:
         c_account_ui_ops.request_add = request_add
         c_account_ui_ops.request_authorize = request_authorize
         c_account_ui_ops.close_account_request = close_account_request
+
+        c_conn_ui_ops.connect_progress = connect_progress
+        c_conn_ui_ops.connected = connected
+        c_conn_ui_ops.disconnected = disconnected
+        c_conn_ui_ops.notice = notice
+        c_conn_ui_ops.report_disconnect = report_disconnect
+        c_conn_ui_ops.network_connected = network_connected
+        c_conn_ui_ops.network_disconnected = network_disconnected
+        c_conn_ui_ops.report_disconnect_reason = report_disconnect_reason
 
         c_conv_ui_ops.create_conversation = create_conversation
         c_conv_ui_ops.destroy_conversation = destroy_conversation
