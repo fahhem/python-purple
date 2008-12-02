@@ -34,6 +34,22 @@ cdef class Plugin:
     def get_id(self):
         return self.c_plugin.info.id
 
+    def get_all(self):
+        ''' @return A string list of protocols' (id, name) '''
+        '''    [('prpl-jabber', 'XMPP'), ('foo', 'MSN'), ...] '''
+        cdef glib.GList *iter
+        cdef plugin.PurplePlugin *pp
+
+        protocols = []
+
+        iter = plugin.c_purple_plugins_get_protocols()
+        while iter:
+            pp = <plugin.PurplePlugin*> iter.data
+            if pp.info and pp.info.name:
+                protocols.append((pp.info.id, pp.info.name))
+            iter = iter.next
+
+        return protocols
 
 cdef class Plugins:
 
