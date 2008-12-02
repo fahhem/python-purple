@@ -103,9 +103,15 @@ cdef void write_im(conversation.PurpleConversation *conv, const_char *who, \
     else:
         message = None
 
+    # FIXME: Maybe we need add more purple flags in the future
+    if flags & conversation.PURPLE_MESSAGE_SEND:
+        flag = "SEND"
+    else:
+        flag = "RECV"
+
     if conversation_cbs.has_key("write-im"):
         (<object> conversation_cbs["write-im"])(username, sender, \
-                                                sender_alias, message)
+				sender_alias, message, flag)
 
 cdef void write_conv(conversation.PurpleConversation *conv, const_char *name, \
         const_char *alias, const_char *message, \
