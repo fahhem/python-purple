@@ -3,10 +3,12 @@ Section: python
 Priority: optional
 Maintainer: Bruno Abinader <bruno.abinader@openbossa.org>
 Build-Depends: cdbs, debhelper, libpurple-dev
+Standards-Version: 3.8.0
 
 Package: python-purple
 Architecture: any
 Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}
+Provides: ${python:Provides}
 Suggests: ${shlibs:Suggests}, cython
 Description: Python bind for libpurple
  Libpurple is a library intended to be used by programmers seeking
