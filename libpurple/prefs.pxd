@@ -30,7 +30,7 @@ cdef extern from "libpurple/prefs.h":
         PURPLE_PREF_PATH
         PURPLE_PREF_PATH_LIST
 
-    void c_purple_prefs_add_none "purple_prefs_add_none" (char *name)
-    void c_purple_prefs_rename "purple_prefs_rename" (char *oldname, char *newname)
-    char *c_purple_prefs_get_string "purple_prefs_get_string" (char *name)
-    glib.gboolean c_purple_prefs_load "purple_prefs_load" ()
+    void purple_prefs_add_none(char *name)
+    void purple_prefs_rename(char *oldname, char *newname)
+    char *purple_prefs_get_string(char *name)
+    glib.gboolean purple_prefs_load()
