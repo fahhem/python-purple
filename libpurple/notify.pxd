@@ -73,11 +73,11 @@ cdef extern from "libpurple/notify.h":
         void *(*notify_message) (PurpleNotifyMsgType type, const_char *title, \
                 const_char *primary, const_char *secondary)
         void *(*notify_email) (connection.PurpleConnection *gc, \
-                const_char *subject, const_char *_from, const_char *to, \
+                const_char *subject, const_char *sender, const_char *to, \
                 const_char *url)
         void *(*notify_emails) (connection.PurpleConnection *gc,
                 size_t count, glib.gboolean detailed, const_char **subjects, \
-                const_char **froms, const_char **tos, const_char **urls)
+                const_char **senders, const_char **tos, const_char **urls)
         void *(*notify_formatted) (const_char *title, const_char *primary, \
                 const_char *secondary, const_char *text)
         void *(*notify_searchresults) (connection.PurpleConnection *gc, \

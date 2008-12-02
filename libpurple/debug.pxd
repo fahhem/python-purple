@@ -20,8 +20,9 @@
 cimport glib
 
 cdef extern from "libpurple/debug.h":
+
     ctypedef enum PurpleDebugLevel:
-        PURPLE_DEBUG_ALL
+        PURPLE_DEBUG_ALL = 0
         PURPLE_DEBUG_MISC
         PURPLE_DEBUG_INFO
         PURPLE_DEBUG_WARNING
