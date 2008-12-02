@@ -65,10 +65,7 @@ cdef class Purple:
     @parm default_path: Full path for libpurple user files.
     """
 
-    cdef object __accounts
-
     def __init__(self, debug_enabled=True, app_name=__APP_NAME__, default_path=__DEFAULT_PATH__):
-        self.__accounts = {}
         if app_name is not __APP_NAME__:
             __APP_NAME__ = app_name
 
@@ -244,15 +241,15 @@ cdef class Purple:
         # load pounces
         pounce.c_purple_pounces_load()
 
-        # initialize accounts
-        self.load_accounts()
-
         return ret
 
     def add_callback(self, type, name, callback):
         """
         Adds a callback with given name inside callback's type.
-        Example: add_callback("account", "notify-added", notify_added_cb)
+
+        @param type     Callback type (e.g. "account")
+        @param name     Callback name (e.g. "notify-added")
+        @param callback Callback to be called
         """
         global account_cbs
         global blist_cbs
@@ -317,45 +314,6 @@ cdef class Purple:
                     jabber, "jabber-receiving-xmlnode", &handle,
                     <signals.PurpleCallback> jabber_receiving_xmlnode_cb, NULL)
 
-    def __get_accounts(self):
-        return self.__accounts
-    accounts = property(__get_accounts)
-
-    def new_account(self, username, protocol_id):
-        acc = Account(username, protocol_id)
-        return acc
-
-    def load_accounts(self):
-        cdef glib.GList *iter
-        cdef account.PurpleAccount *acc
-        iter = account.purple_accounts_get_all()
-        while iter:
-            acc = <account.PurpleAccount *> iter.data
-            if <account.PurpleAccount *>acc:
-                username = <char *> account.purple_account_get_username(acc)
-                protocol_id = <char *> account.purple_account_get_protocol_id(acc)
-                self.account_add(username.split("/")[0], protocol_id, \
-                        "172.18.216.211", 8080)
-            iter = iter.next
-
-    def account_add(self, username, protocol_id, host, port):
-        if not self.account_verify(username):
-            acc = purple.Account(username, protocol_id)
-            self.__accounts[username] = acc
-            if not account.purple_accounts_find(username, protocol_id):
-                acc.proxy.set_type(purple.ProxyInfoType().HTTP)
-                acc.proxy.set_host(host)
-                acc.proxy.set_port(port)
-                acc.save_into_xml()
-
-    def account_verify(self, acc_username):
-        if self.__accounts:
-            for username in self.__accounts.keys():
-                if acc_username == username:
-                    return self.__accounts[username]
-        else:
-            return None
-
     def accounts_get_all(self):
         cdef glib.GList *iter
         cdef account.PurpleAccount *acc
@@ -386,4 +344,3 @@ include "account.pyx"
 include "buddy.pyx"
 #include "connection.pyx"
 include "conversation.pyx"
-
