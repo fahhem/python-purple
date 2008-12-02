@@ -74,7 +74,7 @@ cdef class Purple:
 
         debug.purple_debug_set_enabled(debug_enabled)
         util.purple_util_set_user_dir(default_path)
-        plugin.c_purple_plugins_add_search_path(default_path)
+        plugin.purple_plugins_add_search_path(default_path)
 
         # adds glib iteration inside ecore main loop
         ecore.timer_add(0.001, self.__glib_iteration_when_idle)
