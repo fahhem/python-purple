@@ -101,21 +101,21 @@ cdef void new_list (blist.PurpleBuddyList *list):
 cdef void new_node (blist.PurpleBlistNode *node):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "new_node\n")
 
-    if node.type == blist.PURPLE_BLIST_GROUP_NODE:
-        __group_node_cb(node, blist_cbs["new_node"])
-    elif node.type == blist.PURPLE_BLIST_CONTACT_NODE:
-        __contact_node_cb(node, blist_cbs["new_node"])
-    elif node.type == blist.PURPLE_BLIST_BUDDY_NODE:
-        __buddy_node_cb(node, blist_cbs["new_node"])
-    elif node.type == blist.PURPLE_BLIST_CHAT_NODE:
-        __chat_node_cb(node, blist_cbs["new_node"])
-    elif node.type == blist.PURPLE_BLIST_OTHER_NODE:
-        __other_node_cb(node, blist_cbs["new_node"])
-    else:
-        try:
+    try:
+        if node.type == blist.PURPLE_BLIST_GROUP_NODE:
+            __group_node_cb(node, blist_cbs["new_node"])
+        elif node.type == blist.PURPLE_BLIST_CONTACT_NODE:
+            __contact_node_cb(node, blist_cbs["new_node"])
+        elif node.type == blist.PURPLE_BLIST_BUDDY_NODE:
+            __buddy_node_cb(node, blist_cbs["new_node"])
+        elif node.type == blist.PURPLE_BLIST_CHAT_NODE:
+            __chat_node_cb(node, blist_cbs["new_node"])
+        elif node.type == blist.PURPLE_BLIST_OTHER_NODE:
+            __other_node_cb(node, blist_cbs["new_node"])
+        else:
             (<object>blist_cbs["new_node"])(node.type)
-        except KeyError:
-            pass
+    except KeyError:
+        pass
 
 cdef void show (blist.PurpleBuddyList *list):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "show\n")
@@ -127,40 +127,40 @@ cdef void show (blist.PurpleBuddyList *list):
 cdef void update (blist.PurpleBuddyList *list, blist.PurpleBlistNode *node):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "update\n")
 
-    if node.type == blist.PURPLE_BLIST_GROUP_NODE:
-        __group_node_cb(node, blist_cbs["update"])
-    elif node.type == blist.PURPLE_BLIST_CONTACT_NODE:
-        __contact_node_cb(node, blist_cbs["update"])
-    elif node.type == blist.PURPLE_BLIST_BUDDY_NODE:
-        __buddy_node_cb(node, blist_cbs["update"])
-    elif node.type == blist.PURPLE_BLIST_CHAT_NODE:
-        __chat_node_cb(node, blist_cbs["update"])
-    elif node.type == blist.PURPLE_BLIST_OTHER_NODE:
-        __other_node_cb(node, blist_cbs["update"])
-    else:
-        try:
+    try:
+        if node.type == blist.PURPLE_BLIST_GROUP_NODE:
+            __group_node_cb(node, blist_cbs["update"])
+        elif node.type == blist.PURPLE_BLIST_CONTACT_NODE:
+            __contact_node_cb(node, blist_cbs["update"])
+        elif node.type == blist.PURPLE_BLIST_BUDDY_NODE:
+            __buddy_node_cb(node, blist_cbs["update"])
+        elif node.type == blist.PURPLE_BLIST_CHAT_NODE:
+            __chat_node_cb(node, blist_cbs["update"])
+        elif node.type == blist.PURPLE_BLIST_OTHER_NODE:
+            __other_node_cb(node, blist_cbs["update"])
+        else:
             (<object>blist_cbs["update"])(node.type)
-        except KeyError:
-            pass
+    except KeyError:
+        pass
 
 cdef void remove (blist.PurpleBuddyList *list, blist.PurpleBlistNode *node):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "remove\n")
 
-    if node.type == blist.PURPLE_BLIST_GROUP_NODE:
-        __group_node_cb(node, blist_cbs["remove"])
-    elif node.type == blist.PURPLE_BLIST_CONTACT_NODE:
-        __contact_node_cb(node, blist_cbs["remove"])
-    elif node.type == blist.PURPLE_BLIST_BUDDY_NODE:
-        __buddy_node_cb(node, blist_cbs["remove"])
-    elif node.type == blist.PURPLE_BLIST_CHAT_NODE:
-        __chat_node_cb(node, blist_cbs["remove"])
-    elif node.type == blist.PURPLE_BLIST_OTHER_NODE:
-        __other_node_cb(node, blist_cbs["remove"])
-    else:
-        try:
+    try:
+        if node.type == blist.PURPLE_BLIST_GROUP_NODE:
+            __group_node_cb(node, blist_cbs["remove"])
+        elif node.type == blist.PURPLE_BLIST_CONTACT_NODE:
+            __contact_node_cb(node, blist_cbs["remove"])
+        elif node.type == blist.PURPLE_BLIST_BUDDY_NODE:
+            __buddy_node_cb(node, blist_cbs["remove"])
+        elif node.type == blist.PURPLE_BLIST_CHAT_NODE:
+            __chat_node_cb(node, blist_cbs["remove"])
+        elif node.type == blist.PURPLE_BLIST_OTHER_NODE:
+            __other_node_cb(node, blist_cbs["remove"])
+        else:
             (<object>blist_cbs["remove"])(node.type)
-        except KeyError:
-            pass
+    except KeyError:
+        pass
 
 cdef void destroy (blist.PurpleBuddyList *list):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "blist", "destroy\n")
