@@ -76,3 +76,23 @@ guint glib_input_add(gint fd, PurpleInputCondition condition, PurpleInputFunctio
 	g_io_channel_unref(channel);
 	return closure->result;
 }
+
+static void
+signed_on(PurpleConnection *gc, gpointer null)
+{
+	PurpleAccount *account = purple_connection_get_account(gc);
+	printf("Account connected: %s %s\n", account->username, account->protocol_id);
+}
+
+void connect_to_signals_for_demonstration_purposes_only(void)
+{
+	static int handle;
+
+	purple_signal_connect(purple_connections_get_handle(), "signed-on", &handle,
+				PURPLE_CALLBACK(signed_on), NULL);
+}
+
+void glib_main_loop() {
+	GMainLoop *loop = g_main_loop_new(NULL, 0);
+	g_main_loop_run(loop);
+}
