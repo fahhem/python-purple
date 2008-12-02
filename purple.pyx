@@ -55,6 +55,8 @@ include "request_cbs.pxd"
 #include "roomlist_cbs.pxd"
 include "signal_cbs.pxd"
 
+include "util.pxd"
+
 cdef class Purple:
     """ Purple class.
 
