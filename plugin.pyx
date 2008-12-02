@@ -132,6 +132,70 @@ cdef class Plugin:
 
         return po
 
+    def set_options(self, id, username, po):
+        ''' @param id The protocol's id '''
+        ''' @param username The account's username '''
+        ''' @param po Dictionary {'setting type': str|int|bool value, ...} '''
+        ''' @return True to success or False to failure '''
+
+        cdef plugin.PurplePlugin *c_plugin
+        cdef prpl.PurplePluginProtocolInfo *c_prpl_info
+        cdef account.PurpleAccount *c_account
+        cdef glib.GList *iter
+        cdef accountopt.PurpleAccountOption *option
+        cdef prefs.PurplePrefType type
+        cdef const_char *str_value
+        cdef const_char *setting
+        cdef int int_value
+        cdef glib.gboolean bool_value
+
+        c_account = NULL
+
+        c_account = account.c_purple_accounts_find(username, id)
+        if c_account == NULL:
+            # FIXME: Message error or call a error handler
+            return False
+
+        c_plugin = plugin.c_purple_plugins_find_with_id(id)
+        c_prpl_info = plugin.c_PURPLE_PLUGIN_PROTOCOL_INFO(c_plugin)
+
+        iter = c_prpl_info.protocol_options
+
+        while iter:
+
+            option = <accountopt.PurpleAccountOption *> iter.data
+            type = accountopt.c_purple_account_option_get_type(option)
+            setting = accountopt.c_purple_account_option_get_setting(option)
+
+            sett = str(<char *> setting)
+
+            iter = iter.next
+
+            if not po.has_key(sett):
+                continue
+
+            if type == prefs.PURPLE_PREF_STRING:
+
+                str_value = <char *> po[sett]
+                account.c_purple_account_set_string(c_account, setting, str_value)
+
+            elif type == prefs.PURPLE_PREF_INT:
+
+                int_value = int(po[sett])
+                account.c_purple_account_set_int(c_account, setting, int_value)
+
+            elif type == prefs.PURPLE_PREF_BOOLEAN:
+
+                bool_value = bool(po[sett])
+                account.c_purple_account_set_bool(c_account, setting, bool_value)
+
+            elif type == prefs.PURPLE_PREF_STRING_LIST:
+
+                str_value = <char *> po[sett]
+                account.c_purple_account_set_string(c_account, setting, str_value)
+
+        return True
+
 
 cdef class Plugins:
 
