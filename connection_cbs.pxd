@@ -19,65 +19,98 @@
 
 cimport purple
 
+cdef extern from *:
+    ctypedef char const_char "const char"
+
 connection_cbs = {}
 
 cdef extern from *:
     ctypedef int size_t
 
-cdef void connect_progress (connection.PurpleConnection *gc, const_char *text,
-                            size_t step, size_t step_count):
+cdef void connect_progress(connection.PurpleConnection *gc, const_char *text, \
+        size_t step, size_t step_count):
+    """
+    When an account is connecting, this operation is called to notify the UI
+    of what is happening, as well as which a step out of step_count has been
+    reached (which might be displayed as a progress bar).
+    """
     debug.c_purple_debug_info("connection", "%s", "connect-progress\n")
-    try:
-        (<object>connection_cbs["connect-progress"])(<char *>text, step, step_count)
-    except KeyError:
-        pass
+    if connection_cbs.has_key("connect-progress"):
+        (<object> connection_cbs["connect-progress"])(<char *> text, step, step_count)
 
-cdef void connected (connection.PurpleConnection *gc):
+cdef void connected(connection.PurpleConnection *gc):
+    """
+    Called when a connection is established (just before the signed-on signal).
+    """
     debug.c_purple_debug_info("connection", "%s", "connected\n")
-    try:
-        (<object>connection_cbs["connected"])("connected: TODO")
-    except KeyError:
-        pass
+    if connection_cbs.has_key("connected"):
+        (<object> connection_cbs["connected"])("connected: TODO")
 
-cdef void disconnected (connection.PurpleConnection *gc):
+cdef void disconnected(connection.PurpleConnection *gc):
+    """
+    Called when a connection is ended (between the signing-off and signed-off
+    signal).
+    """
     debug.c_purple_debug_info("connection", "%s", "disconnected\n")
-    try:
-        (<object>connection_cbs["disconnected"])("disconnected: TODO")
-    except KeyError:
-        pass
+    if connection_cbs.has_key("disconnected"):
+        (<object> connection_cbs["disconnected"])("disconnected: TODO")
 
-cdef void notice (connection.PurpleConnection *gc, const_char *text):
+cdef void notice(connection.PurpleConnection *gc, const_char *text):
+    """
+    Used to display connection-specific notices. (Pidgin's Gtk user interface
+    implements this as a no-op; purple_connection_notice(), which uses this
+    operation, is not used by any of the protocols shipped with libpurple.)
+    """
     debug.c_purple_debug_info("connection", "%s", "notice\n")
-    try:
-        (<object>connection_cbs["notice"])("notice: TODO")
-    except KeyError:
-        pass
+    if connection_cbs.has_key("notice"):
+        (<object> connection_cbs["notice"])("notice: TODO")
 
-cdef void report_disconnect (connection.PurpleConnection *gc,
-                             const_char *text):
+cdef void report_disconnect(connection.PurpleConnection *gc, const_char *text):
+    """
+    Called when an error causes a connection to be disconnected.
+    Called before disconnected.
+    @param text  a localized error message.
+    @see purple_connection_error
+    @deprecated in favour of
+                PurpleConnectionUiOps.report_disconnect_reason.
+    """
     debug.c_purple_debug_info("connection", "%s", "report-disconnect\n")
-    try:
-        (<object>connection_cbs["report-disconnect"])(<char *>text)
-    except KeyError:
-        pass
+    if connection_cbs.has_key("report-disconnect"):
+        (<object> connection_cbs["report-disconnect"])(<char *> text)
 
-cdef void network_connected ():
+cdef void network_connected():
+    """
+    Called when libpurple discovers that the computer's network connection
+    is active. On Linux, this uses Network Manager if available; on Windows,
+    it uses Win32's network change notification infrastructure.
+    """
     debug.c_purple_debug_info("connection", "%s", "network-connected\n")
-    try:
-        (<object>connection_cbs["network-connected"])("network-connected: TODO")
-    except KeyError:
-        pass
+    if connection_cbs.has_key("network-connected"):
+        (<object> connection_cbs["network-connected"])()
 
-cdef void network_disconnected ():
+cdef void network_disconnected():
+    """
+    Called when libpurple discovers that the computer's network connection
+    has gone away.
+    """
     debug.c_purple_debug_info("connection", "%s", "network-disconnected\n")
-    try:
-        (<object>connection_cbs["network-disconnected"])("network-disconnected: TODO")
-    except KeyError:
-        pass
+    if connection_cbs.has_key("network-disconnected"):
+        (<object> connection_cbs["network-disconnected"])()
 
-cdef void report_disconnect_reason (connection.PurpleConnection *gc,
-                                    connection.PurpleConnectionError reason,
-                                    const_char *text):
+cdef void report_disconnect_reason(connection.PurpleConnection *gc, \
+        connection.PurpleConnectionError reason, const_char *text):
+    """
+    Called when an error causes a connection to be disconnected. Called
+    before disconnected. This op is intended to replace report_disconnect.
+    If both are implemented, this will be called first; however, there's no
+    real reason to implement both.
+    @param reason  why the connection ended, if known, or
+                   PURPLE_CONNECTION_ERROR_OTHER_ERROR, if not.
+    @param text  a localized message describing the disconnection
+                 in more detail to the user.
+    @see purple_connection_error_reason
+    @since 2.3.0
+    """
     debug.c_purple_debug_info("connection", "%s", "report-disconnect-reason\n")
 
     reason_string = {
@@ -99,7 +132,5 @@ cdef void report_disconnect_reason (connection.PurpleConnection *gc,
         15: 'Certificate error (other)',
         16: 'Other error' }[reason]
 
-    try:
-        (<object>connection_cbs["report-disconnect-reason"])(reason_string, <char *>text)
-    except KeyError:
-        pass
+    if connection_cbs.has_key("report-disconnect-reason"):
+        (<object> connection_cbs["report-disconnect-reason"])(reason_string, <char *> text)
