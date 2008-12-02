@@ -17,19 +17,14 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cimport blist
-cimport conversation
-cimport ft
-#cimport imgstore
-cimport notify
-cimport proxy
-cimport plugin
-cimport roomlist
-cimport status
-#cimport whiteboard
 cimport glib
+
+cdef extern from "libpurple/plugin.h":
+    ctypedef struct PurplePlugin:
+        pass
 
 cdef extern from "libpurple/prpl.h":
     ctypedef struct PurplePluginProtocolInfo:
         glib.GList *protocol_options
-    plugin.PurplePlugin *c_purple_find_prpl "purple_find_prpl" (char *id)
+
+    PurplePlugin *c_purple_find_prpl "purple_find_prpl" (char *id)
