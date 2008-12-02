@@ -18,4 +18,5 @@
 #
 
 cdef extern from "libpurple/util.h":
+    void *c_purple_markup_strip_html "purple_markup_strip_html" (const_char_ptr str)
     void c_purple_util_set_user_dir "purple_util_set_user_dir" (char *dir)

@@ -27,6 +27,7 @@ cdef extern from "libpurple/blist.h":
     ctypedef struct PurpleBuddyList:
         pass
 
+    void *c_purple_blist_get_handle "purple_blist_get_handle" ()
     void c_purple_blist_load "purple_blist_load" ()
     PurpleBuddyList* c_purple_blist_new "purple_blist_new" ()
 

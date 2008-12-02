@@ -17,12 +17,11 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cdef extern from "libpurple/proxy.h":
-    cdef struct PurpleProxyInfo
+cdef extern from "libpurple/signals.h":
+    ctypedef void (*PurpleCallback) ()
 
-    ctypedef int PurpleProxyType
-
-    PurpleProxyInfo *c_purple_proxy_info_new "purple_proxy_info_new" ()
-    void c_purple_proxy_info_set_type "purple_proxy_info_set_type" (PurpleProxyInfo *info, PurpleProxyType type)
-    void c_purple_proxy_info_set_host "purple_proxy_info_set_host" (const_char_ptr host)
-    void c_purple_proxy_info_set_port "purple_proxy_info_set_port" (const_char_ptr port)
+    gulong c_purple_signal_connect "purple_signal_connect" (void *instance,
+            const_char_ptr signal, void *handle, PurpleCallback func,
+            void *data)
+    void c_purple_signal_disconnect "purple_signal_disconnect" (void *instance,
+            const_char_ptr signal, void *handle, PurpleCallback func)

@@ -22,10 +22,10 @@ cdef class Conversation:
     cdef PurpleConversation *__conv
 
     def __cinit__(self):
-        purple_conversations_init()
+        c_purple_conversations_init()
 
     def conversation_new(self, type, acc, const_char_ptr name):
-        self.__conv = purple_conversation_new(type, <PurpleAccount*>acc.__account, name)
+        self.__conv = c_purple_conversation_new(type, <PurpleAccount*>acc.__account, name)
 
     def conversation_set_ui_ops(self):
         cdef PurpleConversationUiOps c_conv_ui_ops
@@ -45,16 +45,16 @@ cdef class Conversation:
         c_conv_ui_ops.custom_smiley_close = NULL
         c_conv_ui_ops.send_confirm = NULL
 
-        purple_conversation_set_ui_ops(self.__conv, &c_conv_ui_ops)
+        c_purple_conversation_set_ui_ops(self.__conv, &c_conv_ui_ops)
 
     def conversation_write(self, const_char_ptr message):
-        purple_conv_im_send(purple_conversation_get_im_data(self.__conv), message)
+        c_purple_conv_im_send(c_purple_conversation_get_im_data(self.__conv), message)
 
     def conversation_destroy(self):
-        purple_conversation_destroy(self.__conv)
+        c_purple_conversation_destroy(self.__conv)
 
     def conversation_get_handle(self):
-        purple_conversations_get_handle()
+        c_purple_conversations_get_handle()
 
     def send_message(self, buddy, const_char_ptr message):
         self.conversation_new(1, buddy.account, buddy.name)

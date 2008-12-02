@@ -39,13 +39,14 @@ include "libpurple/plugin.pxd"
 include "libpurple/pounce.pxd"
 include "libpurple/prefs.pxd"
 include "libpurple/proxy.pxd"
+include "libpurple/signals.pxd"
 include "libpurple/status.pxd"
 include "libpurple/savedstatuses.pxd"
 include "libpurple/util.pxd"
 
 cdef extern from "c_purple.h":
-     guint glib_input_add(gint fd, PurpleInputCondition condition, PurpleInputFunction function, gpointer data)
-     void glib_main_loop()
+    void connect_to_signals_for_demonstration_purposes_only ()
+    guint glib_input_add(gint fd, PurpleInputCondition condition, PurpleInputFunction function, gpointer data)
 
 import ecore
 

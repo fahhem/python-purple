@@ -58,11 +58,10 @@ cdef extern from "libpurple/conversation.h":
         void (*custom_smiley_close) (PurpleConversation *conv, const_char_ptr smile)
         void (*send_confirm) (PurpleConversation *conv, const_char_ptr message)
 
-    void purple_conversations_init()
-    PurpleConversation *purple_conversation_new(int type, PurpleAccount *account, const_char_ptr name)
-    void purple_conversation_set_ui_ops(PurpleConversation *conv, PurpleConversationUiOps *ops)
-    PurpleConvIm *purple_conversation_get_im_data(PurpleConversation *conv)
-    void purple_conv_im_send(PurpleConvIm *im, const_char_ptr message)
-    void *purple_conversations_get_handle()
-    void purple_conversation_destroy(PurpleConversation *conv)
-
+    void c_purple_conversations_init "purple_conversations_init" ()
+    void *c_purple_conversations_get_handle "purple_conversations_get_handle" ()
+    PurpleConversation *c_purple_conversation_new "purple_conversation_new" (int type, PurpleAccount *account, const_char_ptr name)
+    void c_purple_conversation_set_ui_ops "purple_conversation_set_ui_ops" (PurpleConversation *conv, PurpleConversationUiOps *ops)
+    PurpleConvIm *c_purple_conversation_get_im_data "purple_conversation_get_im_data" (PurpleConversation *conv)
+    void c_purple_conv_im_send "purple_conv_im_send" (PurpleConvIm *im, const_char_ptr message)
+    void c_purple_conversation_destroy "purple_conversation_destroy" (PurpleConversation *conv)

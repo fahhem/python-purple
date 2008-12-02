@@ -20,5 +20,3 @@
 cdef extern from "libpurple/connection.h":
     ctypedef struct PurpleConnection:
         pass
-
-    void connect_to_signals_for_demonstration_purposes_only()
