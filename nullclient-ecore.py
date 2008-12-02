@@ -9,7 +9,6 @@ conn_cbs = {}
 conv_cbs = {}
 notify_cbs = {}
 request_cbs = {}
-signal_cbs = {}
 
 def account_callback(name):
     print "---- account callback example: %s" % name
@@ -103,17 +102,6 @@ request_cbs["close_request"] = request_callback
 request_cbs["request_folder"] = request_callback
 
 cbs["request"] = request_cbs
-
-def buddy_signed_off_cb(name, bname):
-    print "---- sign off from buddy %s" % bname
-
-def receiving_im_msg_cb(sender, name, message):
-    print "---- receiving IM message from %s: %s" % (name, message)
-    return False
-
-#signal_cbs["buddy_signed_off"] = buddy_signed_off_cb
-signal_cbs["receiving_im_msg"] = receiving_im_msg_cb
-
 
 class MainWindow:
     def __init__(self, quit_cb):
@@ -239,12 +227,8 @@ class NullClientPurple:
         self.username = "carmanplugintest@gmail.com"
         self.password = "abc123def"
 
-
         global cbs
-        global signal_cbs
         cbs["blist"]["update"] = self._purple_update_blist_cb
-        signal_cbs["buddy_signed_off"] = self._purple_signal_sign_off_cb
-        cbs["conversation"]["create_conversation"] = self._purple_create_conv_cb
         self.p.purple_init(cbs)
 
         #Initializing UI
@@ -283,7 +267,7 @@ class NullClientPurple:
 
         self.account.set_enabled("carman-purple-python", True)
         self.p.connect()
-        self.p.attach_signals(signal_cbs)
+        self.p.signal_connect("buddy-signed-off", self._purple_signal_sign_off_cb)
 
     def send_msg(self, name, msg):
         if not self.conversations.has_key(name):

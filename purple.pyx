@@ -252,21 +252,34 @@ cdef class Purple:
         conn = Connection()
         conn.connect()
 
-    def attach_signals(self, __signal_cbs=None):
-        if __signal_cbs is not None:
-            global signal_cbs
-            signal_cbs = __signal_cbs
-
+    def signal_connect(self, name=None, cb=None):
         cdef int handle
+        cdef plugin.PurplePlugin *jabber
 
-        signals.c_purple_signal_connect(blist.c_purple_blist_get_handle(),
-                "buddy-signed-off", &handle,
-                <signals.PurpleCallback> signal_buddy_signed_off_cb, NULL)
+        if name is None:
+            return
 
-        signals.c_purple_signal_connect(
-                conversation.c_purple_conversations_get_handle(),
-                "receiving-im-msg", &handle,
-                <signals.PurpleCallback> signal_receiving_im_msg_cb, NULL)
+        jabber = prpl.c_purple_find_prpl("prpl-jabber")
+        if jabber == NULL:
+            return
+
+        global signal_cbs
+        signal_cbs[name] = cb
+
+        if name == "buddy-signed-off":
+            signals.c_purple_signal_connect(
+                    blist.c_purple_blist_get_handle(),
+                    "buddy-signed-off", &handle,
+                    <signals.PurpleCallback> signal_buddy_signed_off_cb, NULL)
+        elif name == "receiving-im-msg":
+            signals.c_purple_signal_connect(
+                    conversation.c_purple_conversations_get_handle(),
+                    "receiving-im-msg", &handle,
+                    <signals.PurpleCallback> signal_receiving_im_msg_cb, NULL)
+        elif name == "jabber-receiving-xmlnode":
+            signals.c_purple_signal_connect(
+                    jabber, "jabber-receiving-xmlnode", &handle,
+                    <signals.PurpleCallback> jabber_receiving_xmlnode_cb, NULL)
 
     def new_account(self, username, protocol_id):
         acc = Account(username, protocol_id)

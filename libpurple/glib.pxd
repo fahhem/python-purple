@@ -31,6 +31,7 @@ cdef extern from "glib.h":
     ctypedef gint gboolean
     ctypedef gboolean (*GSourceFunc) (gpointer data)
     ctypedef unsigned int gsize
+    ctypedef signed int gssize
     ctypedef char gchar
     ctypedef unsigned char guchar
 
@@ -90,3 +91,5 @@ cdef extern from "glib.h":
     gboolean g_main_context_iteration (GMainContext *context, gboolean may_block)
 
     gboolean g_source_remove(guint tag)
+
+    gchar *g_markup_escape_text (gchar *text, gssize length)

@@ -2,6 +2,7 @@ import purple
 import ecore
 import getpass
 import sys
+from xml.dom import minidom
 
 cbs = {}
 acc_cbs = {}
@@ -10,7 +11,6 @@ conn_cbs = {}
 conv_cbs = {}
 notify_cbs = {}
 request_cbs = {}
-signal_cbs = {}
 
 def account_callback(name):
     print "---- account callback example: %s" % name
@@ -123,10 +123,13 @@ cbs["connection"] = conn_cbs
 def conv_callback(name):
     print "---- conversation callback example: %s" % name
 
+def write_im_cb(name, message):
+    print "---- (conversation) write_im: %s %s" % (name, message)
+
 conv_cbs["create_conversation"] = conv_callback
 conv_cbs["destroy_conversation"] = conv_callback
 conv_cbs["write_chat"] = conv_callback
-conv_cbs["write_im"] = conv_callback
+conv_cbs["write_im"] = write_im_cb
 conv_cbs["write_conv"] = conv_callback
 conv_cbs["chat_add_users"] = conv_callback
 conv_cbs["chat_rename_user"] = conv_callback
@@ -170,14 +173,21 @@ request_cbs["request_folder"] = request_callback
 cbs["request"] = request_cbs
 
 def buddy_signed_off_cb(name):
-    print "---- sign off from buddy %s" % name
+    print "---- (signal) sign off from buddy %s" % name
 
 def receiving_im_msg_cb(sender, name, message):
-    print "---- receiving IM message from %s: %s" % (name, message)
+    print "---- (signal) receiving IM message from %s: %s" % (name, message)
     return False
 
-signal_cbs["buddy_signed_off"] = buddy_signed_off_cb
-signal_cbs["receiving_im_msg"] = receiving_im_msg_cb
+def jabber_received_xmlnode_cb(message):
+    xml = minidom.parse(message)
+
+    for msg in xml.getElementsByTagName("message"):
+        who = msg.getAttribute("from")
+        for geoloc in msg.getElementsByTagNameNS("http://jabber.org/protocol/geoloc", "geoloc"):
+            lat = geoloc.getElementsByTagName("lat")[0].childNodes[0].nodeValue
+            lon = geoloc.getElementsByTagName("lon")[0].childNodes[0].nodeValue
+            print "who: %s lat: %s lon: %s" % (who, lat, lon)
 
 class NullClient:
     def __init__(self):
@@ -213,14 +223,16 @@ def getpassword():
     return getpass.getpass()
 
 if __name__ == '__main__':
-
     client = NullClient()
     client.execute()
+    client.set_protocol("XMPP")
+    client.p.signal_connect("buddy-signed-off", buddy_signed_off_cb)
+    client.p.signal_connect("receiving-im-msg", receiving_im_msg_cb)
+    client.p.signal_connect("jabber-receiving-xmlnode", jabber_received_xmlnode_cb)
     username = getuser()
     password = getpassword()
     client.new_account(username, password)
 
     client.p.connect()
-    client.p.attach_signals(signal_cbs)
     ecore.timer_add(20, client.get_buddies)
     ecore.main_loop_begin()

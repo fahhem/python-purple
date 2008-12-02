@@ -19,32 +19,31 @@
 
 cimport glib
 
-cimport account
-cimport accountopt
-cimport buddyicon
-cimport blist
-cimport connection
-cimport conversation
-cimport core
-cimport debug
-cimport eventloop
-cimport ft
-cimport idle
-cimport notify
-cimport plugin
-cimport pounce
-cimport prefs
-cimport privacy
-cimport proxy
-cimport prpl
-cimport request
-cimport roomlist
-cimport signals
-cimport status
-cimport savedstatuses
-cimport value
-cimport util
-cimport xmlnode
+cdef extern from *:
+    ctypedef int size_t
 
-cdef extern from "libpurple/purple.h":
-    pass
+cdef extern from "libpurple/xmlnode.h":
+    ctypedef struct xmlnode
+
+    ctypedef enum XMLNodeType:
+        XMLNODE_TYPE_TAG
+        XMLNODE_TYPE_ATTRIB
+        XMLNODE_TYPE_DATA
+
+    ctypedef struct xmlnode:
+        char *name
+        char *xmlns
+        XMLNodeType type
+        char *data
+        size_t data_sz
+        xmlnode *parent
+        xmlnode *child
+        xmlnode *lastchild
+        xmlnode *next
+        char *prefix
+        glib.GHashTable *namespace_map
+
+    xmlnode *xmlnode_get_child(xmlnode *parent, char *name)
+    char *xmlnode_to_str(xmlnode *node, int *len)
+    char *xmlnode_get_data(xmlnode *node)
+    char *xmlnode_get_attrib(xmlnode *node, char *attr)
