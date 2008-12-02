@@ -20,61 +20,94 @@
 cimport purple
 
 cdef class Conversation:
-    """ Conversation class """
-    cdef conversation.PurpleConversation *__conv
-    cdef object __acc
+    """
+    Conversation class
+    @param type    UNKNOWN, IM, CHAT, MISC, ANY
+    @param account Your account
+    @param name    Buddy name
+    """
 
+    cdef object __account
     cdef object __name
+    cdef object __type
+    cdef object __exists
 
-    def __init__(self):
-        conversation.purple_conversations_init()
-        self.__name = None
-        self.__acc = None
+    def __init__(self, type, account, name):
+        self.__type = {
+            "UNKNOWN": conversation.PURPLE_CONV_TYPE_UNKNOWN,
+            "IM": conversation.PURPLE_CONV_TYPE_IM,
+            "CHAT": conversation.PURPLE_CONV_TYPE_CHAT,
+            "MISC": conversation.PURPLE_CONV_TYPE_MISC,
+            "ANY": conversation.PURPLE_CONV_TYPE_ANY }[type]
+        self.__account = account
+        self.__name = name
+
+        if self._get_structure() != NULL:
+            self.__exists = True
+        else:
+            self.__exists = False
+
+    cdef conversation.PurpleConversation *_get_structure(self):
+        return conversation.purple_find_conversation_with_account( \
+            self.__type, self.__name, account.purple_accounts_find( \
+            self.__account.username, self.__account.protocol.id))
+
+    def __get_exists(self):
+        return self.__exists
+    exists = property(__get_exists)
 
     def __get_account(self):
-        return self.__acc
-    def __set_account(self, acc):
-        self.__acc = acc
-    account = property(__get_account, __set_account)
+        if self.__exists:
+            return self.__account
+        else:
+            return None
+    account = property(__get_account)
 
     def __get_name(self):
-        return self.__name
-    def __set_name(self, name):
-        self.__name = name
-    name = property(__get_name, __set_name)
+        if self.__exists:
+            return <char *> conversation.purple_conversation_get_name( \
+                    self._get_structure())
+        else:
+            return None
+    name = property(__get_name)
 
-    def initialize(self, acc, type, char *name):
-        cdef account.PurpleAccount *c_account
-        self.__acc = acc
-        self.__name = name
+    def new(self):
+        """
+        Creates a new conversation.
 
-        c_account = account.purple_accounts_find(<char *> acc[0], <char *> acc[1])
-        if not c_account:
-            return
+        @return True if successful, False if conversation already exists
+        """
+        if self.__exists:
+            return False
+        else:
+            conversation.purple_conversation_new(self.__type, \
+                    account.purple_accounts_find(self.__account.username, \
+                    self.__account.protocol.id), self.__name)
+            self.__exists = True
+            return True
 
-        if type == "UNKNOWN":
-            self.__conv =\
-            conversation.purple_conversation_new(conversation.PURPLE_CONV_TYPE_UNKNOWN,\
-                c_account, self.__name)
-        elif type == "IM":
-            self.__conv =\
-            conversation.purple_conversation_new(conversation.PURPLE_CONV_TYPE_IM,\
-                <account.PurpleAccount*> c_account, self.__name)
-        elif type == "CHAT":
-            self.__conv =\
-            conversation.purple_conversation_new(conversation.PURPLE_CONV_TYPE_CHAT,\
-                c_account, self.__name)
-        elif type == "MISC":
-            self.__conv =\
-            conversation.purple_conversation_new(conversation.PURPLE_CONV_TYPE_MISC,\
-                c_account, self.__name)
-        elif type == "ANY":
-            self.__conv =\
-            conversation.purple_conversation_new(conversation.PURPLE_CONV_TYPE_ANY,\
-                c_account, self.__name)
+    def destroy(self):
+        """
+        Destroys a conversation.
 
-    def conversation_set_ui_ops(self):
+        @return True if successful, False if conversation doesn't exists
+        """
+        if self.__exists:
+            conversation.purple_conversation_destroy(self._get_structure())
+            self.__exists = False
+            return True
+        else:
+            return False
+
+    def set_ui_ops(self, cbs):
+        """
+        Sets UI operations for a conversation.
+
+        @return True if sucessful, False otherwise
+        """
+        # FIXME: We may need to create c-functions for each of these?
         cdef conversation.PurpleConversationUiOps c_conv_ui_ops
+
         c_conv_ui_ops.create_conversation = NULL
         c_conv_ui_ops.destroy_conversation = NULL
         c_conv_ui_ops.write_chat = NULL
@@ -91,16 +124,20 @@ cdef class Conversation:
         c_conv_ui_ops.custom_smiley_close = NULL
         c_conv_ui_ops.send_confirm = NULL
 
-        conversation.purple_conversation_set_ui_ops(self.__conv, &c_conv_ui_ops)
+        conversation.purple_conversation_set_ui_ops(self._get_structure(), \
+                &c_conv_ui_ops)
+        return True
 
-    def write(self, char *message):
-        if self.__conv:
-            conversation.purple_conv_im_send(conversation.purple_conversation_get_im_data(self.__conv), message)
+    def im_send(self, message):
+        """
+        Sends a message to this IM conversation.
 
-    def get_handle(self):
-        conversation.purple_conversations_get_handle()
-
-    def destroy(self):
-        print "[DEBUG]: Destroy conversation: %s" % self.__name
-        if self.__conv:
-            conversation.purple_conversation_destroy(self.__conv)
+        @return True if successful, False if conversation is not IM or conversation doesn't exists
+        """
+        if self.__exists and self.__type == conversation.PURPLE_CONV_TYPE_IM:
+            conversation.purple_conv_im_send( \
+                    conversation.purple_conversation_get_im_data( \
+                    self._get_structure()), message)
+            return True
+        else:
+            return False
