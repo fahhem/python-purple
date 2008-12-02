@@ -67,7 +67,7 @@ cdef class Buddy:
         c_alias = <char *> blist.purple_buddy_get_alias_only( \
                 self._get_structure())
         if c_alias:
-            return c_alias
+            return unicode(c_alias, 'utf-8')
         else:
             return None
     alias = property(__get_alias)
