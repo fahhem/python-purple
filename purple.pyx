@@ -345,7 +345,7 @@ cdef class Purple:
         while iter:
             pp = <plugin.PurplePlugin*> iter.data
             if pp.info and pp.info.name:
-                protocol_list.append[Protocol(pp.info.id)]
+                protocol_list.append(Protocol(pp.info.id))
             iter = iter.next
         return protocol_list
 
