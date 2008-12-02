@@ -24,6 +24,8 @@ cdef extern from "c_purple.h":
 
 import ecore
 
+include "plugin.pyx"
+
 __DEFAULT_PATH__ = "/tmp"
 __APP_NAME__ = "carman-purple-python"
 __APP_VERSION__ = "0.1"
@@ -61,6 +63,8 @@ cdef class Purple:
     @parm default_path: Full path for libpurple user files.
     """
 
+    cdef Plugins plugins
+
     def __init__(self, debug_enabled=True, app_name=__APP_NAME__, default_path=__DEFAULT_PATH__):
         if app_name is not __APP_NAME__:
             __APP_NAME__ = app_name
@@ -71,6 +75,7 @@ cdef class Purple:
         debug.c_purple_debug_set_enabled(debug_enabled)
         util.c_purple_util_set_user_dir(default_path)
         plugin.c_purple_plugins_add_search_path(default_path)
+        self.plugins = Plugins()
 
         # adds glib iteration inside ecore main loop
         ecore.timer_add(0.001, self.__glib_iteration_when_idle)
@@ -246,16 +251,7 @@ cdef class Purple:
         return ret
 
     def get_protocols(self):
-        cdef glib.GList *iter
-        cdef plugin.PurplePlugin *__plugin
-        protocols = []
-        iter = plugin.c_purple_plugins_get_protocols()
-        while iter:
-            __plugin = <plugin.PurplePlugin*> iter.data
-            if __plugin.info and __plugin.info.name:
-                protocols += [(__plugin.info.id, __plugin.info.name)]
-            iter = iter.next
-        return protocols
+        return self.plugins.get_protocols()
 
     def connect(self):
         conn = Connection()
