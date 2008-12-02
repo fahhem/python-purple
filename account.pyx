@@ -283,6 +283,10 @@ cdef class Account:
 
             sett = str(<char *> setting)
 
+            if not po.has_key(sett):
+                iter = iter.next
+                continue
+
             if type == prefs.PURPLE_PREF_STRING:
 
                 str_value = <char *> po[sett]
