@@ -17,6 +17,9 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cdef extern from "glib.h":
+    ctypedef int gboolean
+
 cdef extern from "libpurple/account.h":
     cdef struct _PurpleAccount
     ctypedef _PurpleAccount PurpleAccount

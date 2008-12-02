@@ -199,7 +199,8 @@ class Purple(object):
         c_purple_util_set_user_dir(dir)
     # util_set_user_dir
 
-#include "core/account.pxd"
+include "core/account.pxd"
+include "core/buddy.pxd"
 #include "core/blist.pxd"
 #include "core/connection.pxd"
 #include "core/core.pxd"
