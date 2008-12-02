@@ -29,7 +29,7 @@ __APP_NAME__ = "carman-purple-python"
 __APP_VERSION__ = "0.1"
 
 cdef account.PurpleAccountUiOps c_account_ui_ops
-#cdef blist.PurpleBlistUiOps c_blist_ui_ops
+cdef blist.PurpleBlistUiOps c_blist_ui_ops
 cdef connection.PurpleConnectionUiOps c_conn_ui_ops
 cdef conversation.PurpleConversationUiOps c_conv_ui_ops
 cdef core.PurpleCoreUiOps c_core_ui_ops
@@ -44,6 +44,7 @@ cdef glib.GHashTable *c_ui_info
 c_ui_info = NULL
 
 include "account_cbs.pxd"
+include "blist_cbs.pxd"
 include "connection_cbs.pxd"
 include "conversation_cbs.pxd"
 
@@ -86,7 +87,7 @@ cdef class Purple:
 
         account.c_purple_accounts_set_ui_ops(&c_account_ui_ops)
         connection.c_purple_connections_set_ui_ops(&c_conn_ui_ops)
-        #blist.c_purple_blist_set_ui_ops(&c_blist_ui_ops)
+        blist.c_purple_blist_set_ui_ops(&c_blist_ui_ops)
         conversation.c_purple_conversations_set_ui_ops(&c_conv_ui_ops)
         #notify.c_purple_notify_set_ui_ops(&c_notify_ui_ops)
         #request.c_purple_request_set_ui_ops(&c_request_ui_ops)
@@ -129,10 +130,12 @@ cdef class Purple:
 
         if callbacks_dict is not None:
             global account_cbs
+            global blist_cbs
             global connection_cbs
             global conversation_cbs
 
             account_cbs = callbacks_dict["account"]
+            blist_cbs = callbacks_dict["blist"]
             connection_cbs = callbacks_dict["connection"]
             conversation_cbs = callbacks_dict["conversation"]
 
@@ -141,6 +144,17 @@ cdef class Purple:
         c_account_ui_ops.request_add = request_add
         c_account_ui_ops.request_authorize = request_authorize
         c_account_ui_ops.close_account_request = close_account_request
+
+        c_blist_ui_ops.new_list = new_list
+        c_blist_ui_ops.new_node = new_node
+        c_blist_ui_ops.show = show
+        c_blist_ui_ops.update = update
+        c_blist_ui_ops.remove = remove
+        c_blist_ui_ops.destroy = destroy
+        c_blist_ui_ops.set_visible = set_visible
+        c_blist_ui_ops.request_add_buddy = request_add_buddy
+        c_blist_ui_ops.request_add_chat = request_add_chat
+        c_blist_ui_ops.request_add_group = request_add_group
 
         c_conn_ui_ops.connect_progress = connect_progress
         c_conn_ui_ops.connected = connected

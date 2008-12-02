@@ -18,24 +18,63 @@
 #
 
 cimport glib
+
 cimport account
 cimport status
 
-cdef extern from "libpurple/blist.h":
-    ctypedef struct PurpleBlistNode:
-        pass
+cdef extern from *:
+    ctypedef char const_char "const char"
 
-    ctypedef struct PurpleBlistUiOps:
+cdef extern from "libpurple/blist.h":
+    ctypedef struct PurpleBuddyList
+    ctypedef struct PurpleBlistUiOps
+    ctypedef struct PurpleBlistNode
+    ctypedef struct PurpleChat
+    ctypedef struct PurpleGroup
+    ctypedef struct PurpleContact
+    ctypedef struct PurpleBuddy
+
+    ctypedef enum PurpleBlistNodeType:
+        PURPLE_BLIST_GROUP_NODE
+        PURPLE_BLIST_CONTACT_NODE
+        PURPLE_BLIST_BUDDY_NODE
+        PURPLE_BLIST_CHAT_NODE
+        PURPLE_BLIST_OTHER_NODE
+
+    ctypedef enum PurpleBlistNodeFlags:
+        PURPLE_BLIST_NODE_FLAG_NO_SAVE = 1 << 0
+
+    ctypedef struct PurpleBlistNode:
         pass
 
     ctypedef struct PurpleBuddy:
         char *name
+        char *alias
+        char *server_alias
+
+    ctypedef struct PurpleContact:
+        pass
+
+    ctypedef struct PurpleGroup:
+        pass
+
+    ctypedef struct PurpleChat:
+        pass
 
     ctypedef struct PurpleBuddyList:
         pass
 
-    ctypedef struct PurplePresence:
-        pass
+    ctypedef struct PurpleBlistUiOps:
+        void (*new_list) (PurpleBuddyList *list)
+        void (*new_node) (PurpleBlistNode *node)
+        void (*show) (PurpleBuddyList *list)
+        void (*update) (PurpleBuddyList *list, PurpleBlistNode *node)
+        void (*remove) (PurpleBuddyList *list, PurpleBlistNode *node)
+        void (*destroy) (PurpleBuddyList *list)
+        void (*set_visible) (PurpleBuddyList *list, glib.gboolean show)
+        void (*request_add_buddy) (account.PurpleAccount *account, const_char *username, const_char *group, const_char *alias)
+        void (*request_add_chat) (account.PurpleAccount *account, PurpleGroup *group, const_char *alias, const_char *name)
+        void (*request_add_group) ()
 
     void *c_purple_blist_get_handle "purple_blist_get_handle" ()
     void c_purple_blist_load "purple_blist_load" ()

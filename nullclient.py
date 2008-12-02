@@ -5,6 +5,7 @@ import sys
 
 cbs = {}
 acc_cbs = {}
+blist_cbs = {}
 conn_cbs = {}
 conv_cbs = {}
 
@@ -18,6 +19,22 @@ acc_cbs["request_authorize"] = account_callback
 acc_cbs["close_account_request"] = account_callback
 
 cbs["account"] = acc_cbs
+
+def blist_callback(name):
+    print "---- blist callback example: %s" % name
+
+blist_cbs["new_list"] = blist_callback
+blist_cbs["new_node"] = blist_callback
+blist_cbs["show"] = blist_callback
+blist_cbs["update"] = blist_callback
+blist_cbs["remove"] = blist_callback
+blist_cbs["destroy"] = blist_callback
+blist_cbs["set_visible"] = blist_callback
+blist_cbs["request_add_buddy"] = blist_callback
+blist_cbs["request_add_chat"] = blist_callback
+blist_cbs["request_add_group"] = blist_callback
+
+cbs["blist"] = blist_cbs
 
 def conn_callback(name):
     print "---- connection callback example: %s" % name
