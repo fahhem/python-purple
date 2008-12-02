@@ -18,26 +18,67 @@
 #
 
 cdef extern from "libpurple/account.h":
-    ctypedef struct PurpleAccount:
-        pass
+    cdef struct _PurpleAccount
+    ctypedef _PurpleAccount PurpleAccount
 
-    PurpleAccount *c_purple_account_new "purple_account_new" (const_char_ptr username, const_char_ptr protocol_id)
-    void c_purple_account_set_username "purple_account_set_username" (PurpleAccount *account, const_char_ptr username)
-    void c_purple_account_set_password "purple_account_set_password" (PurpleAccount *account, const_char_ptr password)
-    void c_purple_account_set_enabled "purple_account_set_enabled" (PurpleAccount *account, const_char_ptr ui, gboolean value)
+    PurpleAccount *purple_account_new(const_char_ptr username, const_char_ptr protocol_id)
+    void purple_account_set_password(PurpleAccount *account, const_char_ptr password)
+    void purple_account_set_enabled(PurpleAccount *account, const_char_ptr ui, gboolean value)
 
-class Account(object):
+cdef extern from "libpurple/status.h":
+    ctypedef int PurpleStatusPrimitive
+
+    cdef struct _PurpleSavedStatus
+    ctypedef _PurpleSavedStatus PurpleSavedStatus
+
+    PurpleSavedStatus *purple_saved_status_new(const_char_ptr title, PurpleStatusPrimitive type)
+    void purple_saved_status_activate(PurpleSavedStatus *saved_status)
+
+cdef extern from "libpurple/proxy.h":
+    cdef struct PurpleProxyInfo
+
+    ctypedef int PurpleProxyType
+    PurpleProxyInfo *purple_proxy_info_new()
+    void c_purple_proxy_info_set_type "purple_proxy_info_set_type" (PurpleProxyInfo *info, PurpleProxyType type)
+    void c_purple_proxy_info_set_host "purple_proxy_info_set_host" (const_char_ptr host)
+    void c_purple_proxy_info_set_port "purple_proxy_info_set_port" (const_char_ptr port)
+
+
+class ProxyType:
+    def __init__(self):
+        self.PROXY_USE_GLOBAL = -1
+        self.PROXY_NONE = 0
+        self.PROXY_HTTP = 1
+        self.PROXY_SOCKS4 = 2
+        self.PROXY_SOCKS5 = 3
+        self.PROXY_USE_ENVVAR = 4
+
+
+class StatusPrimitive:
+    def __init__(self):
+        self.STAUTS_UNSET = 0
+        self.STATUS_OFFLINE = 1
+        self.STATUS_AVAILABLE = 2
+        self.STATUS_UNAVAILABLE = 3
+        self.STATUS_INVISIBLE = 4
+        self.STATUS_AWAY = 5
+        self.STATUS_EXTENDED_AWAY = 6
+        self.STATUS_MOBILE = 7
+        self.STATUS_TUNE = 8
+        self.STATUS_NUN_PRIMITIVE = 9
+
+cdef class Account:
     """ Account class """
+    cdef PurpleAccount *__account
 
-    def __init__(self, username, protocol_id):
-        cdef PurpleAccount *acc = c_purple_account_new(username, protocol_id)
-        self.__acc = <object> acc
-        acc = <PurpleAccount *> self.__acc
+    def __cinit__(self, const_char_ptr username, const_char_ptr protocol_id):
+        self.__account = purple_account_new(username, protocol_id)
+        """FIXME: Check status implementation"""
+#        self.__sstatus = purple_saved_status_new("on-line", StatusPrimitive().STATUS_AVAILABLE)
+#        purple_saved_status_activate(self.__sstatus)
 
-    """
-    def purple_account_set_password(self, account, password):
-        c_purple_account_set_password(account, password)
+    def set_password(self, password):
+        purple_account_set_password(self.__account, password)
 
-    def purple_account_set_enabled(self, account, ui, value):
-        c_purple_account_set_enabled(account, ui, value)
-    """
+    def set_enabled(self, ui, value):
+        purple_account_set_enabled(self.__account, ui, value)
