@@ -22,24 +22,24 @@ cimport purple
 cdef class Account:
     """
     Account class
-    @param core
+    @param core Purple class instance
     @param username
-    @param protocol_id
+    @param protocol Protocol class instance
     """
 
-    def __init__(self, core, username, protocol_id):
-        self.__core = core
+    def __init__(self, username, protocol, core):
         self.__username = username
-        self.__protocol = Protocol(self, protocol_id)
+        self.__protocol = protocol
+        self.__core = core
 
-        if self._get_structure() == NULL:
-            self.__exists = False
-        else:
+        if protocol.exists and self._get_structure() != NULL:
             self.__exists = True
+        else:
+            self.__exists = False
 
     cdef account.PurpleAccount *_get_structure(self):
         return account.purple_accounts_find(self.username, \
-                self.protocol_id)
+                self.protocol.protocol_id)
 
     def __is_connected(self):
         if self.__exists:
@@ -84,18 +84,9 @@ cdef class Account:
             return self.__username
     username = property(__get_username)
 
-    def __get_protocol_id(self):
-        cdef char *protocol_id = NULL
-        if self.__exists:
-            protocol_id = <char *> account.purple_account_get_protocol_id( \
-                    self._get_structure())
-            if protocol_id:
-                return protocol_id
-            else:
-                return None
-        else:
-            return self.protocol_id
-    protocol_id = property(__get_protocol_id)
+    def __get_protocol(self):
+        return self.protocol
+    protocol = property(__get_protocol)
 
     def __get_password(self):
         cdef char *password = NULL
@@ -164,15 +155,17 @@ cdef class Account:
         else:
             return False
 
-    def set_protocol_id(self, protocol_id):
+    def set_protocol(self, protocol):
         """
-        Sets the account's protocol ID.
+        Sets the account's protocol.
 
-        @param protocol_id The protocol ID
+        @param protocol A Protocol class instance
         @return True if successful, False if account doesn't exists
         """
-        if self.__exists:
-            self.__protocol._set_protocol_id(protocol_id)
+        if protocol.exists and self.__exists:
+            account.purple_account_set_protocol_id(self._get_structure(), \
+                        protocol.protocol_id)
+            self.__protocol = protocol
             return True
         else:
             return False
