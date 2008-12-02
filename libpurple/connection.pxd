@@ -17,10 +17,14 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cimport glib
+
 cimport account
+cimport plugin
 
 cdef extern from *:
     ctypedef int size_t
+    ctypedef long int time_t
     ctypedef char const_char "const char"
 
 cdef extern from "libpurple/connection.h":
@@ -76,7 +80,19 @@ cdef extern from "libpurple/connection.h":
         void (*report_disconnect_reason) (PurpleConnection *gc, PurpleConnectionError reason, const_char *text)
 
     ctypedef struct PurpleConnection:
-        pass
+        plugin.PurplePlugin *prpl
+        PurpleConnectionFlags flags
+        PurpleConnectionState state
+        account.PurpleAccount *account
+        char *password
+        int inpa
+        glib.GSList *buddy_chats
+        void *proto_data
+        char *display_name
+        glib.guint keepalive
+        glib.gboolean wants_to_die
+        glib.guint disconnect_timeout
+        time_t last_received
 
     account.PurpleAccount *c_purple_connection_get_account "purple_connection_get_account" (PurpleConnection *gc)
     void *c_purple_connections_get_handle "purple_connections_get_handle" ()

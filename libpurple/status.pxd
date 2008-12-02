@@ -26,7 +26,7 @@ cimport value
 
 cdef extern from *:
     ctypedef char const_char "const char"
-    ctypedef int time_t
+    ctypedef long int time_t
 
 cdef extern from "libpurple/status.h":
     ctypedef struct PurpleStatusType
