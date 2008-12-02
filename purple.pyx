@@ -347,6 +347,7 @@ cdef class Purple:
         else:
             return None
 
+include "plugin.pyx"
 include "proxy.pyx"
 include "account.pyx"
 include "buddy.pyx"
