@@ -179,6 +179,33 @@ cdef class Account:
 
     protocol_options = property(_get_protocol_options)
 
+    def _get_protocol_labels(self):
+        cdef glib.GList *iter
+        cdef accountopt.PurpleAccountOption *option
+        cdef const_char *label_name
+        cdef const_char *setting
+
+        if self.c_account == NULL:
+            return None
+
+        po = {}
+
+        iter = self.c_prpl_info.protocol_options
+
+        while iter:
+
+            option = <accountopt.PurpleAccountOption *> iter.data
+            label_name = accountopt.c_purple_account_option_get_text(option)
+            setting = accountopt.c_purple_account_option_get_setting(option)
+
+            sett = str(<char *> setting)
+            label = str(<char *> label_name)
+
+            po[sett] = label
+
+        return po
+
+    protocol_labels = property(_get_protocol_labels)
 
     def get_protocol_name(self):
         if self.c_account:
