@@ -72,6 +72,15 @@ cdef class Buddy:
             return None
     alias = property(__get_alias)
 
+    def __get_group(self):
+        cdef blist.PurpleGroup *c_group = NULL
+        if self.__exists:
+            c_group = blist.purple_buddy_get_group(self._get_structure())
+            return <char *> blist.purple_group_get_name(c_group)
+        else:
+            return None
+    group = property(__get_group)
+
     def __get_server_alias(self):
         cdef char *c_server_alias = NULL
         c_server_alias = <char *> blist.purple_buddy_get_server_alias( \
@@ -129,6 +138,20 @@ cdef class Buddy:
     def set_alias(self, alias):
         if self.__exists:
             blist.purple_blist_alias_buddy(self._get_structure(), alias)
+            return True
+        else:
+            return False
+
+    def set_group(self, group):
+        cdef blist.PurpleContact *c_contact = NULL
+        cdef blist.PurpleGroup *c_group = NULL
+        if self.__exists and group:
+            c_group = blist.purple_find_group(group)
+            if c_group == NULL:
+                c_group = blist.purple_group_new(group)
+
+            c_contact = blist.purple_buddy_get_contact(self._get_structure())
+            blist.purple_blist_add_contact(c_contact, c_group, NULL)
             return True
         else:
             return False
