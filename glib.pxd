@@ -52,6 +52,7 @@ cdef extern from "glib.h":
 
     GHashTable *g_hash_table_new (GHashFunc, GEqualFunc)
     void g_hash_table_insert (GHashTable*, gpointer, gpointer)
+    void g_hash_table_destroy (GHashTable*)
 
     guint g_timeout_add(guint interval, GSourceFunc function, gpointer data)
     guint g_timeout_add_seconds(guint interval, GSourceFunc function, gpointer data)

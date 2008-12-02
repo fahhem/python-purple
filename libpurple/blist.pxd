@@ -21,6 +21,9 @@ cdef extern from "libpurple/blist.h":
     ctypedef struct PurpleBlistNode:
         pass
 
+    ctypedef struct PurpleBlistUiOps:
+        pass
+
     ctypedef struct PurpleBuddy:
         pass
 
@@ -30,6 +33,7 @@ cdef extern from "libpurple/blist.h":
     void *c_purple_blist_get_handle "purple_blist_get_handle" ()
     void c_purple_blist_load "purple_blist_load" ()
     PurpleBuddyList* c_purple_blist_new "purple_blist_new" ()
+    void c_purple_blist_set_ui_ops "purple_blist_set_ui_ops" (PurpleBlistUiOps *ops)
 
     PurpleBuddy *c_purple_buddy_new "purple_buddy_new" (PurpleAccount *account,
             const_char_ptr screenname, const_char_ptr alias)

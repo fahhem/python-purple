@@ -17,11 +17,8 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cdef extern from "libpurple/connection.h":
-    ctypedef struct PurpleConnection:
+cdef extern from "libpurple/request.h":
+    ctypedef struct PurpleRequestUiOps:
         pass
 
-    ctypedef struct PurpleConnectionUiOps:
-        pass
-
-    void c_purple_connections_set_ui_ops "purple_connections_set_ui_ops" (PurpleConnectionUiOps *ops)
+    void c_purple_request_set_ui_ops "purple_request_set_ui_ops" (PurpleRequestUiOps *ops)

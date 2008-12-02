@@ -34,11 +34,15 @@ include "libpurple/conversation.pxd"
 include "libpurple/core.pxd"
 include "libpurple/debug.pxd"
 include "libpurple/eventloop.pxd"
+include "libpurple/ft.pxd"
 include "libpurple/idle.pxd"
+include "libpurple/notify.pxd"
 include "libpurple/plugin.pxd"
 include "libpurple/pounce.pxd"
 include "libpurple/prefs.pxd"
 include "libpurple/proxy.pxd"
+include "libpurple/request.pxd"
+include "libpurple/roomlist.pxd"
 include "libpurple/signals.pxd"
 include "libpurple/status.pxd"
 include "libpurple/savedstatuses.pxd"
@@ -90,7 +94,6 @@ cdef class Purple:
         c_purple_prefs_load()
 
         c_purple_prefs_add_none("/carman")
-        c_purple_prefs_add_none("/carman/plugins")
     # __core_ui_ops_ui_prefs_init
 
     cdef void __core_ui_ops_debug_init(self):
@@ -99,10 +102,23 @@ cdef class Purple:
 
     cdef void __core_ui_ops_ui_init(self):
         c_purple_debug(PURPLE_DEBUG_INFO, "core_ui_ops", "ui_init\n")
+
+        # FIXME: Add core ui initialization here
     # __core_ui_ops_ui_init
 
     cdef void __core_ui_ops_quit(self):
         c_purple_debug(PURPLE_DEBUG_INFO, "core_ui_ops", "quit\n")
+        c_purple_accounts_set_ui_ops(NULL)
+        c_purple_connections_set_ui_ops(NULL)
+        c_purple_blist_set_ui_ops(NULL)
+        c_purple_conversations_set_ui_ops(NULL)
+        c_purple_notify_set_ui_ops(NULL)
+        c_purple_request_set_ui_ops(NULL)
+        c_purple_xfers_set_ui_ops(NULL)
+        c_purple_roomlist_set_ui_ops(NULL)
+
+        if self.c_ui_info:
+            g_hash_table_destroy(self.c_ui_info)
     # __core_ui_ops_quit
 
     cdef GHashTable *__core_ui_ops_get_ui_info(self):
