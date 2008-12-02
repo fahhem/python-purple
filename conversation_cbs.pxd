@@ -85,15 +85,16 @@ cdef void write_im(conversation.PurpleConversation *conv, const_char *who, \
     else:
         username = None
 
-    if who:
-        sender = <char *> who
-        buddy = blist.purple_find_buddy(acc, <char *> who)
+    if who == NULL:
+        who = conversation.purple_conversation_get_name(conv)
+
+    sender = <char *> who
+    buddy = blist.purple_find_buddy(acc, <char *> who)
+    if buddy:
         c_sender_alias = <char *> blist.purple_buddy_get_alias_only(buddy)
-    else:
-        sender = None
 
     if c_sender_alias:
-        sender_alias = c_sender_alias
+        sender_alias = unicode(c_sender_alias, 'utf-8')
     else:
         sender_alias = None
 
