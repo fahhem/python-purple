@@ -259,16 +259,6 @@ cdef class Account:
         else:
             return None
 
-    def get_enabled(self, ui):
-        if self.c_account:
-            return account.c_purple_account_get_enabled(self.c_account, ui)
-        else:
-            return None
-
-    def set_enabled(self, ui, value):
-        if self.c_account:
-            account.c_purple_account_set_enabled(self.c_account, ui, value)
-
     def set_status(self):
         self.__sstatus = savedstatuses.c_purple_savedstatus_new(NULL, status.PURPLE_STATUS_AVAILABLE)
         savedstatuses.c_purple_savedstatus_activate(self.__sstatus)
@@ -389,4 +379,26 @@ cdef class Account:
             return account.c_purple_account_get_protocol_id(c_account)
         else:
             return None
+
+    def set_enabled(self, acc, ui, value):
+        ''' @param acc Tuple (username, protocol id) '''
+        ''' @param ui The UI '''
+        ''' @param value True to enabled or False to disabled '''
+        cdef account.PurpleAccount *c_account
+
+        c_account = account.c_purple_accounts_find(acc[0], acc[1])
+        if c_account:
+            account.c_purple_account_set_enabled(c_account, <char *> ui, bool(value))
+ 
+    def get_enabled(self, acc, ui):
+        ''' @param acc Tuple (username, protocol id) '''
+        ''' @param ui The UI '''
+        cdef account.PurpleAccount *c_account
+
+        c_account = account.c_purple_accounts_find(acc[0], acc[1])
+        if c_account:
+            return account.c_purple_account_get_enabled(c_account, ui)
+        else:
+            return None
+
 
