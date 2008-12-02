@@ -132,6 +132,10 @@ cdef extern from "libpurple/account.h":
             "purple_accounts_get_all_active" ()
     void c_purple_accounts_set_ui_ops "purple_accounts_set_ui_ops" \
             (PurpleAccountUiOps *ops)
+    void c_purple_account_connect "purple_account_connect" \
+	    (PurpleAccount *account)
+    void c_purple_account_disconnect "purple_account_disconnect" \
+	    (PurpleAccount *account)
     glib.gboolean c_purple_account_is_connected "purple_account_is_connected" \
             (PurpleAccount *account)
     PurpleProxyInfo *c_purple_account_get_proxy_info \
