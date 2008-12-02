@@ -1,0 +1,14 @@
+Source: python-purple
+Section: python
+Priority: optional
+Maintainer: Bruno Abinader <bruno.abinader@openbossa.org>
+Build-Depends: cdbs, cython, debhelper, gcc, libpurple-dev, python
+
+Package: python-purple
+Architecture: all
+Depends: ${python:Depends}, ${misc:Depends}
+XB-Python-Version: ${python:Versions}
+Description: Python bind for libpurple
+ Libpurple is a library intended to be used by programmers seeking
+ to write an IM client that connects to many IM networks.
+ This is a python bind for libpurple written using Cython.
