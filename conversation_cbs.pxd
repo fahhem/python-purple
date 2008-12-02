@@ -67,7 +67,7 @@ cdef void write_im (conversation.PurpleConversation *conv, const_char *who,
                     time_t mtime):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "conversation", "write-im\n")
     cdef account.PurpleAccount *acc = conversation.c_purple_conversation_get_account(conv)
-    cdef blist.PurpleBuddy *buddy = blist.c_purple_find_buddy(acc, <char *> who)
+    cdef blist.PurpleBuddy *buddy = NULL
     cdef char *c_username = NULL
     cdef char *c_sender_alias = NULL
 
@@ -79,6 +79,7 @@ cdef void write_im (conversation.PurpleConversation *conv, const_char *who,
 
     if who:
         sender = <char *> who
+        buddy = blist.c_purple_find_buddy(acc, <char *> who)
         c_sender_alias = <char *> blist.c_purple_buddy_get_alias_only(buddy)
     else:
         sender = None
