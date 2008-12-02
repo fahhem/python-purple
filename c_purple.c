@@ -91,8 +91,3 @@ void connect_to_signals_for_demonstration_purposes_only(void)
 	purple_signal_connect(purple_connections_get_handle(), "signed-on", &handle,
 				PURPLE_CALLBACK(signed_on), NULL);
 }
-
-void glib_main_loop() {
-	GMainLoop *loop = g_main_loop_new(NULL, 0);
-	g_main_loop_run(loop);
-}

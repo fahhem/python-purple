@@ -1,4 +1,5 @@
 import purple
+import ecore
 
 class NullClient:
     def __init__(self):
@@ -29,4 +30,4 @@ if __name__ == '__main__':
     client.new_account("seu_email@email.com", client.protocol,"sua_senha_aqui")
 
     client.p.connect()
-    client.p.run_loop()
+    ecore.main_loop_begin()

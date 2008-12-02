@@ -239,9 +239,6 @@ cdef class Purple:
         conn = Connection()
         conn.connect()
 
-    def run_loop(self):
-        glib_main_loop()
-
 include "core/account.pxd"
 include "core/buddy.pxd"
 include "glib.pxd"

@@ -22,5 +22,3 @@ guint glib_input_add(gint fd, PurpleInputCondition condition,
 	PurpleInputFunction function, gpointer data);
 
 void connect_to_signals_for_demonstration_purposes_only(void);
-
-void glib_main_loop(void);
