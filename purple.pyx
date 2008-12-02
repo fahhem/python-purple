@@ -245,8 +245,9 @@ cdef class Purple:
 
         return ret
 
-    def add_callback(self, type, name, func):
-        """ Adds a callback 'func' with given name 'name' inside type 'type'.
+    def add_callback(self, type, name, callback):
+        """
+        Adds a callback with given name inside callback's type.
         Example: add_callback("account", "notify-added", notify_added_cb)
         """
         global account_cbs
@@ -261,7 +262,7 @@ cdef class Purple:
           "connection": connection_cbs,
           "conversation": conversation_cbs,
           "notify": notify_cbs,
-          "request": request_cbs }[type][name] = func
+          "request": request_cbs }[type][name] = callback
 
     def signal_connect(self, name=None, cb=None):
         cdef int handle
