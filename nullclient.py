@@ -138,16 +138,31 @@ class NullClient:
         self.p.purple_init(cbs)
 
     def set_protocol(self, protocol):
-        for i in self.p.get_protocols():
-            if i[1] == protocol:
+        for p in self.p.get_protocols():
+            if p.get_name() == protocol:
                 print "-- NULLCLIENT --: Choosing %s as protocol" % protocol
-                self.protocol = i[0]
-                print "-- NULLCLIENT --: Protocol successfully chosen: %s" % i[0]
+                self.protocol = p
+                print "-- NULLCLIENT --: Protocol successfully chosen: %s" % p.get_id()
                 return
 
     def new_account(self, username, protocol, password):
-        self.account = purple.Account(username, protocol)
+        self.account = purple.Account(username, protocol.get_id())
         self.account.set_password(password)
+
+        proxy = self.account.get_proxyinfo()
+        if proxy is None:
+            print "None"
+            proxy = purple.ProxyInfo()
+            proxy.cnew()
+
+        proxy.set_type(purple.ProxyInfoType().HTTP())
+        proxy.set_host("172.18.216.211")
+        proxy.set_port(8080)
+
+        self.account.set_proxyinfo(proxy)
+
+        self.account.get_protocol_options()
+
         self.account.set_enabled("carman-purple-python", True)
     def get_buddies(self):
         buddies = self.account.get_buddies_online()
