@@ -1,15 +1,7 @@
 #!/usr/bin/env python
 
-import sys
-import os
-
-from ez_setup import use_setuptools
-use_setuptools('0.6c8')
-
-
-from setuptools import setup, find_packages, Extension
-from distutils.sysconfig import get_python_inc
-from glob import glob
+from distutils.core import setup
+from distutils.extension import Extension
 
 from Cython.Distutils import build_ext
 
@@ -20,13 +12,11 @@ ldflags = Popen(['pkg-config', '--libs', 'purple'], stdout=PIPE).communicate()[0
 
 purplemodule = Extension('purple',
                          sources=['c_purple.c','purple.pyx'],
-                         depends=glob('libpurple/*.pxd'),
                          extra_compile_args=cflags,
                          extra_link_args=ldflags)
 
-long_description = """\
-Python bindings for Purple, a multi-protocol instant messaging library.
-"""
+long_description = "\
+Python bindings for libpurple, a multi-protocol instant messaging library."
 
 class pypurple_build_ext(build_ext):
     def finalize_options(self):
@@ -40,8 +30,6 @@ setup(name = 'python-purple',
       author_email = 'bruno.abinader@openbossa.org',
       description = 'Python bindings for Purple',
       long_description = long_description,
-      packages = find_packages(),
       ext_modules = [purplemodule],
-      zip_safe=False,
       cmdclass = {'build_ext': pypurple_build_ext},
       )
