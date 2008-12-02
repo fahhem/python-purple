@@ -135,6 +135,30 @@ cdef class Buddy:
             return None
     idle = property(__get_idle)
 
+    def __get_active_status(self):
+        cdef status.PurpleStatus* c_status = NULL
+        cdef char *type = NULL
+        cdef char *name = NULL
+        cdef char *msg = NULL
+        if self.__exists:
+            active = {}
+            c_status = status.purple_presence_get_active_status( \
+                    blist.purple_buddy_get_presence(self._get_structure()))
+            type = <char *> status.purple_status_get_id(c_status)
+            name = <char *> status.purple_status_get_name(c_status)
+            msg = <char *> status.purple_status_get_attr_string(c_status,
+                "message")
+
+            active['type'] = type
+            active['name'] = name
+            if msg:
+                active['message'] = msg
+
+            return active
+        else:
+            return None
+    active_status = property(__get_active_status)
+
     def set_alias(self, alias):
         if self.__exists:
             blist.purple_blist_alias_buddy(self._get_structure(), alias)
