@@ -29,7 +29,7 @@ cdef void connect_progress (connection.PurpleConnection *gc, const_char *text,
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "connection",
                          "connect_progress\n")
     try:
-        (<object>connection_cbs["connect_progress"])("connect_progress")
+        (<object>connection_cbs["connect_progress"])(<char *>text, step, step_count)
     except KeyError:
         pass
 
@@ -37,7 +37,7 @@ cdef void connected (connection.PurpleConnection *gc):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "connection",
                          "connected\n")
     try:
-        (<object>connection_cbs["connected"])("connected")
+        (<object>connection_cbs["connected"])()
     except KeyError:
         pass
 
@@ -45,7 +45,7 @@ cdef void disconnected (connection.PurpleConnection *gc):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "connection",
                          "disconnected\n")
     try:
-        (<object>connection_cbs["disconnected"])("disconnected")
+        (<object>connection_cbs["disconnected"])()
     except KeyError:
         pass
 
@@ -62,7 +62,7 @@ cdef void report_disconnect (connection.PurpleConnection *gc,
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "connection",
                          "report_disconnect\n")
     try:
-        (<object>connection_cbs["report_disconnect"])("report_disconnect")
+        (<object>connection_cbs["report_disconnect"])(<char *>text)
     except KeyError:
         pass
 
@@ -87,7 +87,27 @@ cdef void report_disconnect_reason (connection.PurpleConnection *gc,
                                     const_char *text):
     debug.c_purple_debug(debug.PURPLE_DEBUG_INFO, "connection",
                          "report_disconnect_reason\n")
+
+    reason_string = {
+        0: 'Network error',
+        1: 'Invalid username',
+        2: 'Authentication failed',
+        3: 'Authentication impossible',
+        4: 'No SSL support',
+        5: 'Encryption error',
+        6: 'Name in use',
+        7: 'Invalid settings',
+        8: 'Certificate not provided',
+        9: 'Certificate untrusted',
+        10: 'Certificate expired',
+        11: 'Certificate not activated',
+        12: 'Certificate hostname mismatch',
+        13: 'Certificate fingerprint mismatch',
+        14: 'Certificate self signed',
+        15: 'Certificate error (other)',
+        16: 'Other error' }[reason]
+
     try:
-        (<object>connection_cbs["report_disconnect_reason"])("report_disconnect_reason")
+        (<object>connection_cbs["report_disconnect_reason"])(reason_string, <char *>text)
     except KeyError:
         pass

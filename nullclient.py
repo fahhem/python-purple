@@ -42,14 +42,30 @@ cbs["blist"] = blist_cbs
 def conn_callback(name):
     print "---- connection callback example: %s" % name
 
-conn_cbs["connect_progress"] = conn_callback
-conn_cbs["connected"] = conn_callback
-conn_cbs["disconnected"] = conn_callback
 conn_cbs["notice"] = conn_callback
-conn_cbs["report_disconnect"] = conn_callback
 conn_cbs["network_connected"] = conn_callback
 conn_cbs["network_disconnected"] = conn_callback
-conn_cbs["report_disconnect_reason"] = conn_callback
+
+def connect_progress_cb(text, step, step_count):
+    print "---- connection status: %s [%s/%s]" % (text, step, step_count)
+
+def connected_cb():
+    print "---- connection status: Connected"
+
+def disconnected_cb():
+    print "---- connection status: Disconnected"
+
+def report_disconnect_cb(text):
+    print "---- %s" % text
+
+def report_disconnect_reason_cb(reason, text):
+    print "---- %s (%s)" % (text, reason)
+
+conn_cbs["connect_progress"] = connect_progress_cb
+conn_cbs["connected"] = connected_cb
+conn_cbs["disconnected"] = disconnected_cb
+conn_cbs["report_disconnect"] = report_disconnect_cb
+conn_cbs["report_disconnect_reason"] = report_disconnect_reason_cb
 
 cbs["connection"] = conn_cbs
 
