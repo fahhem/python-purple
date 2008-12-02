@@ -336,6 +336,19 @@ cdef class Purple:
 
         return account_list
 
+    def protocols_get_all(self):
+        cdef glib.GList *iter
+        cdef plugin.PurplePlugin *pp
+
+        iter = plugin.c_purple_plugins_get_protocols()
+        protocol_list = []
+        while iter:
+            pp = <plugin.PurplePlugin*> iter.data
+            if pp.info and pp.info.name:
+                protocol_list.append[Protocol(pp.info.id)]
+            iter = iter.next
+        return protocol_list
+
 include "protocol.pyx"
 #include "plugin.pyx"
 include "proxy.pyx"
