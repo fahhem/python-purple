@@ -391,27 +391,25 @@ cdef class Account:
         if self.__exists:
             return False
         else:
-            # FIXME: Using purple_accounts_add(...) to save to xml
-            #   I think we could improve this ..
             account.purple_accounts_add(account.purple_account_new( \
                     self.__username, self.__protocol.id))
 
             self.__exists = True
             return True
 	
-	def remove_account(self, username, protocol_id):
+	def remove(self):
 		"""
         Removes as existing account.
 
         @return True if successful, False if account doesnt exists
         """
-		who = account.purple_accounts_find(username, protocol_id)
-		
-		if who == NULL:
-			return False
-		else
-			account.purple_accounts_remove( who )
+		if self.__exists:
+			account.purple_accounts_remove(self._get_structure())
+			
+			self__exists = False
 			return True
+		else:
+			return False
 
     def connect(self):
         """
