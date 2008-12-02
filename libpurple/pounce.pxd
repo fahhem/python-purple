@@ -20,4 +20,4 @@
 cimport glib
 
 cdef extern from "libpurple/pounce.h":
-    glib.gboolean c_purple_pounces_load "purple_pounces_load" ()
+    glib.gboolean purple_pounces_load()
