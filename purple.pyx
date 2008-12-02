@@ -73,7 +73,7 @@ cdef class Purple:
         plugin.c_purple_plugins_add_search_path(default_path)
 
         # adds glib iteration inside ecore main loop
-        ecore.idler_add(self.__glib_iteration_when_idle)
+        ecore.timer_add(0.001, self.__glib_iteration_when_idle)
 
     def __del__(self):
         core.c_purple_core_quit()
