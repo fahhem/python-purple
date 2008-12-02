@@ -24,26 +24,24 @@ cdef extern from "libpurple/purple.h":
     cdef struct _PurpleAccount
     ctypedef _PurpleAccount PurpleAccount
 
-    PurpleBuddy *purple_buddy_new(PurpleAccount *account,
+    PurpleBuddy *c_purple_buddy_new "purple_buddy_new" (PurpleAccount *account,
             const_char_ptr screenname, const_char_ptr alias)
 
-    const_char_ptr purple_buddy_get_alias_only(PurpleBuddy *buddy)
-    const_char_ptr purple_buddy_get_name(PurpleBuddy *buddy)
-
+    const_char_ptr c_purple_buddy_get_alias_only "purple_buddy_get_alias_only" (PurpleBuddy *buddy)
+    const_char_ptr c_purple_buddy_get_name "purple_buddy_get_name" (PurpleBuddy *buddy)
 
 cdef class Buddy:
     """ Buddy class """
     cdef PurpleBuddy *__buddy
 
-    def __cinit__(self, acc, const_char_ptr scr, const_char_ptr alias):
-        self.__buddy = purple_buddy_new(<PurpleAccount *>acc.__account, scr, alias)
-        self.acc = acc
+    def __cinit__(self):
+        self.__buddy = NULL
+
+    def new_buddy(self, acc, const_char_ptr scr, const_char_ptr alias):
+        self.__buddy = c_purple_buddy_new(<PurpleAccount *>acc.__account, scr, alias)
 
     def get_alias(self):
-        return purple_buddy_get_alias_only(self.__buddy)
+        return c_purple_buddy_get_alias_only(self.__buddy)
 
     def get_name(self):
-        return purple_buddy_get_name(self.__buddy)
-
-    def get_account(self):
-        return self.acc
+        return c_purple_buddy_get_name(self.__buddy)
