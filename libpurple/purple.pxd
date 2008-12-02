@@ -20,6 +20,7 @@
 cimport glib
 
 cimport account
+cimport accountopt
 cimport buddyicon
 cimport blist
 cimport connection
