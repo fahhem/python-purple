@@ -58,5 +58,6 @@ cdef class Plugins:
                 if p:
                     protocols += [p]
             iter = iter.next
+        glib.g_list_free(iter)
         self.protocols = protocols
         return protocols

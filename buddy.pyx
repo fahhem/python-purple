@@ -30,7 +30,7 @@ cdef class Buddy:
         self.__buddy = blist.c_purple_buddy_new(<account.PurpleAccount *>acc.__account, scr, alias)
 
     def get_alias(self):
-        return blist.c_purple_buddy_get_alias_only(self.__buddy)
+        return <char *>blist.c_purple_buddy_get_alias_only(self.__buddy)
 
     def get_name(self):
-        return blist.c_purple_buddy_get_name(self.__buddy)
+        return <char *>blist.c_purple_buddy_get_name(self.__buddy)
