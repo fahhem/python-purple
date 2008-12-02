@@ -18,6 +18,7 @@
 #
 
 cimport purple
+cimport proxy
 
 cdef class Account:
     """ Account class """
@@ -58,3 +59,16 @@ cdef class Account:
                 buddies += [buddy.name]
             iter = iter.next
         return buddies
+
+    def get_proxyinfo(self):
+        cdef proxy.PurpleProxyInfo *c_proxyinfo
+        c_proxyinfo = account.c_purple_account_get_proxy_info(self.__account)
+        if c_proxyinfo == NULL:
+            return None
+        cdef ProxyInfo proxyinfo
+        proxyinfo = proxy.ProxyInfo()
+        proxyinfo.c_proxyinfo = c_proxyinfo
+        return proxyinfo
+
+    def set_proxyinfo(self, ProxyInfo proxyinf):
+        account.c_purple_account_set_proxy_info(self.__account, proxyinf.c_proxyinfo)

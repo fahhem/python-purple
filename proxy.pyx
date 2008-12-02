@@ -51,20 +51,29 @@ cdef class ProxyInfo:
     cdef proxy.PurpleProxyInfo *c_proxyinfo
 
     def __init__(self):
-        self.c_proxyinfo = proxy.c_purple_proxy_info_new()
+        self.c_proxyinfo = NULL
+
+    def cnew(self):
+        if self.c_proxyinfo == NULL:
+            self.c_proxyinfo = proxy.c_purple_proxy_info_new()
 
     def set_type(self, ProxyInfoType type):
-        proxy.c_purple_proxy_info_set_type(self.c_proxyinfo, type.c_proxyinfotype)
+        if self.c_proxyinfo:
+            proxy.c_purple_proxy_info_set_type(self.c_proxyinfo, type.c_proxyinfotype)
 
     def set_host(self, char *host):
-        proxy.c_purple_proxy_info_set_host(self.c_proxyinfo, host)
+        if self.c_proxyinfo:
+            proxy.c_purple_proxy_info_set_host(self.c_proxyinfo, host)
 
     def set_port(self, int port):
-        proxy.c_purple_proxy_info_set_port(self.c_proxyinfo, port)
+        if self.c_proxyinfo:
+            proxy.c_purple_proxy_info_set_port(self.c_proxyinfo, port)
 
     def set_username(self, char *username):
-        proxy.c_purple_proxy_info_set_username(self.c_proxyinfo, username)
+        if self.c_proxyinfo:
+            proxy.c_purple_proxy_info_set_username(self.c_proxyinfo, username)
 
     def set_password(self, char *password):
-        proxy.c_purple_proxy_info_set_password(self.c_proxyinfo, password)
+        if self.c_proxyinfo:
+            proxy.c_purple_proxy_info_set_password(self.c_proxyinfo, password)
 

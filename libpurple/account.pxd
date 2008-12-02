@@ -18,6 +18,7 @@
 #
 
 cimport glib
+cimport proxy
 
 cdef extern from "libpurple/account.h":
     ctypedef struct PurpleAccount:
@@ -32,11 +33,24 @@ cdef extern from "libpurple/account.h":
     ctypedef struct PurpleAccountUiOps:
         pass
 
-    PurpleAccount *c_purple_account_new "purple_account_new" (char *username, char *protocol_id)
-    void c_purple_account_set_password "purple_account_set_password" (PurpleAccount *account, char *password)
-    char *c_purple_account_get_password "purple_account_get_password" (PurpleAccount *account)
-    void c_purple_account_set_enabled "purple_account_set_enabled" (PurpleAccount *account, char *ui, glib.gboolean value)
-    char *c_purple_account_get_username "purple_account_get_username" (PurpleAccount *account)
-    glib.GList *c_purple_accounts_get_all_active "purple_accounts_get_all_active" ()
-    void c_purple_accounts_set_ui_ops "purple_accounts_set_ui_ops" (PurpleAccountUiOps *ops)
-    glib.gboolean c_purple_account_is_connected "purple_account_is_connected" (PurpleAccount *account)
+    PurpleAccount *c_purple_account_new "purple_account_new"    \
+            (char *username, char *protocol_id)
+    void c_purple_account_set_password "purple_account_set_password"    \
+            (PurpleAccount *account, char *password)
+    char *c_purple_account_get_password "purple_account_get_password"   \
+            (PurpleAccount *account)
+    void c_purple_account_set_enabled "purple_account_set_enabled"      \
+            (PurpleAccount *account, char *ui, glib.gboolean value)
+    char *c_purple_account_get_username "purple_account_get_username"   \
+            (PurpleAccount *account)
+    glib.GList *c_purple_accounts_get_all_active        \
+            "purple_accounts_get_all_active" ()
+    void c_purple_accounts_set_ui_ops "purple_accounts_set_ui_ops"      \
+            (PurpleAccountUiOps *ops)
+    glib.gboolean c_purple_account_is_connected "purple_account_is_connected" \
+            (PurpleAccount *account)
+    proxy.PurpleProxyInfo *c_purple_account_get_proxy_info      \
+            "purple_account_get_proxy_info" (PurpleAccount *account)
+    void c_purple_account_set_proxy_info "purple_account_set_proxy_info" \
+            (PurpleAccount *account, proxy.PurpleProxyInfo *info)
+
