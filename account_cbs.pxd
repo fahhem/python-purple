@@ -24,49 +24,57 @@ cdef extern from *:
 
 account_cbs = {}
 
-cdef void notify_added (account.PurpleAccount *account,
-                        const_char *remote_user, const_char *id,
-                        const_char *alias, const_char *message):
+cdef void notify_added(account.PurpleAccount *account, \
+        const_char *remote_user, const_char *id, const_char *alias, \
+        const_char *message):
+    """
+    A buddy who is already on this account's buddy list added this account to
+    their buddy list.
+    """
     debug.c_purple_debug_info("account", "%s", "notify-added\n")
-    try:
-        (<object>account_cbs["notify-added"])("notify-added: TODO")
-    except KeyError:
-        pass
+    if account_cbs.has_key("notify-added"):
+        (<object> account_cbs["notify-added"])("notify-added: TODO")
 
-cdef void status_changed (account.PurpleAccount *account,
-                          status.PurpleStatus *status):
+cdef void status_changed(account.PurpleAccount *account, \
+        status.PurpleStatus *status):
+    """
+    This account's status changed.
+    """
     debug.c_purple_debug_info("account", "%s", "status-changed\n")
-    try:
-        (<object>account_cbs["status-changed"])("status-changed: TODO")
-    except KeyError:
-        pass
+    if account_cbs.has_key("status-changed"):
+        (<object> account_cbs["status-changed"])("status-changed: TODO")
 
-cdef void request_add (account.PurpleAccount *account,
-                       const_char *remote_user, const_char *id,
-                       const_char *alias, const_char *message):
+cdef void request_add(account.PurpleAccount *account, \
+        const_char *remote_user, const_char *id, const_char *alias, \
+        const_char *message):
+    """
+    Someone we don't have on our list added us; prompt to add them.
+    """
     debug.c_purple_debug_info("account", "%s", "request-add\n")
-    try:
-        (<object>account_cbs["request-add"])("request-add: TODO")
-    except KeyError:
-        pass
+    if account_cbs.has_key("request-add"):
+        (<object> account_cbs["request-add"])("request-add: TODO")
 
-cdef void *request_authorize (account.PurpleAccount *account,
-                              const_char *remote_user, const_char *id,
-                              const_char *alias, const_char *message,
-                              glib.gboolean on_list,
-                              account.PurpleAccountRequestAuthorizationCb authorize_cb,
-                              account.PurpleAccountRequestAuthorizationCb deny_cb,
-                              void *user_data):
+cdef void *request_authorize(account.PurpleAccount *account, \
+        const_char *remote_user, const_char *id, const_char *alias, \
+        const_char *message, glib.gboolean on_list, \
+        account.PurpleAccountRequestAuthorizationCb authorize_cb, \
+        account.PurpleAccountRequestAuthorizationCb deny_cb, \
+        void *user_data):
+    """
+    Prompt for authorization when someone adds this account to their buddy
+    list. To authorize them to see this account's presence, call
+    authorize_cb(user_data) otherwise call deny_cb(user_data).
+    @return a UI-specific handle, as passed to #close_account_request.
+    """
     debug.c_purple_debug_info("account", "%s", "request-authorize\n")
-    try:
-        (<object>account_cbs["request-authorize"])("request-authorize: TODO")
-        return NULL
-    except KeyError:
-        pass
+    if account_cbs.has_key("request-authorize"):
+        (<object> account_cbs["request-authorize"])("request-authorize: TODO")
 
 cdef void close_account_request (void *ui_handle):
+    """
+    Close a pending request for authorization. ui_handle is a handle as
+    returned by request_authorize.
+    """
     debug.c_purple_debug_info("account", "%s", "close-account-request\n")
-    try:
-        (<object>account_cbs["close-account-request"])("close-account-request: TODO")
-    except KeyError:
-        pass
+    if account_cbs.has_key("close-account-request"):
+        (<object> account_cbs["close-account-request"])("close-account-request: TODO")
