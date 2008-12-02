@@ -17,21 +17,23 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cdef extern from *:
-    ctypedef char* const_char_ptr "const char *"
+cdef extern from "glib.h":
+    ctypedef void* gpointer
+    ctypedef int gint
+    ctypedef unsigned int guint
+    ctypedef gint gboolean
 
-cdef extern from "time.h":
-    ctypedef long int time_t
+    # GHashTable is an opaque data structure
+    ctypedef struct GHashTable:
+        void* none
 
-include "glib.pxd"
-include "core/account.pxd"
-include "core/blist.pxd"
-include "core/connection.pxd"
-include "core/core.pxd"
-include "core/debug.pxd"
-include "core/eventloop.pxd"
-include "core/idle.pxd"
-include "core/plugin.pxd"
-include "core/pounce.pxd"
-include "core/prefs.pxd"
-include "core/util.pxd"
+    struct _GSList:
+        gpointer data
+        _GSList *next
+    ctypedef _GSList GSList
+
+    struct _GList:
+        gpointer data
+        _GList *next
+        _GList *prev
+    ctypedef _GList GList
