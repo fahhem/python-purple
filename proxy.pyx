@@ -92,3 +92,38 @@ cdef class ProxyInfo:
     def get_types(self):
         return self.types.keys()
 
+    def set_info(self, acc, info):
+        ''' @param acc Tuple (username, protocol id) '''
+        ''' @param info Dictionary {'type': "HTTP", 'port': "1234", '''
+        '''                'username': "foo", 'passworld': "foo123"} '''
+
+        cdef account.PurpleAccount *c_account
+        cdef proxy.PurpleProxyInfo *c_proxyinfo
+        c_account = account.c_purple_accounts_find(acc[0], acc[1])
+
+        if c_account == NULL:
+            #FIXME: Message error or call a callback handle to error
+            return False
+
+        c_proxyinfo = account.c_purple_account_get_proxy_info(c_account)
+
+        if info.has_key('type'):
+            type = info['type']
+            if not type in self.types.keys():
+                #FIXME: Message error or call a callback handle to error
+                return False
+            proxy.c_purple_proxy_info_set_type(c_proxyinfo, self.types[type])
+
+        if info.has_key('port'):
+            port = int(info['port'])
+            proxy.c_purple_proxy_info_set_port(c_proxyinfo, port)
+
+        if info.has_key('username'):
+            username = info['username']
+            proxy.c_purple_proxy_info_set_username(c_proxyinfo, username)
+
+        if info.has_key('password'):
+            password = info['password']
+            proxy.c_purple_proxy_info_set_password(c_proxyinfo, password)
+           
+        return True
