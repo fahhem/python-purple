@@ -30,7 +30,7 @@ cdef void __group_node_cb(blist.PurpleBlistNode *node, object callback):
     if group.name:
         name = group.name
     else:
-        name = None
+        name = ""
 
     try:
         callback(node.type, name, group.totalsize, group.currentsize, \
@@ -44,10 +44,12 @@ cdef void __contact_node_cb(blist.PurpleBlistNode *node, object callback):
     if contact.alias:
         alias = contact.alias
     else:
-        alias = None
+        alias = ""
+
+    name = ""
 
     try:
-        callback(node.type, alias, contact.totalsize, contact.currentsize, \
+        callback(node.type, name, alias, contact.totalsize, contact.currentsize, \
                  contact.online)
     except KeyError:
         pass
@@ -60,12 +62,12 @@ cdef void __buddy_node_cb(blist.PurpleBlistNode *node, object callback):
     elif buddy.alias:
         alias = buddy.alias
     else:
-        alias = None
+        alias = ""
 
     if buddy.name:
         name = buddy.name
     else:
-        name = None
+        name = ""
 
     try:
         callback(node.type, name, alias)
@@ -78,7 +80,7 @@ cdef void __chat_node_cb(blist.PurpleBlistNode *node, object callback):
     if chat.alias:
         alias = chat.alias
     else:
-        alias = None
+        alias = ""
 
     try:
         callback(node.type, alias)

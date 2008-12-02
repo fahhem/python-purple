@@ -224,7 +224,7 @@ class NullClientPurple:
     def __init__(self):
         self.p = purple.Purple(debug_enabled=False)
         self.window = MainWindow(self.quit)
-        self.buddies = [] #online buddies
+        self.buddies = {} #all buddies
         self.conversations = {}
         self.account = None
         self.protocol_id = "prpl-jabber"
@@ -240,16 +240,21 @@ class NullClientPurple:
         self.window.add_send_cb(self.send_msg)
         self.window.init_window()
 
-    def _purple_update_blist_cb(self, type, name=None, totalsize=None,\
+    def _purple_update_blist_cb(self, type, name=None, alias=None, totalsize=None,\
                              currentsize=None, online=None):
-        self.buddies = self.account.get_buddies_online()
         if type == 2:
-            if name in self.buddies:
-                self.buddies.append(name)
+            if not self.buddies.has_key(name):
+                b = purple.Buddy()
+                b.new_buddy(self.account, name, alias)
+                self.buddies[name] = b
+            elif self.buddies[name].online is True:
                 self.window.new_buddy(name)
 
     def _purple_signal_sign_off_cb(self, name, bname):
-        self.buddies.remove(bname)
+        if self.buddies.has_key(bname):
+            self.buddies[bname] = None
+            self.buddies.pop(bname)
+            print "[DEBUG]: Buddy removed!"
         self.window.remove_buddy(bname)
 
     def _purple_create_conv_cb(self, name, type):
