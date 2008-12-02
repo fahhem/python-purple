@@ -70,15 +70,40 @@ cdef void status_changed(account.PurpleAccount *account, \
     if account_cbs.has_key("status-changed"):
         (<object> account_cbs["status-changed"])("status-changed: TODO")
 
-cdef void request_add(account.PurpleAccount *account, \
+cdef void request_add(account.PurpleAccount *c_account, \
         const_char *remote_user, const_char *id, const_char *alias, \
-        const_char *message):
+        const_char *c_message):
     """
     Someone we don't have on our list added us; prompt to add them.
     """
+    cdef connection.PurpleConnection *gc = \
+            account.purple_account_get_connection(c_account)
+
     debug.purple_debug_info("account", "%s", "request-add\n")
+
+    if alias:
+        remote_alias = <char *> alias
+    else:
+        remote_alias = None
+
+    if id:
+        username = <char *> id
+    elif connection.purple_connection_get_display_name(gc) != NULL:
+        username = connection.purple_connection_get_display_name(gc)
+    else:
+        username = account.purple_account_get_username(c_account)
+
+    protocol_id = account.purple_account_get_protocol_id(c_account)
+
+    if c_message:
+        message = <char *> c_message
+    else:
+        message = None
+
     if account_cbs.has_key("request-add"):
-        (<object> account_cbs["request-add"])("request-add: TODO")
+        (<object> account_cbs["request-add"])( \
+                (<char *> remote_user, remote_alias), \
+                (username, protocol_id), message)
 
 cdef void *request_authorize(account.PurpleAccount *c_account, \
         const_char *remote_user, const_char *id, const_char *alias, \
