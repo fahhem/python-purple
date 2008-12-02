@@ -24,9 +24,14 @@ cdef extern from "c_purple.h":
 
 import ecore
 
-__DEFAULT_PATH__ = "/tmp"
-__APP_NAME__ = "carman-purple-python"
-__APP_VERSION__ = "0.1"
+cdef glib.GHashTable *c_ui_info
+
+c_ui_info = NULL
+
+cdef char *c_ui_name
+cdef char *c_ui_version
+cdef char *c_ui_website
+cdef char *c_ui_dev_website
 
 cdef account.PurpleAccountUiOps c_account_ui_ops
 cdef blist.PurpleBlistUiOps c_blist_ui_ops
@@ -39,10 +44,6 @@ cdef notify.PurpleNotifyUiOps c_notify_ui_ops
 #cdef privacy.PurplePrivacyUiOps c_privacy_ui_ops
 cdef request.PurpleRequestUiOps c_request_ui_ops
 #cdef roomlist.PurpleRoomlistUiOps c_rlist_ui_ops
-
-cdef glib.GHashTable *c_ui_info
-
-c_ui_info = NULL
 
 include "account_cbs.pxd"
 include "blist_cbs.pxd"
@@ -60,31 +61,39 @@ include "util.pxd"
 cdef class Purple:
     """ Purple class.
 
-    @parm debug_enabled: Toggle debug messages.
-    @parm app_name: Set application name.
-    @parm default_path: Full path for libpurple user files.
+    @param debug_enabled: Toggle debug messages.
+    @param default_path: Full path for libpurple user files.
     """
 
-    def __init__(self, debug_enabled=True, app_name=__APP_NAME__, default_path=__DEFAULT_PATH__):
-        if app_name is not __APP_NAME__:
-            __APP_NAME__ = app_name
+    def __init__(self, ui_name, ui_version, ui_website, ui_dev_website, \
+            debug_enabled=None, default_path=None):
 
-        if default_path is not __DEFAULT_PATH__:
-            __DEFAULT_PATH__ = default_path
+        global c_ui_name
+        global c_ui_version
+        global c_ui_website
+        global c_ui_dev_website
 
-        debug.purple_debug_set_enabled(debug_enabled)
-        util.purple_util_set_user_dir(default_path)
-        plugin.purple_plugins_add_search_path(default_path)
+        c_ui_name = ui_name
+        c_ui_version = ui_version
+        c_ui_website = ui_website
+        c_ui_dev_website = ui_dev_website
+
+        if debug_enabled:
+            debug.purple_debug_set_enabled(debug_enabled)
+
+        if default_path:
+            util.purple_util_set_user_dir(default_path)
 
         # adds glib iteration inside ecore main loop
         ecore.timer_add(0.001, self.__glib_iteration_when_idle)
 
-    def __get_ui_name(self):
-        return __APP_NAME__
-    ui_name = property(__get_ui_name)
-
     def destroy(self):
         core.purple_core_quit()
+
+    def __get_ui_name(self):
+        global c_ui_name
+        return str(c_ui_name)
+    ui_name = property(__get_ui_name)
 
     cdef void __core_ui_ops_ui_prefs_init(self):
         debug.purple_debug_info("core_ui_ops", "%s", "ui_prefs_init\n")
@@ -112,8 +121,6 @@ cdef class Purple:
     cdef void __core_ui_ops_quit(self):
         debug.purple_debug_info("core_ui_ops", "%s", "quit\n")
 
-        global c_ui_info
-
         account.purple_accounts_set_ui_ops(NULL)
         connection.purple_connections_set_ui_ops(NULL)
         blist.purple_blist_set_ui_ops(NULL)
@@ -124,17 +131,24 @@ cdef class Purple:
         #ft.purple_xfers_set_ui_ops(NULL)
         #roomlist.purple_roomlist_set_ui_ops(NULL)
 
-        if c_ui_info:
-            glib.g_hash_table_destroy(c_ui_info)
+        if self.c_ui_info:
+            glib.g_hash_table_destroy(<glib.GHashTable *> self.c_ui_info)
 
     cdef glib.GHashTable *__core_ui_ops_get_ui_info(self):
         global c_ui_info
+        global c_ui_name
+        global c_ui_version
+        global c_ui_website
+        global c_ui_dev_website
 
         if c_ui_info == NULL:
-            c_ui_info = glib.g_hash_table_new(glib.g_str_hash, glib.g_str_equal)
+            c_ui_info = glib.g_hash_table_new(glib.g_str_hash, \
+                    glib.g_str_equal)
 
-            glib.g_hash_table_insert(c_ui_info, "name", <glib.gpointer> __APP_NAME__)
-            glib.g_hash_table_insert(c_ui_info, "version", <glib.gpointer> __APP_VERSION__)
+            glib.g_hash_table_insert(c_ui_info, "name", c_ui_name)
+            glib.g_hash_table_insert(c_ui_info, "version", c_ui_version)
+            glib.g_hash_table_insert(c_ui_info, "website", c_ui_website)
+            glib.g_hash_table_insert(c_ui_info, "dev_website", c_ui_dev_website)
         return c_ui_info
 
     def __glib_iteration_when_idle(self):
@@ -143,6 +157,7 @@ cdef class Purple:
 
     def purple_init(self):
         """ Initializes libpurple """
+        global c_ui_name
 
         c_account_ui_ops.notify_added = notify_added
         c_account_ui_ops.status_changed = status_changed
@@ -221,7 +236,7 @@ cdef class Purple:
         eventloop.purple_eventloop_set_ui_ops(&c_eventloop_ui_ops)
 
         # initialize purple core
-        ret = core.purple_core_init(__APP_NAME__)
+        ret = core.purple_core_init(c_ui_name)
         if ret is False:
             debug.purple_debug_fatal("main", "%s", "libpurple " \
                                        "initialization failed.\n")
