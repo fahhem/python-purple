@@ -469,6 +469,10 @@ cdef class Account:
 
             blist.purple_blist_add_buddy(c_buddy, NULL, c_group, NULL)
             account.purple_account_add_buddy(self._get_structure(), c_buddy)
+            if c_alias:
+                blist.purple_blist_alias_buddy(c_buddy, c_alias)
+                server.serv_alias_buddy(c_buddy)
+
             return True
 
         else:

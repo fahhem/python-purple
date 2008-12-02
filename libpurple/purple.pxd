@@ -39,6 +39,7 @@ cimport proxy
 cimport prpl
 cimport request
 cimport roomlist
+cimport server
 cimport signals
 cimport status
 cimport savedstatuses
