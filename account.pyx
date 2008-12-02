@@ -17,38 +17,6 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cdef extern from "glib.h":
-    ctypedef int gboolean
-
-cdef extern from "libpurple/account.h":
-    cdef struct _PurpleAccount
-    ctypedef _PurpleAccount PurpleAccount
-
-    PurpleAccount *c_purple_account_new "purple_account_new" (const_char_ptr username, const_char_ptr protocol_id)
-    void c_purple_account_set_password "purple_account_set_password" (PurpleAccount *account, const_char_ptr password)
-    const_char_ptr c_purple_account_get_password "purple_account_get_password" (PurpleAccount *account)
-    void c_purple_account_set_enabled "purple_account_set_enabled" (PurpleAccount *account, const_char_ptr ui, gboolean value)
-    const_char_ptr c_purple_account_get_username "purple_account_get_username" (PurpleAccount *account)
-
-cdef extern from "libpurple/status.h":
-    ctypedef int PurpleStatusPrimitive
-
-    cdef struct _PurpleSavedStatus
-    ctypedef _PurpleSavedStatus PurpleSavedStatus
-
-    PurpleSavedStatus *c_purple_savedstatus_new "purple_savedstatus_new" (const_char_ptr title, PurpleStatusPrimitive type)
-    void c_purple_savedstatus_activate "purple_savedstatus_activate" (PurpleSavedStatus *saved_status)
-
-cdef extern from "libpurple/proxy.h":
-    cdef struct PurpleProxyInfo
-
-    ctypedef int PurpleProxyType
-    PurpleProxyInfo *purple_proxy_info_new()
-    void c_purple_proxy_info_set_type "purple_proxy_info_set_type" (PurpleProxyInfo *info, PurpleProxyType type)
-    void c_purple_proxy_info_set_host "purple_proxy_info_set_host" (const_char_ptr host)
-    void c_purple_proxy_info_set_port "purple_proxy_info_set_port" (const_char_ptr port)
-
-
 class ProxyType:
     def __init__(self):
         self.PROXY_USE_GLOBAL = -1

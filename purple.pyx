@@ -19,8 +19,6 @@
 
 include "glib.pxd"
 
-import ecore
-
 cdef extern from *:
     ctypedef char* const_char_ptr "const char *"
     ctypedef char* const_guchar_ptr "const guchar *"
@@ -28,86 +26,26 @@ cdef extern from *:
 cdef extern from "time.h":
     ctypedef long int time_t
 
-cdef extern from "libpurple/blist.h":
-    ctypedef struct PurpleBuddyList:
-        pass
-
-    void c_purple_set_blist "purple_set_blist" (PurpleBuddyList *list)
-    void c_purple_blist_load "purple_blist_load" ()
-    PurpleBuddyList* c_purple_blist_new "purple_blist_new" ()
-
-cdef extern from "libpurple/core.h":
-    ctypedef struct PurpleCoreUiOps:
-        void (*ui_prefs_init) ()
-        void (*debug_ui_init) ()
-        void (*ui_init) ()
-        void (*quit) ()
-        GHashTable* (*get_ui_info) ()
-
-    gboolean c_purple_core_init "purple_core_init" (const_char_ptr ui_name)
-    void c_purple_core_quit "purple_core_quit" ()
-    void c_purple_core_set_ui_ops "purple_core_set_ui_ops" (PurpleCoreUiOps *ops)
-    gboolean c_purple_core_ensure_single_instance "purple_core_ensure_single_instance" ()
-
-cdef extern from "libpurple/debug.h":
-    ctypedef enum PurpleDebugLevel:
-        PURPLE_DEBUG_ALL
-        PURPLE_DEBUG_MISC
-        PURPLE_DEBUG_INFO
-        PURPLE_DEBUG_WARNING
-        PURPLE_DEBUG_ERROR
-        PURPLE_DEBUG_FATAL
-
-    void c_purple_debug "purple_debug" (PurpleDebugLevel level, const_char_ptr category, const_char_ptr format)
-    void c_purple_debug_set_enabled "purple_debug_set_enabled" (gboolean debug_enabled)
-
-cdef extern from "libpurple/eventloop.h":
-    ctypedef enum PurpleInputCondition:
-        PURPLE_INPUT_READ
-        PURPLE_INPUT_WRITE
-
-    ctypedef void (*PurpleInputFunction) (gpointer , gint, PurpleInputCondition)
-
-    ctypedef struct PurpleEventLoopUiOps:
-        guint (*timeout_add) (guint interval, GSourceFunc function, gpointer data)
-        gboolean (*timeout_remove) (guint handle)
-        guint (*input_add) (int fd, PurpleInputCondition cond, PurpleInputFunction func, gpointer user_data)
-        gboolean (*input_remove) (guint handle)
-        int (*input_get_error) (int fd, int *error)
-        guint (*timeout_add_seconds)(guint interval, GSourceFunc function, gpointer data)
-
-    void c_purple_eventloop_set_ui_ops "purple_eventloop_set_ui_ops" (PurpleEventLoopUiOps *ops)
-
-cdef extern from "libpurple/plugin.h":
-    ctypedef struct PurplePlugin
-
-    cdef struct _PurplePluginInfo:
-        char *id
-        char *name
-    ctypedef _PurplePluginInfo PurplePluginInfo
-
-    cdef struct _PurplePlugin:
-        PurplePluginInfo *info                # The plugin information.
-    ctypedef _PurplePlugin PurplePlugin
-
-    void c_purple_plugins_add_search_path "purple_plugins_add_search_path" (const_char_ptr path)
-    GList *c_purple_plugins_get_protocols "purple_plugins_get_protocols" ()
-
-cdef extern from "libpurple/pounce.h":
-    gboolean c_purple_pounces_load "purple_pounces_load" ()
-
-cdef extern from "libpurple/prefs.h":
-    void c_purple_prefs_add_none "purple_prefs_add_none" (const_char_ptr name)
-    void c_purple_prefs_rename "purple_prefs_rename" (const_char_ptr oldname, const_char_ptr newname)
-    const_char_ptr c_purple_prefs_get_string "purple_prefs_get_string" (const_char_ptr name)
-    gboolean c_purple_prefs_load "purple_prefs_load" ()
-
-cdef extern from "libpurple/util.h":
-    void c_purple_util_set_user_dir "purple_util_set_user_dir" (char *dir)
+include "libpurple/account.pxd"
+include "libpurple/buddyicon.pxd"
+include "libpurple/blist.pxd"
+include "libpurple/connection.pxd"
+include "libpurple/conversation.pxd"
+include "libpurple/core.pxd"
+include "libpurple/debug.pxd"
+include "libpurple/eventloop.pxd"
+include "libpurple/plugin.pxd"
+include "libpurple/pounce.pxd"
+include "libpurple/prefs.pxd"
+include "libpurple/proxy.pxd"
+include "libpurple/status.pxd"
+include "libpurple/util.pxd"
 
 cdef extern from "c_purple.h":
      guint glib_input_add(gint fd, PurpleInputCondition condition, PurpleInputFunction function, gpointer data)
      void glib_main_loop()
+
+import ecore
 
 __DEFAULT_PATH__ = "/tmp"
 __APP_NAME__ = "carman-purple-python"
@@ -240,11 +178,10 @@ cdef class Purple:
         conn.connect()
 
 include "core/account.pxd"
-include "core/buddy.pxd"
-include "glib.pxd"
 #include "core/blist.pxd"
+include "core/buddy.pxd"
 include "core/connection.pxd"
+include "core/conversation.pxd"
 #include "core/core.pxd"
 #include "core/idle.pxd"
 #include "core/pounce.pxd"
-include "core/conversation.pxd"

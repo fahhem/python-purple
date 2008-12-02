@@ -17,14 +17,13 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cdef extern from "libpurple/connection.h":
-    cdef struct PurpleConnection
+cdef extern from "libpurple/account.h":
+    ctypedef struct PurpleAccount:
+        pass
 
-    void connect_to_signals_for_demonstration_purposes_only()
-
-cdef class Connection:
-    """ Connection class """
-    cdef PurpleConnection *__conn
-
-    def connect(self):
-        connect_to_signals_for_demonstration_purposes_only()
+    PurpleAccount *c_purple_account_new "purple_account_new" (const_char_ptr username, const_char_ptr protocol_id)
+    void c_purple_account_set_password "purple_account_set_password" (PurpleAccount *account, const_char_ptr password)
+    const_char_ptr c_purple_account_get_password "purple_account_get_password" (PurpleAccount *account)
+    void c_purple_account_set_enabled "purple_account_set_enabled" (PurpleAccount *account, const_char_ptr ui, gboolean value)
+    const_char_ptr c_purple_account_get_username "purple_account_get_username" (PurpleAccount *account)
+    GList *c_purple_accounts_get_all_active "purple_accounts_get_all_active" ()
