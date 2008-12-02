@@ -399,6 +399,19 @@ cdef class Account:
         if c_account:
             return account.c_purple_account_get_enabled(c_account, ui)
         else:
-            return None
+            return False
+
+    def is_connected(self, acc):
+        ''' @param acc Tuple (username, protocol id) '''
+        ''' @param ui The UI '''
+        cdef account.PurpleAccount *c_account
+
+        c_account = account.c_purple_accounts_find(acc[0], acc[1])
+        if c_account:
+            return account.c_purple_account_is_connected(c_account)
+        else:
+            return False
+        
+ 
 
 
