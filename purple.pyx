@@ -260,10 +260,6 @@ cdef class Purple:
           "notify": notify_cbs,
           "request": request_cbs }[type][name] = func
 
-    def connect(self):
-        conn = Connection()
-        conn.connect()
-
     def signal_connect(self, name=None, cb=None):
         cdef int handle
         cdef plugin.PurplePlugin *jabber
@@ -278,7 +274,22 @@ cdef class Purple:
         global signal_cbs
         signal_cbs[name] = cb
 
-        if name == "buddy-signed-off":
+        if name == "signed-on":
+            signals.c_purple_signal_connect(
+                    connection.c_purple_connections_get_handle(),
+                    "signed-on", &handle,
+                    <signals.PurpleCallback> signal_signed_on_cb, NULL)
+        elif name == "signed-off":
+            signals.c_purple_signal_connect(
+                    connection.c_purple_connections_get_handle(),
+                    "signed-off", &handle,
+                    <signals.PurpleCallback> signal_signed_off_cb, NULL)
+        elif name == "buddy-signed-on":
+            signals.c_purple_signal_connect(
+                    blist.c_purple_blist_get_handle(),
+                    "buddy-signed-on", &handle,
+                    <signals.PurpleCallback> signal_buddy_signed_on_cb, NULL)
+        elif name == "buddy-signed-off":
             signals.c_purple_signal_connect(
                     blist.c_purple_blist_get_handle(),
                     "buddy-signed-off", &handle,
@@ -334,5 +345,5 @@ cdef class Purple:
 include "proxy.pyx"
 include "account.pyx"
 include "buddy.pyx"
-include "connection.pyx"
+#include "connection.pyx"
 include "conversation.pyx"

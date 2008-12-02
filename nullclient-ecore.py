@@ -3,7 +3,7 @@
 import etk
 import ecore
 import purple
-from xml.dom import minidom
+#from xml.dom import minidom
 
 class MainWindow:
     def __init__(self, quit_cb):
@@ -200,22 +200,32 @@ class NullClientPurple(object):
                 self.window.txt_area.text += sender + ": " + message + "<br> "
             self.window.show()
 
+    def __purple_signal_signed_on_cb(self, username, protocol_id):
+        print "[DEBUG] Signed on: %s %s" % (username, protocol_id)
+
+    def __purple_signal_signed_off_cb(self, username, protocol_id):
+        print "[DEBUG] Signed off: %s %s" % (username, protocol_id)
+
+    def __purple_signal_buddy_signed_on_cb(self, name, alias):
+        print "[DEBUG]: Buddy signed on: %s %s" % (name, alias)
+
     def __purple_signal_buddy_signed_off_cb(self, name, alias):
         if self.buddies.has_key(name):
             self.buddies[name] = None
             self.buddies.pop(name)
-            print "[DEBUG]: Buddy removed!"
+            print "[DEBUG]: Buddy signed off: %s %s" % (name, alias)
         self.window.remove_buddy(name)
 
+    """
     def __purple_signal_jabber_receiving_xmlnode_cb(self, message):
-    xml = minidom.parse(message)
-
-    for msg in xml.getElementsByTagName("message"):
-        who = msg.getAttribute("from")
-        for geoloc in msg.getElementsByTagNameNS("http://jabber.org/protocol/geoloc", "geoloc"):
-            lat = geoloc.getElementsByTagName("lat")[0].childNodes[0].nodeValue
-            lon = geoloc.getElementsByTagName("lon")[0].childNodes[0].nodeValue
-            print "who: %s lat: %s lon: %s" % (who, lat, lon)
+        xml = minidom.parse(message)
+        for msg in xml.getElementsByTagName("message"):
+            who = msg.getAttribute("from")
+            for geoloc in msg.getElementsByTagNameNS("http://jabber.org/protocol/geoloc", "geoloc"):
+                lat = geoloc.getElementsByTagName("lat")[0].childNodes[0].nodeValue
+                lon = geoloc.getElementsByTagName("lon")[0].childNodes[0].nodeValue
+                print "who: %s lat: %s lon: %s" % (who, lat, lon)
+    """
 
     def add_account(self):
         username = "carmanplugintest@gmail.com"
@@ -232,9 +242,11 @@ class NullClientPurple(object):
             self.account.get_protocol_options()
             self.account.set_enabled("carman-purple-python", True)
             self.account.password = password
-            self.purple.connect()
+            self.purple.signal_connect("signed-on", self.__purple_signal_signed_on_cb)
+            self.purple.signal_connect("signed-off", self.__purple_signal_signed_off_cb)
+            self.purple.signal_connect("buddy-signed-on", self.__purple_signal_buddy_signed_on_cb)
             self.purple.signal_connect("buddy-signed-off", self.__purple_signal_buddy_signed_off_cb)
-            self.purple.signal_connect("jabber-receiving-xmlnode", self.__purple_signal_jabber_receiving_xmlnode_cb)
+            #self.purple.signal_connect("jabber-receiving-xmlnode", self.__purple_signal_jabber_receiving_xmlnode_cb)
 
     def send_msg(self, name, msg):
         if not self.conversations.has_key(name):

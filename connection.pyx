@@ -19,19 +19,9 @@
 
 cimport purple
 
-cdef void signed_on_cb (connection.PurpleConnection *gc, glib.gpointer null):
-    cdef account.PurpleAccount *acc = connection.c_purple_connection_get_account(gc)
-    print "Account connected: %s %s" % (acc.username, acc.protocol_id)
-
 cdef class Connection:
     """ Connection class """
     cdef connection.PurpleConnection *__conn
 
     def __init__(self):
         pass
-
-    def connect(self):
-        cdef int handle
-
-        signals.c_purple_signal_connect(connection.c_purple_connections_get_handle(),
-            "signed-on", &handle, <signals.PurpleCallback> signed_on_cb, NULL)

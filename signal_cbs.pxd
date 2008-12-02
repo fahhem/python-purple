@@ -21,6 +21,73 @@ cimport purple
 
 signal_cbs = {}
 
+cdef void signal_signed_on_cb (connection.PurpleConnection *gc, \
+                               glib.gpointer null):
+    cdef account.PurpleAccount *acc = connection.c_purple_connection_get_account(gc)
+    cdef char *c_username = NULL
+    cdef char *c_protocol_id = NULL
+
+    c_username = <char *> account.c_purple_account_get_username(acc)
+    if c_username == NULL:
+        username = None
+    else:
+        username = c_username
+
+    c_protocol_id = <char *> account.c_purple_account_get_protocol_id(acc)
+    if c_protocol_id == NULL:
+        protocol_id = None
+    else:
+        protocol_id = c_protocol_id
+
+    try:
+        (<object> signal_cbs["signed-on"])(username, protocol_id)
+    except KeyError:
+        pass
+
+cdef void signal_signed_off_cb (connection.PurpleConnection *gc, \
+                               glib.gpointer null):
+    cdef account.PurpleAccount *acc = connection.c_purple_connection_get_account(gc)
+    cdef char *c_username = NULL
+    cdef char *c_protocol_id = NULL
+
+    c_username = <char *> account.c_purple_account_get_username(acc)
+    if c_username == NULL:
+        username = None
+    else:
+        username = c_username
+
+    c_protocol_id = <char *> account.c_purple_account_get_protocol_id(acc)
+    if c_protocol_id == NULL:
+        protocol_id = None
+    else:
+        protocol_id = c_protocol_id
+
+    try:
+        (<object> signal_cbs["signed-off"])(username, protocol_id)
+    except KeyError:
+        pass
+
+cdef void signal_buddy_signed_on_cb (blist.PurpleBuddy *buddy):
+    cdef char *c_name = NULL
+    cdef char *c_alias = NULL
+
+    c_name = <char *> blist.c_purple_buddy_get_name(buddy)
+    if c_name == NULL:
+        name = None
+    else:
+        name = c_name
+
+    c_alias = <char *> blist.c_purple_buddy_get_alias_only(buddy)
+    if c_alias == NULL:
+        alias = None
+    else:
+        alias = c_alias
+
+    try:
+        (<object> signal_cbs["buddy-signed-on"])(name, alias)
+    except KeyError:
+        pass
+
 cdef void signal_buddy_signed_off_cb (blist.PurpleBuddy *buddy):
     cdef char *c_name = NULL
     cdef char *c_alias = NULL
