@@ -266,7 +266,7 @@ class NullClientPurple:
 
     def connect(self):
         self.account = purple.Account(self.username, self.protocol_id)
-        self.account.set_password(self.password)
+        self.account.password = self.password
 
         self.account.proxy.set_type(purple.ProxyInfoType().HTTP)
         self.account.proxy.set_host("172.18.216.211")

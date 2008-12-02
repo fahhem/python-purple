@@ -45,28 +45,89 @@ cdef class Account:
         self.__proxy = ProxyInfo()
         self.__proxy.c_proxyinfo = c_proxyinfo
 
-    def set_password(self, password):
-        account.c_purple_account_set_password(self.c_account, password)
-
-    def set_enabled(self, ui, value):
-        account.c_purple_account_set_enabled(self.c_account, ui, value)
-
-    def get_acc_username(self):
+    def __get_username(self):
         if self.c_account:
             return account.c_purple_account_get_username(self.c_account)
+        else:
+            return None
+    def __set_username(self, username):
+        if self.c_account:
+            account.c_purple_account_set_username(self.c_account, username)
+    username = property(__get_password, __set_username)
 
-    def get_password(self):
+    def __get_password(self):
         if self.c_account:
             return account.c_purple_account_get_password(self.c_account)
+        else:
+            return None
+    def __set_password(self, password):
+        if self.c_account:
+            account.c_purple_account_set_password(self.c_account, password)
+    password = property(__get_password, __set_password)
+
+    def __get_alias(self):
+        if self.c_account:
+            return account.c_purple_account_get_alias(self.c_account)
+        else:
+            return None
+    def __set_alias(self, alias):
+        if self.c_account:
+            account.c_purple_account_set_alias(self.c_account, alias)
+    alias = property(__get_alias, __set_alias)
+
+    def __get_user_info(self):
+        if self.c_account:
+            return account.c_purple_account_get_user_info(self.c_account)
+        else:
+            return None
+    def __set_user_info(self, user_info):
+        if self.c_account:
+            account.c_purple_account_set_user_info(self.c_account, user_info)
+    user_info = property(__get_user_info, __set_user_info)
+
+    def __get_protocol_id(self):
+        if self.c_account:
+            return account.c_purple_account_get_protocol_id(self.c_account)
+        else:
+            return None
+    def __set_protocol_id(self, protocol_id):
+        if self.c_account:
+            account.c_purple_account_set_protocol_id(self.c_account, protocol_id)
+    protocol_id = property(__get_protocol_id, __set_protocol_id)
+
+    def __get_remember_password(self):
+        if self.c_account:
+            return account.c_purple_account_get_remember_password(self.c_account)
+        else:
+            return None
+    def __set_remember_password(self, value):
+        if self.c_account:
+            account.c_purple_account_set_remember_password(self.c_account, value)
+    remember_password = property(__get_remember_password, __set_remember_password)
+
+    def get_protocol_name(self):
+        if self.c_account:
+            return account.c_purple_account_get_protocol_name(self.c_account)
+        else:
+            return None
+
+    def get_enabled(self, ui):
+        if self.c_account:
+            return account.c_purple_account_get_enabled(self.c_account, ui)
+        else:
+            return None
+
+    def set_enabled(self, ui, value):
+        if self.c_account:
+            account.c_purple_account_set_enabled(self.c_account, ui, value)
 
     def set_status(self):
         self.__sstatus = savedstatuses.c_purple_savedstatus_new(NULL, status.PURPLE_STATUS_AVAILABLE)
         savedstatuses.c_purple_savedstatus_activate(self.__sstatus)
 
-    def get_proxy(self):
+    def __get_proxy(self):
         return self.__proxy
-
-    proxy = property(get_proxy)
+    proxy = property(__get_proxy)
 
     def get_buddies_online(self):
         cdef glib.GSList *iter

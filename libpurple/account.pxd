@@ -94,14 +94,40 @@ cdef extern from "libpurple/account.h":
 
     PurpleAccount *c_purple_account_new "purple_account_new" \
             (char *username, char *protocol_id)
-    void c_purple_account_set_password "purple_account_set_password" \
-            (PurpleAccount *account, char *password)
-    char *c_purple_account_get_password "purple_account_get_password" \
-            (PurpleAccount *account)
-    void c_purple_account_set_enabled "purple_account_set_enabled" \
-            (PurpleAccount *account, char *ui, glib.gboolean value)
+
+    glib.gboolean c_purple_account_get_enabled "purple_account_get_enabled" \
+            (PurpleAccount *account, char *ui)
     char *c_purple_account_get_username "purple_account_get_username" \
             (PurpleAccount *account)
+    char *c_purple_account_get_password "purple_account_get_password" \
+            (PurpleAccount *account)
+    char *c_purple_account_get_alias "purple_account_get_alias" \
+            (PurpleAccount *account)
+    char *c_purple_account_get_user_info "purple_account_get_user_info" \
+            (PurpleAccount *account)
+    char *c_purple_account_get_protocol_id "purple_account_get_protocol_id" \
+            (PurpleAccount *account)
+    char *c_purple_account_get_protocol_name \
+            "purple_account_get_protocol_name" (PurpleAccount *account)
+    glib.gboolean c_purple_account_get_remember_password \
+            "purple_account_get_remember_password" (PurpleAccount *account)
+
+    void c_purple_account_set_enabled "purple_account_set_enabled" \
+            (PurpleAccount *account, char *ui, glib.gboolean value)
+    void c_purple_account_set_username "purple_account_set_username" \
+            (PurpleAccount *account, char *username)
+    void c_purple_account_set_password "purple_account_set_password" \
+            (PurpleAccount *account, char *password)
+    void c_purple_account_set_alias "purple_account_set_alias" \
+            (PurpleAccount *account, char *alias)
+    void c_purple_account_set_user_info "purple_account_set_user_info" \
+            (PurpleAccount *account, char *user_info)
+    void c_purple_account_set_protocol_id "purple_account_set_protocol_id" \
+            (PurpleAccount *account, char *protocol_id)
+    void c_purple_account_set_remember_password \
+            "purple_account_set_remember_password" (PurpleAccount *account, \
+                                                    glib.gboolean value)
+
     glib.GList *c_purple_accounts_get_all_active \
             "purple_accounts_get_all_active" ()
     void c_purple_accounts_set_ui_ops "purple_accounts_set_ui_ops" \
@@ -126,4 +152,3 @@ cdef extern from "libpurple/account.h":
             (PurpleAccount *account, char *name, char *value)
     void c_purple_account_set_bool "purple_account_set_bool" \
             (PurpleAccount *account, char *name, glib.gboolean value)
-

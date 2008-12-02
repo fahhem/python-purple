@@ -201,7 +201,7 @@ class NullClient:
 
     def new_account(self, username, password):
         self.account = purple.Account(username, self.protocol_id)
-        self.account.set_password(password)
+        self.account.password = password
 
         self.account.proxy.set_type(purple.ProxyInfoType().HTTP)
         self.account.proxy.set_host("172.18.216.211")
@@ -225,7 +225,6 @@ def getpassword():
 if __name__ == '__main__':
     client = NullClient()
     client.execute()
-    client.set_protocol("XMPP")
     client.p.signal_connect("buddy-signed-off", buddy_signed_off_cb)
     client.p.signal_connect("receiving-im-msg", receiving_im_msg_cb)
     client.p.signal_connect("jabber-receiving-xmlnode", jabber_received_xmlnode_cb)

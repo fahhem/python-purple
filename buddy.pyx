@@ -22,26 +22,38 @@ cimport purple
 cdef class Buddy:
     """ Buddy class """
     cdef blist.PurpleBuddy *c_buddy
-    cdef Account __acc
+    cdef Account _acc
 
     def __init__(self):
         self.c_buddy = NULL
+
+    def __get_account(self):
+        return self.__acc
+    def __set_account(self, acc):
+        self._acc = acc
+    account = property(__get_account, __set_account)
+
+    def __get_alias(self):
+        if self.c_buddy:
+            return <char *>blist.c_purple_buddy_get_alias_only(self.c_buddy)
+        else:
+            return None
+    alias = property(__get_alias)
+
+    def __get_name(self):
+        if self.c_buddy:
+            return <char *>blist.c_purple_buddy_get_name(self.c_buddy)
+        else:
+            return None
+    name = property(__get_name)
+
+    def __get_online(self): # FIXME
+        name = self.name
+        self.c_buddy = blist.c_purple_find_buddy(self._acc.c_account, name)
+        return status.c_purple_presence_is_online(blist.c_purple_buddy_get_presence(self.c_buddy))
+    online = property(__get_online)
 
     def new_buddy(self, acc, char *scr, char *alias):
         self.__acc = acc
         self.c_buddy = blist.c_purple_buddy_new(<account.PurpleAccount *>\
                 self.__acc.c_account, scr, alias)
-
-    def __get_alias(self):
-        return <char *>blist.c_purple_buddy_get_alias_only(self.c_buddy)
-    alias = property(__get_alias)
-
-    def __get_name(self):
-        return <char *>blist.c_purple_buddy_get_name(self.c_buddy)
-    name = property(__get_name)
-
-    def __get_online(self):
-        name = self.name
-        self.c_buddy = blist.c_purple_find_buddy(self.__acc.c_account, name)
-        return status.c_purple_presence_is_online(blist.c_purple_buddy_get_presence(self.c_buddy))
-    online = property(__get_online)
