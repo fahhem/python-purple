@@ -211,8 +211,12 @@ class MainWindow:
         if callable(cb):
             self.quit_cb = cb
 
-    def _write_im_cb(self, name, message):
-        self.txt_area.text +=  str(name) + ": " + str(message) + "<br> "
+    def _write_im_cb(self, name, who, message):
+        if who:
+            w = who.split("/")[0]
+            self.txt_area.text +=  w + ": " + str(message) + "<br> "
+        else:
+            self.txt_area.text += str(name) + ": " + str(message) + "<br> "
         self._window.show_all()
 
 

@@ -81,4 +81,5 @@ cdef class Conversation:
         conversation.c_purple_conversations_get_handle()
 
     def destroy(self):
+        print "[DEBUG]: Destroy conversation: %s" % self.name
         conversation.c_purple_conversation_destroy(self.__conv)
