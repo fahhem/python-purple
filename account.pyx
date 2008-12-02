@@ -24,11 +24,13 @@ from protocol import Protocol
 cdef class Account:
     """
     Account class
+    @param core
     @param username
     @param protocol_id
     """
 
-    def __init__(self, username, protocol_id):
+    def __init__(self, core, username, protocol_id):
+        self.__core = core
         self.__username = username
         self.__protocol = Protocol(self, protocol_id)
 
@@ -62,6 +64,10 @@ cdef class Account:
         else:
             return None
     is_disconnected = property(__is_disconnected)
+
+    def __get_core(self):
+        return self.__core
+    core = property(__get_core)
 
     def __get_exists(self):
         return self.__exists

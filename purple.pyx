@@ -82,6 +82,10 @@ cdef class Purple:
         # adds glib iteration inside ecore main loop
         ecore.timer_add(0.001, self.__glib_iteration_when_idle)
 
+    def __get_ui_name(self):
+        return __APP_NAME__
+    ui_name = property(__get_ui_name)
+
     def destroy(self):
         core.c_purple_core_quit()
 
@@ -369,7 +373,7 @@ cdef class Purple:
                 protocol_id = <char *> account.purple_account_get_protocol_id(acc)
 
                 if username != NULL and protocol_id != NULL:
-                    account_list.append(Account(username, protocol_id))
+                    account_list.append(Account(self, username, protocol_id))
             iter = iter.next
 
         return account_list
