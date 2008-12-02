@@ -24,9 +24,14 @@ cdef class Plugin:
     cdef prpl.PurplePluginProtocolInfo *c_prpl_info
     cdef plugin.PurplePluginInfo *c_plugin_info
 
+    def __init__(self):
+        pass
+
+    '''
     def __init__(self, id):
         self.c_plugin = plugin.c_purple_plugins_find_with_id(id)
         self.c_prpl_info = plugin.c_PURPLE_PLUGIN_PROTOCOL_INFO(self.c_plugin)
+    '''
 
     def get_name(self):
         return self.c_plugin.info.name
@@ -72,9 +77,6 @@ cdef class Plugin:
 
         if username:
             c_account = account.c_purple_accounts_find(username, id)
-            if c_account == NULL:
-                # FIXME: Message error or call a error handler
-                return None
 
         c_plugin = plugin.c_purple_plugins_find_with_id(id)
         c_prpl_info = plugin.c_PURPLE_PLUGIN_PROTOCOL_INFO(c_plugin)
@@ -91,7 +93,7 @@ cdef class Plugin:
             setting = accountopt.c_purple_account_option_get_setting(option)
 
             sett = str(<char *> setting)
-            label = str(<char *> lanel_name)
+            label = str(<char *> label_name)
 
             if type == prefs.PURPLE_PREF_STRING:
                 str_value = accountopt.c_purple_account_option_get_default_string(option)
@@ -157,7 +159,7 @@ cdef class Plugin:
             # FIXME: Message error or call a error handler
             return False
 
-        c_plugin = plugin.c_purple_plugins_find_with_id(id)
+        c_plugin = plugin.c_purple_plugins_find_with_id(acc[1])
         c_prpl_info = plugin.c_PURPLE_PLUGIN_PROTOCOL_INFO(c_plugin)
 
         iter = c_prpl_info.protocol_options
@@ -172,7 +174,7 @@ cdef class Plugin:
 
             iter = iter.next
 
-            if not po.has_key(sett):
+            if not po.has_key(sett) or not po[sett]:
                 continue
 
             if type == prefs.PURPLE_PREF_STRING:
