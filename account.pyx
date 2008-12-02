@@ -140,14 +140,28 @@ cdef class Account:
     def get_buddies_online(self):
         cdef glib.GSList *iter
         cdef blist.PurpleBuddy *buddy
+        cdef char *c_name = NULL
+        cdef char *c_alias = NULL
         buddies = []
         iter = blist.c_purple_find_buddies(self.c_account, NULL)
         while iter:
+            c_name = NULL
+            c_alias = NULL
             buddy = <blist.PurpleBuddy *> iter.data
             if <blist.PurpleBuddy *>buddy and \
                 account.c_purple_account_is_connected(blist.c_purple_buddy_get_account(buddy)) and \
                 status.c_purple_presence_is_online(blist.c_purple_buddy_get_presence(buddy)):
-                buddies += [buddy.name]
+                c_name = <char *> blist.c_purple_buddy_get_name(buddy)
+                if c_name == NULL:
+                    name = None
+                else:
+                    name = c_name
+                c_alias = <char *> blist.c_purple_buddy_get_alias_only(buddy)
+                if c_alias == NULL:
+                    alias = None
+                else:
+                    alias = c_alias
+                buddies.append((name, alias))
             iter = iter.next
         return buddies
 
