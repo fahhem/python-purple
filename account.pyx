@@ -29,8 +29,15 @@ cdef class Account:
     cdef prpl.PurplePluginProtocolInfo *c_prpl_info
     cdef plugin.PurplePluginInfo *c_plugin_info
     cdef savedstatuses.PurpleSavedStatus *__sstatus
-    cdef ProxyInfo __proxy
 
+    cdef object __proxy
+    cdef object __protocol
+
+    def __init__(self):
+        self.__proxy = purple.ProxyInfo()
+        self.__protocol = purple.Plugin()
+
+    '''
     def __init__(self, char *username, char *protocol_id):
         cdef proxy.PurpleProxyInfo *c_proxyinfo
         cdef account.PurpleAccount *acc = NULL
@@ -52,6 +59,7 @@ cdef class Account:
 
         self.c_plugin = plugin.c_purple_plugins_find_with_id(protocol_id)
         self.c_prpl_info = plugin.c_PURPLE_PLUGIN_PROTOCOL_INFO(self.c_plugin)
+    '''
 
     def __get_username(self):
         if self.c_account:
@@ -253,6 +261,14 @@ cdef class Account:
 
     protocol_labels = property(_get_protocol_labels)
 
+    def __get_proxy(self):
+        return self.__proxy
+    proxy = property(__get_proxy)
+
+    def __get_protocol(self):
+        return self.__protocol
+    protocol = property(__get_protocol)
+
     def get_protocol_name(self):
         if self.c_account:
             return account.c_purple_account_get_protocol_name(self.c_account)
@@ -262,10 +278,6 @@ cdef class Account:
     def set_status(self):
         self.__sstatus = savedstatuses.c_purple_savedstatus_new(NULL, status.PURPLE_STATUS_AVAILABLE)
         savedstatuses.c_purple_savedstatus_activate(self.__sstatus)
-
-    def __get_proxy(self):
-        return self.__proxy
-    proxy = property(__get_proxy)
 
     def get_buddies_online(self):
         cdef glib.GSList *iter
@@ -302,6 +314,8 @@ cdef class Account:
         if c_account == NULL:
             return None
 
+        account.c_purple_accounts_add(c_account) 
+
         return (username, protocol_id)
 
     def get_all(self):
@@ -325,17 +339,26 @@ cdef class Account:
     def get_password(self, acc):
         ''' @param acc Tuple (username, protocol id) '''
         cdef account.PurpleAccount *c_account
+        cdef char *value
+        value = NULL
 
         c_account = account.c_purple_accounts_find(acc[0], acc[1])
         if c_account:
-            return account.c_purple_account_get_password(c_account)
-        else:
+            value = <char *> account.c_purple_account_get_password(c_account)
+
+        if value == NULL:
             return None
+        else:
+            return value
+
 
     def set_password(self, acc, password):
         ''' @param acc Tuple (username, protocol id) '''
         ''' @param password The account's password '''
         cdef account.PurpleAccount *c_account
+
+        if not password:
+            return
 
         c_account = account.c_purple_accounts_find(acc[0], acc[1])
         if c_account:
@@ -344,17 +367,25 @@ cdef class Account:
     def get_alias(self, acc):
         ''' @param acc Tuple (username, protocol id) '''
         cdef account.PurpleAccount *c_account
+        cdef char *value
+        value = NULL
 
         c_account = account.c_purple_accounts_find(acc[0], acc[1])
         if c_account:
-            return account.c_purple_account_get_alias(c_account)
-        else:
+            value = <char *> account.c_purple_account_get_alias(c_account)
+
+        if value == NULL:
             return None
+        else:
+            return value
 
     def set_alias(self, acc, alias):
         ''' @param acc Tuple (username, protocol id) '''
         ''' @param alias The account's alias '''
         cdef account.PurpleAccount *c_account
+
+        if not alias:
+            return
 
         c_account = account.c_purple_accounts_find(acc[0], acc[1])
         if c_account:
@@ -365,6 +396,9 @@ cdef class Account:
         ''' @param protocol_id The new account's protocol id '''
         cdef account.PurpleAccount *c_account
 
+        if not protocol_id:
+            return
+
         c_account = account.c_purple_accounts_find(acc[0], acc[1])
         if c_account:
             account.c_purple_account_set_protocol_id(c_account, protocol_id)
@@ -373,12 +407,18 @@ cdef class Account:
         ''' @param acc Tuple (username, protocol id) '''
         ''' @return account's protocol id '''
         cdef account.PurpleAccount *c_account
+        cdef char *value
+        value = NULL
 
         c_account = account.c_purple_accounts_find(acc[0], acc[1])
         if c_account:
-            return account.c_purple_account_get_protocol_id(c_account)
-        else:
+            value = <char *> account.c_purple_account_get_protocol_id(c_account)
+
+        if value == NULL:
             return None
+        else:
+            return value
+
 
     def set_enabled(self, acc, ui, value):
         ''' @param acc Tuple (username, protocol id) '''
