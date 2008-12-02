@@ -10,7 +10,6 @@ from subprocess import Popen, PIPE
 
 cflags = Popen(['pkg-config', '--cflags', 'purple'], stdout=PIPE).communicate()[0].split()
 ldflags = Popen(['pkg-config', '--libs', 'purple'], stdout=PIPE).communicate()[0].split()
-print ldflags
 
 class pypurple_build_ext(build_ext):
     def finalize_options(self):
