@@ -160,3 +160,5 @@ cdef extern from "libpurple/account.h":
             (char *name, char *protocol)
     glib.GList *c_purple_accounts_get_all "purple_accounts_get_all" ()
     void c_purple_accounts_add "purple_accounts_add" (PurpleAccount *account)
+    void c_purple_accounts_delete "purple_accounts_delete" (PurpleAccount
+            *account)

@@ -490,3 +490,10 @@ cdef class Account:
             return account.c_purple_account_get_remember_password(c_account)
         else:
             return None
+
+    def remove(self, acc):
+        cdef account.PurpleAccount *c_account
+
+        c_account = account.c_purple_accounts_find(acc[0], acc[1])
+        if c_account:
+            account.c_purple_accounts_delete(c_account)
