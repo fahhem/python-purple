@@ -21,6 +21,7 @@ cimport glib
 
 cdef extern from "libpurple/debug.h":
 
+    # Debug levels
     ctypedef enum PurpleDebugLevel:
         PURPLE_DEBUG_ALL = 0
         PURPLE_DEBUG_MISC
@@ -29,19 +30,30 @@ cdef extern from "libpurple/debug.h":
         PURPLE_DEBUG_ERROR
         PURPLE_DEBUG_FATAL
 
-    void c_purple_debug "purple_debug" (PurpleDebugLevel level, \
-            char *category, char *format_type, char *format)
-    void c_purple_debug_misc "purple_debug_misc" (char *category, \
-            char *format_type, char *format)
-    void c_purple_debug_info "purple_debug_info" (char *category, \
-            char *format_type, char *format)
-    void c_purple_debug_warning "purple_debug_warning" (char *category, \
-            char *format_type, char *format)
-    void c_purple_debug_error "purple_debug_error" (char *category, \
-            char *format_type, char *format)
-    void c_purple_debug_fatal "purple_debug_fatal" (char *category, \
-            char *format_type, char *format)
+    # Debug UI operations FIXME
+    #ctypedef struct PurpleDebugUiOps:
+        #void (*print)(PurpleDebugLevel level, char *category, char *arg_s)
+        #glib.gboolean (*is_enabled)(PurpleDebugLevel level, char *category)
 
-    void c_purple_debug_set_enabled "purple_debug_set_enabled" \
-            (glib.gboolean debug_enabled)
-    glib.gboolean c_purple_debug_is_enabled "purple_debug_is_enabled" ()
+    # Debug API
+    void purple_debug(PurpleDebugLevel level, char *category, \
+            char *format_type, char *format)
+    void purple_debug_misc(char *category, char *format_type, \
+            char *format)
+    void purple_debug_info(char *category, char *format_type, \
+            char *format)
+    void purple_debug_warning(char *category, char *format_type, \
+            char *format)
+    void purple_debug_error (char *category, char *format_type, \
+            char *format)
+    void purple_debug_fatal (char *category, char *format_type, \
+            char *format)
+    void purple_debug_set_enabled(glib.gboolean enabled)
+    glib.gboolean purple_debug_is_enabled()
+
+    # UI Registration Functions FIXME
+    #void purple_debug_set_ui_ops(PurpleDebugUiOps *ops)
+    #PurpleDebugUiOps *purple_debug_get_ui_ops(void)
+
+    # Debug Subsystem
+    void purple_debug_init()

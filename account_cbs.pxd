@@ -31,7 +31,7 @@ cdef void notify_added(account.PurpleAccount *account, \
     A buddy who is already on this account's buddy list added this account to
     their buddy list.
     """
-    debug.c_purple_debug_info("account", "%s", "notify-added\n")
+    debug.purple_debug_info("account", "%s", "notify-added\n")
     if account_cbs.has_key("notify-added"):
         (<object> account_cbs["notify-added"])("notify-added: TODO")
 
@@ -40,7 +40,7 @@ cdef void status_changed(account.PurpleAccount *account, \
     """
     This account's status changed.
     """
-    debug.c_purple_debug_info("account", "%s", "status-changed\n")
+    debug.purple_debug_info("account", "%s", "status-changed\n")
     if account_cbs.has_key("status-changed"):
         (<object> account_cbs["status-changed"])("status-changed: TODO")
 
@@ -50,7 +50,7 @@ cdef void request_add(account.PurpleAccount *account, \
     """
     Someone we don't have on our list added us; prompt to add them.
     """
-    debug.c_purple_debug_info("account", "%s", "request-add\n")
+    debug.purple_debug_info("account", "%s", "request-add\n")
     if account_cbs.has_key("request-add"):
         (<object> account_cbs["request-add"])("request-add: TODO")
 
@@ -66,7 +66,7 @@ cdef void *request_authorize(account.PurpleAccount *account, \
     authorize_cb(user_data) otherwise call deny_cb(user_data).
     @return a UI-specific handle, as passed to #close_account_request.
     """
-    debug.c_purple_debug_info("account", "%s", "request-authorize\n")
+    debug.purple_debug_info("account", "%s", "request-authorize\n")
     if account_cbs.has_key("request-authorize"):
         (<object> account_cbs["request-authorize"])("request-authorize: TODO")
 
@@ -75,6 +75,6 @@ cdef void close_account_request (void *ui_handle):
     Close a pending request for authorization. ui_handle is a handle as
     returned by request_authorize.
     """
-    debug.c_purple_debug_info("account", "%s", "close-account-request\n")
+    debug.purple_debug_info("account", "%s", "close-account-request\n")
     if account_cbs.has_key("close-account-request"):
         (<object> account_cbs["close-account-request"])("close-account-request: TODO")

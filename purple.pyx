@@ -75,8 +75,8 @@ cdef class Purple:
         if default_path is not __DEFAULT_PATH__:
             __DEFAULT_PATH__ = default_path
 
-        debug.c_purple_debug_set_enabled(debug_enabled)
-        util.c_purple_util_set_user_dir(default_path)
+        debug.purple_debug_set_enabled(debug_enabled)
+        util.purple_util_set_user_dir(default_path)
         plugin.c_purple_plugins_add_search_path(default_path)
 
         # adds glib iteration inside ecore main loop
@@ -86,17 +86,17 @@ cdef class Purple:
         core.c_purple_core_quit()
 
     cdef void __core_ui_ops_ui_prefs_init(self):
-        debug.c_purple_debug_info("core_ui_ops", "%s", "ui_prefs_init\n")
+        debug.purple_debug_info("core_ui_ops", "%s", "ui_prefs_init\n")
         prefs.c_purple_prefs_load()
 
         prefs.c_purple_prefs_add_none("/carman")
 
     cdef void __core_ui_ops_debug_init(self):
-        debug.c_purple_debug_info("core_ui_ops", "%s", "debug_ui_init\n")
+        debug.purple_debug_info("core_ui_ops", "%s", "debug_ui_init\n")
         pass
 
     cdef void __core_ui_ops_ui_init(self):
-        debug.c_purple_debug_info("core_ui_ops", "%s", "ui_init\n")
+        debug.purple_debug_info("core_ui_ops", "%s", "ui_init\n")
 
         account.purple_accounts_set_ui_ops(&c_account_ui_ops)
         connection.c_purple_connections_set_ui_ops(&c_conn_ui_ops)
@@ -109,7 +109,7 @@ cdef class Purple:
         #roomlist.c_purple_roomlist_set_ui_ops(&c_rlist_ui_ops)
 
     cdef void __core_ui_ops_quit(self):
-        debug.c_purple_debug_info("core_ui_ops", "%s", "quit\n")
+        debug.purple_debug_info("core_ui_ops", "%s", "quit\n")
 
         global c_ui_info
 
@@ -222,13 +222,13 @@ cdef class Purple:
         # initialize purple core
         ret = core.c_purple_core_init(__APP_NAME__)
         if ret is False:
-            debug.c_purple_debug_fatal("main", "%s", "libpurple " \
+            debug.purple_debug_fatal("main", "%s", "libpurple " \
                                        "initialization failed.\n")
             return False
 
         # check if there is another instance of libpurple running
         if core.c_purple_core_ensure_single_instance() == False:
-            debug.c_purple_debug_fatal("main", "%s", "Another instance of " \
+            debug.purple_debug_fatal("main", "%s", "Another instance of " \
                                       "libpurple is already running.\n")
             core.c_purple_core_quit()
             return False

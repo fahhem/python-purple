@@ -34,7 +34,7 @@ cdef void connect_progress(connection.PurpleConnection *gc, const_char *text, \
     of what is happening, as well as which a step out of step_count has been
     reached (which might be displayed as a progress bar).
     """
-    debug.c_purple_debug_info("connection", "%s", "connect-progress\n")
+    debug.purple_debug_info("connection", "%s", "connect-progress\n")
     if connection_cbs.has_key("connect-progress"):
         (<object> connection_cbs["connect-progress"])(<char *> text, step, step_count)
 
@@ -42,7 +42,7 @@ cdef void connected(connection.PurpleConnection *gc):
     """
     Called when a connection is established (just before the signed-on signal).
     """
-    debug.c_purple_debug_info("connection", "%s", "connected\n")
+    debug.purple_debug_info("connection", "%s", "connected\n")
     if connection_cbs.has_key("connected"):
         (<object> connection_cbs["connected"])("connected: TODO")
 
@@ -51,7 +51,7 @@ cdef void disconnected(connection.PurpleConnection *gc):
     Called when a connection is ended (between the signing-off and signed-off
     signal).
     """
-    debug.c_purple_debug_info("connection", "%s", "disconnected\n")
+    debug.purple_debug_info("connection", "%s", "disconnected\n")
     if connection_cbs.has_key("disconnected"):
         (<object> connection_cbs["disconnected"])("disconnected: TODO")
 
@@ -61,7 +61,7 @@ cdef void notice(connection.PurpleConnection *gc, const_char *text):
     implements this as a no-op; purple_connection_notice(), which uses this
     operation, is not used by any of the protocols shipped with libpurple.)
     """
-    debug.c_purple_debug_info("connection", "%s", "notice\n")
+    debug.purple_debug_info("connection", "%s", "notice\n")
     if connection_cbs.has_key("notice"):
         (<object> connection_cbs["notice"])("notice: TODO")
 
@@ -74,7 +74,7 @@ cdef void report_disconnect(connection.PurpleConnection *gc, const_char *text):
     @deprecated in favour of
                 PurpleConnectionUiOps.report_disconnect_reason.
     """
-    debug.c_purple_debug_info("connection", "%s", "report-disconnect\n")
+    debug.purple_debug_info("connection", "%s", "report-disconnect\n")
     if connection_cbs.has_key("report-disconnect"):
         (<object> connection_cbs["report-disconnect"])(<char *> text)
 
@@ -84,7 +84,7 @@ cdef void network_connected():
     is active. On Linux, this uses Network Manager if available; on Windows,
     it uses Win32's network change notification infrastructure.
     """
-    debug.c_purple_debug_info("connection", "%s", "network-connected\n")
+    debug.purple_debug_info("connection", "%s", "network-connected\n")
     if connection_cbs.has_key("network-connected"):
         (<object> connection_cbs["network-connected"])()
 
@@ -93,7 +93,7 @@ cdef void network_disconnected():
     Called when libpurple discovers that the computer's network connection
     has gone away.
     """
-    debug.c_purple_debug_info("connection", "%s", "network-disconnected\n")
+    debug.purple_debug_info("connection", "%s", "network-disconnected\n")
     if connection_cbs.has_key("network-disconnected"):
         (<object> connection_cbs["network-disconnected"])()
 
@@ -111,7 +111,7 @@ cdef void report_disconnect_reason(connection.PurpleConnection *gc, \
     @see purple_connection_error_reason
     @since 2.3.0
     """
-    debug.c_purple_debug_info("connection", "%s", "report-disconnect-reason\n")
+    debug.purple_debug_info("connection", "%s", "report-disconnect-reason\n")
 
     reason_string = {
         0: 'Network error',
