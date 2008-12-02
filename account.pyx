@@ -370,3 +370,12 @@ cdef class Account:
         if c_account:
             account.c_purple_account_set_alias(c_account, alias)
 
+    def set_protocol_id(self, acc, protocol_id):
+        ''' @param acc Tuple (username, protocol id) '''
+        ''' @param protocol_id The new account's protocol id '''
+        cdef account.PurpleAccount *c_account
+
+        c_account = account.c_purple_accounts_find(acc[0], acc[1])
+        if c_account:
+            account.c_purple_account_set_protocol_id(c_account, protocol_id)
+
