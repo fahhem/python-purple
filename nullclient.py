@@ -10,6 +10,7 @@ conn_cbs = {}
 conv_cbs = {}
 notify_cbs = {}
 request_cbs = {}
+signal_cbs = {}
 
 def account_callback(name):
     print "---- account callback example: %s" % name
@@ -101,6 +102,16 @@ request_cbs["request_folder"] = request_callback
 
 cbs["request"] = request_cbs
 
+def buddy_signed_off_cb(name):
+    print "---- signal callback example: sign off from buddy %s" % name
+
+def receiving_im_msg_cb(sender, message):
+    print "---- signal callback example: receiving im message from %s" % sender
+    print "---- message: %s" % message
+
+signal_cbs["buddy_signed_off"] = buddy_signed_off_cb
+signal_cbs["receiving_im_msg"] = receiving_im_msg_cb
+
 class NullClient:
     def __init__(self):
         self.p = purple.Purple(debug_enabled=False)
@@ -144,5 +155,6 @@ if __name__ == '__main__':
     client.new_account(username, client.protocol, password)
 
     client.p.connect()
+    client.p.attach_signals(signal_cbs)
     ecore.timer_add(20, client.get_buddies)
     ecore.main_loop_begin()

@@ -51,6 +51,7 @@ include "conversation_cbs.pxd"
 include "notify_cbs.pxd"
 include "request_cbs.pxd"
 #include "roomlist_cbs.pxd"
+include "signal_cbs.pxd"
 
 cdef class Purple:
     """ Purple class.
@@ -259,6 +260,22 @@ cdef class Purple:
     def connect(self):
         conn = Connection()
         conn.connect()
+
+    def attach_signals(self, __signal_cbs=None):
+        if __signal_cbs is not None:
+            global signal_cbs
+            signal_cbs = __signal_cbs
+
+        cdef int handle
+
+        signals.c_purple_signal_connect(blist.c_purple_blist_get_handle(),
+                "buddy-signed-off", &handle,
+                <signals.PurpleCallback> signal_buddy_signed_off_cb, NULL)
+
+        signals.c_purple_signal_connect(
+                conversation.c_purple_conversations_get_handle(),
+                "receiving-im-msg", &handle,
+                <signals.PurpleCallback> signal_receiving_im_msg_cb, NULL)
 
 include "proxy.pyx"
 include "account.pyx"
