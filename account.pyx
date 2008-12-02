@@ -351,3 +351,22 @@ cdef class Account:
         if c_account:
             account.c_purple_account_set_password(c_account, password)
 
+    def get_alias(self, acc):
+        ''' @param acc Tuple (username, protocol id) '''
+        cdef account.PurpleAccount *c_account
+
+        c_account = account.c_purple_accounts_find(acc[0], acc[1])
+        if c_account:
+            return account.c_purple_account_get_alias(c_account)
+        else:
+            return None
+
+    def set_alias(self, acc, alias):
+        ''' @param acc Tuple (username, protocol id) '''
+        ''' @param alias The account's alias '''
+        cdef account.PurpleAccount *c_account
+
+        c_account = account.c_purple_accounts_find(acc[0], acc[1])
+        if c_account:
+            account.c_purple_account_set_alias(c_account, alias)
+
