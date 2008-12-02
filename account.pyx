@@ -95,7 +95,7 @@ cdef class Account:
 
     def _get_protocol_options(self):
         """
-        @return Dictionary {'setting': value, ...} 
+        @return Dictionary {'setting': value, ...}
         """
         cdef glib.GList *iter
         cdef account.PurpleAccount *c_account
@@ -221,6 +221,50 @@ cdef class Account:
         else:
             return None
     enabled = property(__get_enabled)
+
+    def __get_status_types(self):
+        cdef glib.GList *iter = NULL
+        cdef status.PurpleStatusType *c_statustype = NULL
+        cdef char *id = NULL
+        cdef char *name = NULL
+
+        if self.__exists:
+            status_types = []
+            iter = account.purple_account_get_status_types(self._get_structure())
+            while iter:
+                c_statustype = <status.PurpleStatusType *> iter.data
+                id = <char *> status.purple_status_type_get_id(c_statustype)
+                name = <char *> status.purple_status_type_get_name(c_statustype)
+                status_types.append((id, name))
+                iter = iter.next
+            return status_types
+        else:
+             return None
+
+    status_types = property(__get_status_types)
+
+    def __get_active_status(self):
+        cdef status.PurpleStatus* c_status = NULL
+        cdef char *type = NULL
+        cdef char *name = NULL
+        cdef char *msg = NULL
+        if self.__exists:
+            active = {}
+            c_status = <status.PurpleStatus*> account.purple_account_get_active_status(self._get_structure())
+            type = <char *> status.purple_status_get_id(c_status)
+            name = <char *> status.purple_status_get_name(c_status)
+            msg = <char *> status.purple_status_get_attr_string(c_status,
+                "message")
+
+            active['type'] = type
+            active['name'] = name
+            if msg:
+                active['message'] = msg
+
+            return active
+        else:
+            return None
+    active_status = property(__get_active_status)
 
     def set_username(self, username):
         """
@@ -540,3 +584,29 @@ cdef class Account:
         else:
             blist.purple_blist_request_add_buddy(self._get_structure(), \
                     buddy_username, NULL, NULL)
+
+    def set_active_status(self, type, msg=None):
+        cdef status.PurpleStatusType *c_statustype = NULL
+
+        if self.__exists:
+            if msg:
+                account.purple_account_set_status(self._get_structure(),
+                        <char *> type, True, "message", <char *> msg, NULL)
+            else:
+                account.purple_account_set_status(self._get_structure(),
+                        <char *> type, True, NULL)
+            return True
+        else:
+            return False
+
+    def set_status_message(self, type, msg):
+        cdef status.PurpleStatus* c_status = NULL
+        cdef status.PurpleStatusType *c_statustype = NULL
+
+        if self.__exists and msg:
+            c_status = account.purple_account_get_status(self._get_structure(),
+                    type)
+            status.purple_status_set_attr_string(c_status, "message", msg)
+            return True
+        else:
+            return False
