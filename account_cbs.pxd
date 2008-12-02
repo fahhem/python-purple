@@ -50,16 +50,41 @@ def call_deny_cb():
     c_request_authorize_deny_cb = NULL
     c_request_authorize_user_data = NULL
 
-cdef void notify_added(account.PurpleAccount *account, \
+cdef void notify_added(account.PurpleAccount *c_account, \
         const_char *remote_user, const_char *id, const_char *alias, \
-        const_char *message):
+        const_char *c_message):
     """
     A buddy who is already on this account's buddy list added this account to
     their buddy list.
     """
+    cdef connection.PurpleConnection *gc = \
+            account.purple_account_get_connection(c_account)
+
     debug.purple_debug_info("account", "%s", "notify-added\n")
+
+    if alias:
+        remote_alias = <char *> alias
+    else:
+        remote_alias = None
+
+    if id:
+        username = <char *> id
+    elif connection.purple_connection_get_display_name(gc) != NULL:
+        username = connection.purple_connection_get_display_name(gc)
+    else:
+        username = account.purple_account_get_username(c_account)
+
+    protocol_id = account.purple_account_get_protocol_id(c_account)
+
+    if c_message:
+        message = <char *> c_message
+    else:
+        message = None
+
     if account_cbs.has_key("notify-added"):
-        (<object> account_cbs["notify-added"])("notify-added: TODO")
+        (<object> account_cbs["notify-added"])( \
+                (<char *> remote_user, remote_alias), \
+                (username, protocol_id), message)
 
 cdef void status_changed(account.PurpleAccount *account, \
         status.PurpleStatus *status):
