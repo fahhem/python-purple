@@ -17,20 +17,8 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cdef extern from "libpurple/eventloop.h":
-    ctypedef struct PurpleEventLoopUiOps:
+cdef extern from "libpurple/idle.h":
+    ctypedef struct PurpleIdleUiOps:
         pass
 
-    void c_purple_eventloop_set_ui_ops "purple_eventloop_set_ui_ops" (PurpleEventLoopUiOps *ops)
-
-class EventLoop(object):
-    """ EventLoop class """
-
-    def __init__(self):
-        purple_eventloop_ui_ops = None
-
-    # FIXME
-    """
-    def purple_eventloop_set_ui_ops(ops):
-        c_purple_eventloop_set_ui_ops(ops)
-    """
+    void c_purple_idle_set_ui_ops "purple_idle_set_ui_ops" (PurpleIdleUiOps *ops)

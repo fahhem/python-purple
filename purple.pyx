@@ -34,6 +34,7 @@ include "libpurple/conversation.pxd"
 include "libpurple/core.pxd"
 include "libpurple/debug.pxd"
 include "libpurple/eventloop.pxd"
+include "libpurple/idle.pxd"
 include "libpurple/plugin.pxd"
 include "libpurple/pounce.pxd"
 include "libpurple/prefs.pxd"
@@ -177,11 +178,7 @@ cdef class Purple:
         conn = Connection()
         conn.connect()
 
-include "core/account.pxd"
-#include "core/blist.pxd"
-include "core/buddy.pxd"
-include "core/connection.pxd"
-include "core/conversation.pxd"
-#include "core/core.pxd"
-#include "core/idle.pxd"
-#include "core/pounce.pxd"
+include "account.pyx"
+include "buddy.pyx"
+include "connection.pyx"
+include "conversation.pyx"
