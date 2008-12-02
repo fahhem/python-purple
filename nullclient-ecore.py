@@ -3,8 +3,6 @@ import ecore
 import purple
 
 cbs = {}
-acc_cbs = {}
-blist_cbs = {}
 conn_cbs = {}
 conv_cbs = {}
 notify_cbs = {}
@@ -15,19 +13,6 @@ def account_callback(name):
 
 def blist_callback(name):
     print "---- blist callback example: %s" % name
-
-#blist_cbs["new_list"] = blist_callback
-#blist_cbs["new_node"] = blist_callback
-#blist_cbs["show"] = blist_callback
-#blist_cbs["update"] = blist_callback
-#blist_cbs["remove"] = blist_callback
-#blist_cbs["destroy"] = blist_callback
-blist_cbs["set_visible"] = blist_callback
-blist_cbs["request_add_buddy"] = blist_callback
-blist_cbs["request_add_chat"] = blist_callback
-blist_cbs["request_add_group"] = blist_callback
-
-cbs["blist"] = blist_cbs
 
 def conn_callback(name):
     print "---- connection callback example: %s" % name
@@ -268,14 +253,18 @@ class NullClientPurple:
         self.protocol_id = "prpl-jabber"
         self.accs = None
 
-        global cbs
-        cbs["blist"]["update"] = self._purple_update_blist_cb
 
         self.p.add_account_cb("notify_added", account_callback)
         self.p.add_account_cb("status_changed", account_callback)
         self.p.add_account_cb("request_add", account_callback)
         self.p.add_account_cb("request_authorize", account_callback)
         self.p.add_account_cb("close_account_request", account_callback)
+
+        self.p.add_blist_cb("set_visible", blist_callback)
+        self.p.add_blist_cb("request_add_buddy", blist_callback)
+        self.p.add_blist_cb("request_add_chat", blist_callback)
+        self.p.add_blist_cb("request_add_group", blist_callback)
+        self.p.add_blist_cb("update", self._purple_update_blist_cb)
 
         self.p.purple_init(cbs)
 

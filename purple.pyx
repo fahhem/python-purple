@@ -141,13 +141,11 @@ cdef class Purple:
         """ Initializes libpurple """
 
         if callbacks_dict is not None:
-            global blist_cbs
             global connection_cbs
             global conversation_cbs
             global notify_cbs
             global request_cbs
 
-            blist_cbs = callbacks_dict["blist"]
             connection_cbs = callbacks_dict["connection"]
             conversation_cbs = callbacks_dict["conversation"]
             notify_cbs = callbacks_dict["notify"]
@@ -256,6 +254,10 @@ cdef class Purple:
     def add_account_cb(self, name, func):
         global account_cbs
         account_cbs[name] = func
+
+    def add_blist_cb(self, name, func):
+        global blist_cbs
+        blist_cbs[name] = func
 
     def connect(self):
         conn = Connection()
