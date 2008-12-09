@@ -2,7 +2,8 @@ Source: python-purple
 Section: python
 Priority: optional
 Maintainer: Bruno Abinader <bruno.abinader@openbossa.org>
-Build-Depends: cdbs, debhelper, libpurple-dev, libglib2.0-dev
+Build-Depends: cdbs, debhelper, libpurple-dev, libglib2.0-dev,
+ python2.5-dev, python2.5-distutils
 Standards-Version: 3.8.0
 
 Package: python-purple
