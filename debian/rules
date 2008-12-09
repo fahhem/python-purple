@@ -1,10 +1,37 @@
 #!/usr/bin/make -f
-# -*- makefile -*-
+DEB_DIR=debian/python-purple
 
-DEB_PYTHON_SYSTEM=pysupport
+build:
 
-include /usr/share/cdbs/1/rules/debhelper.mk
-include /usr/share/cdbs/1/class/python-distutils.mk
+clean:
+	dh_testdir
+	python2.5 setup_dist.py clean
+	rm -f `find $(CURDIR) -name '*.py[co]'`
+	rm -rf build-stamp build
+	rm -rf $(DEB_DIR)
+	#rm -rf purple.c
+	dh_clean install-stamp
 
-install/cython::
-#	dh_installman debian/python-purple.1
+install: build install-stamp
+install-stamp:
+	dh_testdir
+	dh_testroot
+	dh_installdirs
+	python2.5 setup_dist.py install --root=$(DEB_DIR)
+
+binary-indep: build install
+	dh_testdir
+	dh_testroot
+	dh_installdocs
+	dh_installchangelogs
+	dh_compress -X.py
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary-arch:
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install
