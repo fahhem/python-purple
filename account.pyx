@@ -577,6 +577,35 @@ cdef class Account:
         else:
             return None
 
+    def get_buddies(self):
+        """
+        @return Account's buddies list
+        """
+        cdef glib.GSList *iter = NULL
+        cdef blist.PurpleBuddy *c_buddy = NULL
+        cdef char *c_alias = NULL
+
+        if self.__exists:
+            iter = blist.purple_find_buddies(self._get_structure(), NULL)
+
+            buddies_list = []
+            while iter:
+                c_alias = NULL
+                c_buddy = <blist.PurpleBuddy *> iter.data
+
+                name = <char *> blist.purple_buddy_get_name(c_buddy)
+                new_buddy = Buddy(name, self)
+
+                c_alias = <char *> blist.purple_buddy_get_alias_only(c_buddy)
+                if c_alias:
+                    new_buddy.set_alias(c_alias)
+
+                buddies_list.append(new_buddy)
+                iter = iter.next
+            return buddies_list
+        else:
+            return None
+
     def request_add_buddy(self, buddy_username, buddy_alias):
         if buddy_alias:
             blist.purple_blist_request_add_buddy(self._get_structure(), \
