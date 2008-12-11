@@ -1,0 +1,45 @@
+python-purple - Python bindings for libpurple
+---------------------------------------------
+
+Copyright (c) 2008 INdT - Instituto Nokia de Tecnologia
+
+Requirements
+------------
+
+In order to build python-purple, you need the following packages:
+ * cdbs
+ * debhelper
+ * libpurple-dev
+ * libglib2.0-dev
+ * python2.5-dev
+ * python2.5-distutils
+ * cython (optional)
+
+Although it's not dependent, cython should also needed if you want to
+re-create purple.c file (generated from cython using purple.pyx).
+
+Building and installing python-purple
+-------------------------------------
+
+Building cython-generated purple.c file (optional):
+
+$ cython purple.pyx -I libpurple/
+
+This is also done by setup.py when running:
+
+$ python2.5 setup.py build
+
+If you don't need to generate purple.c file, you can use setup_dist.py:
+
+$ python2.5 setup_dist.py build
+
+Both setups generates purple.so inside build/ directory. The difference is
+that setup.py also generates purple.c file, if it doesn't exists.
+
+To install files inside your system:
+
+$ sudo python2.5 setup.py install --root=/usr
+
+You can also create a debian package of it:
+
+$ dpkg-buildpackage -rfakeroot
