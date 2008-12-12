@@ -228,8 +228,8 @@ cdef class Account:
         cdef char *id = NULL
         cdef char *name = NULL
 
+        status_types = []
         if self.__exists:
-            status_types = []
             iter = account.purple_account_get_status_types(self._get_structure())
             while iter:
                 c_statustype = <status.PurpleStatusType *> iter.data
@@ -237,9 +237,8 @@ cdef class Account:
                 name = <char *> status.purple_status_type_get_name(c_statustype)
                 status_types.append((id, name))
                 iter = iter.next
-            return status_types
-        else:
-             return None
+
+        return status_types
 
     status_types = property(__get_status_types)
 
@@ -552,11 +551,11 @@ cdef class Account:
         cdef blist.PurpleBuddy *c_buddy = NULL
         cdef char *c_alias = NULL
 
+        buddies_list = []
         if self.__exists and \
                 account.purple_account_is_connected(self._get_structure()):
             iter = blist.purple_find_buddies(self._get_structure(), NULL)
 
-            buddies_list = []
             while iter:
                 c_alias = NULL
                 c_buddy = <blist.PurpleBuddy *> iter.data
@@ -573,9 +572,8 @@ cdef class Account:
 
                     buddies_list.append(new_buddy)
                 iter = iter.next
-            return buddies_list
-        else:
-            return None
+
+        return buddies_list
 
     def get_buddies(self):
         """
@@ -585,10 +583,10 @@ cdef class Account:
         cdef blist.PurpleBuddy *c_buddy = NULL
         cdef char *c_alias = NULL
 
+        buddies_list = []
         if self.__exists:
             iter = blist.purple_find_buddies(self._get_structure(), NULL)
 
-            buddies_list = []
             while iter:
                 c_alias = NULL
                 c_buddy = <blist.PurpleBuddy *> iter.data
@@ -602,9 +600,8 @@ cdef class Account:
 
                 buddies_list.append(new_buddy)
                 iter = iter.next
-            return buddies_list
-        else:
-            return None
+
+        return buddies_list
 
     def request_add_buddy(self, buddy_username, buddy_alias):
         if buddy_alias:
