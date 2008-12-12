@@ -43,3 +43,15 @@ $ sudo python2.5 setup.py install --root=/usr
 You can also create a debian package of it:
 
 $ dpkg-buildpackage -rfakeroot
+
+Testing python-purple
+---------------------
+
+Python-purple provides a client example (nullclient) which connects to a
+Gtalk account and displays libpurple's debug messages. In order to execute it,
+issue the following command:
+
+$ LD_PRELOAD=/usr/lib/libpurple.so.0 python2.5 nullclient.py
+
+It will ask for a username and then password. Insert it and it will
+automatically connect to the given account.
