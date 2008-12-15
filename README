@@ -55,3 +55,26 @@ $ LD_PRELOAD=/usr/lib/libpurple.so.0 python2.5 nullclient.py
 
 It will ask for a username and then password. Insert it and it will
 automatically connect to the given account.
+
+There is also another example client (nullclient-ecore), which provides some
+callback examples from libpurple interacting with UI. In order to execute it,
+issue the following command:
+
+$ LD_PRELOAD=/usr/lib/libpurple.so.0 python2.5 nullclient-ecore.py
+
+An Etk-based window will pop up showing text windows, a command entry and
+three buttons ('Send', 'Connect', 'Add account'). In order to test it, follow
+the steps below:
+
+1. Click on 'Add account' button. A pop-up window appears, and you can enter
+there a gmail-based account (e.g. jsmith@gmail.com). Click 'Ok' when done.
+
+2. Click on 'Connect' button. A pop-up window appears asking for account's
+password. Click 'Ok' when done.
+
+Now wait for the account connection. When 'Connected' appears, your buddy
+list gets updated.
+
+3. You are now connected! Select a buddy from buddy list, write a message on
+the command entry and click 'Send'. Your message appears in the text box.
+If your buddy replies, his/her message also gets shown in the text box.
