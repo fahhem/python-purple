@@ -61,6 +61,11 @@ cdef extern from "libpurple/request.h":
     ctypedef struct PurpleRequestField:
         pass
 
+    ctypedef void (*PurpleRequestActionCb)(void *, int)
+    ctypedef void (*PurpleRequestChoiceCb)(void *, int)
+    ctypedef void (*PurpleRequestFieldsCb)(void *, PurpleRequestFields *fields)
+    ctypedef void (*PurpleRequestFileCb)(void *, char *filename)
+
     ctypedef struct PurpleRequestUiOps:
         void *(*request_input) (const_char *title, const_char *primary,
                                 const_char *secondary,

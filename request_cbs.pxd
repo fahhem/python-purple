@@ -23,8 +23,15 @@ cdef extern from *:
     ctypedef char const_char "const char"
     ctypedef int size_t
     ctypedef void* va_list
+    char* charptr "char *"
+    glib.GCallback glibcb "GCallback"
+    void* va_arg(void *action, void *type)
 
 request_cbs = {}
+
+cdef request.PurpleRequestActionCb req_actions_cb[10]
+cdef object req_actions_list = []
+cdef void *req_action_user_data = NULL
 
 cdef void *request_input(const_char *title, const_char *primary, \
         const_char *secondary, const_char *default_value, \
@@ -53,6 +60,17 @@ cdef void *request_choice(const_char *title, const_char *primary, \
     if request_cbs.has_key("request-choice"):
         (<object> request_cbs["request-choice"])("request-choice: TODO")
 
+cdef void __call_action(int i):
+    global req_actions_cb
+    global req_actions_list
+    global req_action_user_data
+
+    cdef request.PurpleRequestActionCb cb 
+
+    if req_actions_list and len(req_actions_list) > i:
+        cb = req_actions_cb[i]
+        cb(req_action_user_data, i)
+
 cdef void *request_action(const_char *title, const_char *primary, \
         const_char *secondary, int default_action, \
         account.PurpleAccount *account, const_char *who, \
@@ -61,9 +79,30 @@ cdef void *request_action(const_char *title, const_char *primary, \
     """
     @see purple_request_action_varg().
     """
+    global req_actions_cb
+    global req_actions_list
+    global req_action_user_data
+    cdef int i
+    cdef char *btn_txt
+    cdef void *cb
+
+    i = 0
+
+    req_action_user_data = user_data
+    req_actions_list = []
+
+    #FIXME: i < 10 max size to req_actions_cb
+    while i < action_count and i < 10:
+        btn_txt = <char *> va_arg(actions, charptr)
+        req_actions_cb[i] = <request.PurpleRequestActionCb> va_arg(actions, glibcb)
+        req_actions_list.append(btn_txt)
+        i = i + 1
+
     debug.purple_debug_info("request", "%s", "request-action\n")
     if request_cbs.has_key("request-action"):
-        (<object> request_cbs["request-action"])("request-action: TODo")
+        (<object> request_cbs["request-action"])(<char *> title,
+			<char *> primary, <char *> secondary,
+			default_action, req_actions_list)
 
 cdef void *request_fields(const_char *title, const_char *primary, \
         const_char *secondary, request.PurpleRequestFields *fields, \

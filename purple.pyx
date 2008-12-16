@@ -429,6 +429,9 @@ cdef class Purple:
             iter = iter.next
         return protocol_list
 
+    def call_action(self, i):
+        __call_action(i)
+
 include "protocol.pyx"
 #include "plugin.pyx"
 include "proxy.pyx"
