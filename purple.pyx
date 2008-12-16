@@ -59,11 +59,17 @@ include "signal_cbs.pxd"
 include "util.pxd"
 
 cdef class Purple:
-    """ Purple class.
+    '''Purple class.
 
-    @param debug_enabled: Toggle debug messages.
-    @param default_path: Full path for libpurple user files.
-    """
+    @param ui_name ID of the UI using the purple.
+        This should be a unique ID, registered with the purple team.
+    @param ui_version UI version.
+    @param ui_website UI website.
+    @param ui_dev_website UI development website.
+    @param debug_enabled True to enable debug messages.
+    @param default_path Custom settings directory
+    '''
+
 
     def __init__(self, ui_name, ui_version, ui_website, ui_dev_website, \
             debug_enabled=None, default_path=None):
@@ -91,6 +97,11 @@ cdef class Purple:
         core.purple_core_quit()
 
     def __get_ui_name(self):
+        '''Returns the UI name.
+
+        @return UI name.
+        '''
+
         global c_ui_name
         return str(c_ui_name)
     ui_name = property(__get_ui_name)
@@ -156,7 +167,11 @@ cdef class Purple:
         return True
 
     def purple_init(self):
-        """ Initializes libpurple """
+        '''Initializes the purple.
+
+        This will setup preferences for all the core subsystems.
+        '''
+
         global c_ui_name
 
         c_account_ui_ops.notify_added = notify_added
@@ -259,13 +274,13 @@ cdef class Purple:
         return ret
 
     def add_callback(self, type, name, callback):
-        """
-        Adds a callback with given name inside callback's type.
+        '''Adds a callback with given name inside callback's type.
 
         @param type     Callback type (e.g. "account")
         @param name     Callback name (e.g. "notify-added")
         @param callback Callback to be called
-        """
+        '''
+
         global account_cbs
         global blist_cbs
         global connection_cbs
@@ -281,6 +296,14 @@ cdef class Purple:
           "request": request_cbs }[type][name] = callback
 
     def signal_connect(self, name=None, cb=None):
+        '''Connects a signal handler to a signal for a particular object.
+        Take care not to register a handler function twice. Purple will
+        not correct any mistakes for you in this area.
+
+        @param name Name of the signal to connect.
+        @param cb Callback function.
+        '''
+
         cdef int handle
         cdef plugin.PurplePlugin *jabber
 
@@ -330,6 +353,11 @@ cdef class Purple:
                     <signals.PurpleCallback> jabber_receiving_xmlnode_cb, NULL)
 
     def accounts_get_all(self):
+        '''Returns a list of all accounts.
+
+        @return A list of all accounts.
+        '''
+
         cdef glib.GList *iter
         cdef account.PurpleAccount *acc
         cdef char *username
@@ -353,10 +381,18 @@ cdef class Purple:
         return account_list
 
     def accounts_get_all_active(self):
+        '''Returns a list of all enabled accounts.
+
+        @return A list of all enabled accounts.
+        '''
+
         cdef glib.GList *iter
         cdef account.PurpleAccount *acc
         cdef char *username
         cdef char *protocol_id
+
+        #FIXME: The list is owned by the caller, and must be g_list_free()d
+        #       to avoid leaking the nodes.
 
         iter = account.purple_accounts_get_all_active()
         account_list = []
@@ -376,6 +412,11 @@ cdef class Purple:
         return account_list
 
     def protocols_get_all(self):
+        '''Returns a list of all protocols.
+
+        @return A list of all protocols.
+        '''
+
         cdef glib.GList *iter
         cdef plugin.PurplePlugin *pp
 
