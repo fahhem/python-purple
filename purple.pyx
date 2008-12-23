@@ -23,6 +23,7 @@ cdef extern from "c_purple.h":
     glib.guint glib_input_add(glib.gint fd, eventloop.PurpleInputCondition condition, eventloop.PurpleInputFunction function, glib.gpointer data)
 
 import ecore
+import signal
 
 cdef glib.GHashTable *c_ui_info
 
@@ -92,6 +93,12 @@ cdef class Purple:
 
         # adds glib iteration inside ecore main loop
         ecore.timer_add(0.001, self.__glib_iteration_when_idle)
+
+        # libpurple's built-in DNS resolution forks processes to perform
+        # blocking lookups without blocking the main process.  It does not
+        # handle SIGCHLD itself, so if the UI does not you quickly get an army
+        # of zombie subprocesses marching around.
+        signal.signal(signal.SIGCHLD, signal.SIG_IGN)
 
     def destroy(self):
         core.purple_core_quit()
