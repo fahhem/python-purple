@@ -17,10 +17,10 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import ecore
 import getpass
 import purple
 import sys
+import time
 
 # The information below is needed by libpurple
 __NAME__ = "nullclient"
@@ -60,5 +60,6 @@ if __name__ == '__main__':
     # Enable account (connects automatically)
     account.set_enabled(True)
 
-    # Initializes ecore mainloop
-    ecore.main_loop_begin()
+    while True:
+        core.iterate_main_loop()
+        time.sleep(0.01)

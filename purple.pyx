@@ -22,7 +22,6 @@ cimport purple
 cdef extern from "c_purple.h":
     glib.guint glib_input_add(glib.gint fd, eventloop.PurpleInputCondition condition, eventloop.PurpleInputFunction function, glib.gpointer data)
 
-import ecore
 import signal
 
 cdef glib.GHashTable *c_ui_info
@@ -90,9 +89,6 @@ cdef class Purple:
 
         if default_path:
             util.purple_util_set_user_dir(default_path)
-
-        # adds glib iteration inside ecore main loop
-        ecore.timer_add(0.001, self.__glib_iteration_when_idle)
 
         # libpurple's built-in DNS resolution forks processes to perform
         # blocking lookups without blocking the main process.  It does not
@@ -168,10 +164,6 @@ cdef class Purple:
             glib.g_hash_table_insert(c_ui_info, "website", c_ui_website)
             glib.g_hash_table_insert(c_ui_info, "dev_website", c_ui_dev_website)
         return c_ui_info
-
-    def __glib_iteration_when_idle(self):
-        glib.g_main_context_iteration(NULL, False)
-        return True
 
     def purple_init(self):
         '''Initializes the purple.
@@ -417,6 +409,10 @@ cdef class Purple:
             iter = iter.next
 
         return account_list
+
+    def iterate_main_loop(self):
+        glib.g_main_context_iteration(NULL, False)
+        return True
 
     def protocols_get_all(self):
         '''Returns a list of all protocols.

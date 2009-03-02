@@ -265,6 +265,7 @@ class NullClient(object):
         # Sets initial parameters
         self.core = purple.Purple(__NAME__, __VERSION__, __WEBSITE__, \
                 __DEV_WEBSITE__, debug_enabled=True, default_path='/tmp')
+        ecore.Timer(0.01, self.core.iterate_main_loop)
         self.account = None
         self.buddies = {}
         self.conversations = {}
