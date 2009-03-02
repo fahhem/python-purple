@@ -31,7 +31,7 @@ cdef void *notify_message(notify.PurpleNotifyMsgType type, \
     TODO
     """
     debug.purple_debug_info("notify", "%s", "notify-message\n")
-    if notify_cbs.has_key("notif-message"):
+    if "notify-message" in notify_cbs:
         (<object> notify_cbs["notify-message"])("notify-message: TODO")
 
 cdef void *notify_email(connection.PurpleConnection *gc, \
@@ -41,7 +41,7 @@ cdef void *notify_email(connection.PurpleConnection *gc, \
     TODO
     """
     debug.purple_debug_info("notify", "%s", "notify-email\n")
-    if notify_cbs.has_key("notify-email"):
+    if "notify-email" in notify_cbs:
         (<object> notify_cbs["notify-email"])("notify-email: TODO")
 
 cdef void *notify_emails(connection.PurpleConnection *gc, size_t count, \
@@ -51,7 +51,7 @@ cdef void *notify_emails(connection.PurpleConnection *gc, size_t count, \
     TODO
     """
     debug.purple_debug_info("notify", "%s", "notify-emails\n")
-    if notify_cbs.has_key("notify-emails"):
+    if "notify-emails" in notify_cbs:
         (<object> notify_cbs["notify-emails"])("notify-emails: TODO")
 
 cdef void *notify_formatted(const_char *title, const_char *primary, \
@@ -60,7 +60,7 @@ cdef void *notify_formatted(const_char *title, const_char *primary, \
     TODO
     """
     debug.purple_debug_info("notify", "%s", "notify-formatted\n")
-    if notify_cbs.has_key("notify-formatted"):
+    if "notify-formatted" in notify_cbs:
         (<object> notify_cbs["notify-formatted"])("notify-formatted: TODO")
 
 cdef void *notify_searchresults(connection.PurpleConnection *gc, \
@@ -70,8 +70,9 @@ cdef void *notify_searchresults(connection.PurpleConnection *gc, \
     TODO
     """
     debug.purple_debug_info("notify", "%s", "notify-searchresults\n")
-    if notify_cbs.has_key("notify-searchresults"):
-        (<object> notify_cbs["notify-searchresults"])("notify-searchresults: TODO")
+    if "notify-searchresults" in notify_cbs:
+        (<object> notify_cbs["notify-searchresults"]) \
+            ("notify-searchresults: TODO")
 
 cdef void notify_searchresults_new_rows(connection.PurpleConnection *gc, \
         notify.PurpleNotifySearchResults *results, void *data):
@@ -79,8 +80,9 @@ cdef void notify_searchresults_new_rows(connection.PurpleConnection *gc, \
     TODO
     """
     debug.purple_debug_info("notify", "%s", "notify-searchresults-new-rows\n")
-    if notify_cbs.has_key("notify-searchresults-new-rows"):
-        (<object> notify_cbs["notify-searchresults-new-rows"])("notify-searchresults-new-rows: TODO")
+    if "notify-searchresults-new-rows" in notify_cbs:
+        (<object> notify_cbs["notify-searchresults-new-rows"]) \
+            ("notify-searchresults-new-rows: TODO")
 
 cdef void *notify_userinfo(connection.PurpleConnection *gc, const_char *who, \
         notify.PurpleNotifyUserInfo *user_info):
@@ -88,7 +90,7 @@ cdef void *notify_userinfo(connection.PurpleConnection *gc, const_char *who, \
     TODO
     """
     debug.purple_debug_info("notify", "%s", "notify-userinfo\n")
-    if notify_cbs.has_key("notify-userinfo"):
+    if "notify-userinfo" in notify_cbs:
         (<object> notify_cbs["notify-userinfo"])("notify-userinfo: TODO")
 
 cdef void *notify_uri(const_char *uri):
@@ -96,7 +98,7 @@ cdef void *notify_uri(const_char *uri):
     TODO
     """
     debug.purple_debug_info("notify", "%s", "notify-uri\n")
-    if notify_cbs.has_key("notify-uri"):
+    if "notify-uri" in notify_cbs:
         (<object> notify_cbs["notify-uri"])("notify-uri: TODO")
 
 cdef void close_notify(notify.PurpleNotifyType type, void *ui_handle):
@@ -104,5 +106,5 @@ cdef void close_notify(notify.PurpleNotifyType type, void *ui_handle):
     TODO
     """
     debug.purple_debug_info("notify", "%s", "close-notify\n")
-    if notify_cbs.has_key("close-notify"):
+    if "close-notify" in notify_cbs:
         (<object> notify_cbs["close-notify"])("close-notify: TODO")

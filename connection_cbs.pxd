@@ -35,15 +35,16 @@ cdef void connect_progress(connection.PurpleConnection *gc, const_char *text, \
     reached (which might be displayed as a progress bar).
     """
     debug.purple_debug_info("connection", "%s", "connect-progress\n")
-    if connection_cbs.has_key("connect-progress"):
-        (<object> connection_cbs["connect-progress"])(<char *> text, step, step_count)
+    if "connect-progress" in connection_cbs:
+        (<object> connection_cbs["connect-progress"]) \
+            (<char *> text, step, step_count)
 
 cdef void connected(connection.PurpleConnection *gc):
     """
     Called when a connection is established (just before the signed-on signal).
     """
     debug.purple_debug_info("connection", "%s", "connected\n")
-    if connection_cbs.has_key("connected"):
+    if "connected" in connection_cbs:
         (<object> connection_cbs["connected"])("connected: TODO")
 
 cdef void disconnected(connection.PurpleConnection *gc):
@@ -52,7 +53,7 @@ cdef void disconnected(connection.PurpleConnection *gc):
     signal).
     """
     debug.purple_debug_info("connection", "%s", "disconnected\n")
-    if connection_cbs.has_key("disconnected"):
+    if "disconnected" in connection_cbs:
         (<object> connection_cbs["disconnected"])("disconnected: TODO")
 
 cdef void notice(connection.PurpleConnection *gc, const_char *text):
@@ -62,7 +63,7 @@ cdef void notice(connection.PurpleConnection *gc, const_char *text):
     operation, is not used by any of the protocols shipped with libpurple.)
     """
     debug.purple_debug_info("connection", "%s", "notice\n")
-    if connection_cbs.has_key("notice"):
+    if "notice" in connection_cbs:
         (<object> connection_cbs["notice"])("notice: TODO")
 
 cdef void report_disconnect(connection.PurpleConnection *gc, const_char *text):
@@ -75,7 +76,7 @@ cdef void report_disconnect(connection.PurpleConnection *gc, const_char *text):
                 PurpleConnectionUiOps.report_disconnect_reason.
     """
     debug.purple_debug_info("connection", "%s", "report-disconnect\n")
-    if connection_cbs.has_key("report-disconnect"):
+    if "report-disconnect" in connection_cbs:
         (<object> connection_cbs["report-disconnect"])(<char *> text)
 
 cdef void network_connected():
@@ -85,7 +86,7 @@ cdef void network_connected():
     it uses Win32's network change notification infrastructure.
     """
     debug.purple_debug_info("connection", "%s", "network-connected\n")
-    if connection_cbs.has_key("network-connected"):
+    if "network-connected" in connection_cbs:
         (<object> connection_cbs["network-connected"])()
 
 cdef void network_disconnected():
@@ -94,7 +95,7 @@ cdef void network_disconnected():
     has gone away.
     """
     debug.purple_debug_info("connection", "%s", "network-disconnected\n")
-    if connection_cbs.has_key("network-disconnected"):
+    if "network-disconnected" in connection_cbs:
         (<object> connection_cbs["network-disconnected"])()
 
 cdef void report_disconnect_reason(connection.PurpleConnection *gc, \
@@ -137,5 +138,6 @@ cdef void report_disconnect_reason(connection.PurpleConnection *gc, \
     else:
         text = None
 
-    if connection_cbs.has_key("report-disconnect-reason"):
-        (<object> connection_cbs["report-disconnect-reason"])(reason_string, <char *> text)
+    if "report-disconnect-reason" in connection_cbs:
+        (<object> connection_cbs["report-disconnect-reason"]) \
+            (reason_string, <char *> text)

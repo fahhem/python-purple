@@ -169,7 +169,7 @@ cdef class Plugin:
 
             iter = iter.next
 
-            if not po.has_key(sett) or not po[sett]:
+            if sett not in po or po[sett] == None:
                 continue
 
             if type == prefs.PURPLE_PREF_STRING:

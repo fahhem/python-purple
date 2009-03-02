@@ -318,7 +318,7 @@ class NullClient(object):
 
     def __update_blist_cb(self, type, name=None, alias=None):
         if self.account and name and type == 2:
-            if not self.buddies.has_key(name):
+            if name not in self.buddies:
                 self.buddies[name] = purple.Buddy(name, self.account)
             if self.buddies[name].online:
                 self.window.add_buddy(name)
@@ -361,7 +361,7 @@ class NullClient(object):
             self.window.show()
 
     def __buddy_signed_off_cb(self, name, alias):
-        if self.buddies.has_key(name):
+        if name in self.buddies:
             del self.buddies[name]
 
         if self.window:
@@ -386,7 +386,7 @@ class NullClient(object):
 
     def send_message(self, name, message):
         print name, message
-        if not self.conversations.has_key(name):
+        if name not in self.conversations:
             self.conversations[name] = purple.Conversation('IM', self.account, name)
             self.conversations[name].new()
 

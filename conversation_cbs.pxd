@@ -42,7 +42,7 @@ cdef void create_conversation(conversation.PurpleConversation *conv):
 
     type = conversation.purple_conversation_get_type(conv)
 
-    if conversation_cbs.has_key("create-conversation"):
+    if "create-conversation" in conversation_cbs:
         (<object> conversation_cbs["create-conversation"])(name, type)
 
 cdef void destroy_conversation(conversation.PurpleConversation *conv):
@@ -50,8 +50,9 @@ cdef void destroy_conversation(conversation.PurpleConversation *conv):
     Called just before a conv is freed.
     """
     debug.purple_debug_info("conversation", "%s", "destroy-conversation\n")
-    if conversation_cbs.has_key("destroy-conversation"):
-        (<object> conversation_cbs["destroy-conversation"])("destroy-conversation: TODO")
+    if "destroy-conversation" in conversation_cbs:
+        (<object> conversation_cbs["destroy-conversation"]) \
+            ("destroy-conversation: TODO")
 
 cdef void write_chat(conversation.PurpleConversation *conv, const_char *who, \
         const_char *message, conversation.PurpleMessageFlags flags, \
@@ -62,7 +63,7 @@ cdef void write_chat(conversation.PurpleConversation *conv, const_char *who, \
     @see purple_conv_chat_write()
     """
     debug.purple_debug_info("conversation", "%s", "write-chat\n")
-    if conversation_cbs.has_key("write-chat"):
+    if "write-chat" in conversation_cbs:
         (<object> conversation_cbs["write-chat"])("write-chat: TODO")
 
 cdef void write_im(conversation.PurpleConversation *conv, const_char *who, \
@@ -74,7 +75,8 @@ cdef void write_im(conversation.PurpleConversation *conv, const_char *who, \
     @see purple_conv_im_write()
     """
     debug.purple_debug_info("conversation", "%s", "write-im\n")
-    cdef account.PurpleAccount *acc = conversation.purple_conversation_get_account(conv)
+    cdef account.PurpleAccount *acc = \
+        conversation.purple_conversation_get_account(conv)
     cdef blist.PurpleBuddy *buddy = NULL
     cdef char *c_username = NULL
     cdef char *c_sender_alias = NULL
@@ -109,9 +111,9 @@ cdef void write_im(conversation.PurpleConversation *conv, const_char *who, \
     else:
         flag = "RECV"
 
-    if conversation_cbs.has_key("write-im"):
+    if "write-im" in conversation_cbs:
         (<object> conversation_cbs["write-im"])(username, sender, \
-				sender_alias, message, flag)
+            sender_alias, message, flag)
 
 cdef void write_conv(conversation.PurpleConversation *conv, const_char *name, \
         const_char *alias, const_char *message, \
@@ -125,7 +127,7 @@ cdef void write_conv(conversation.PurpleConversation *conv, const_char *name, \
     @see purple_conversation_write()
     """
     debug.purple_debug_info("conversation", "%s", "write-conv\n")
-    if conversation_cbs.has_key("write-conv"):
+    if "write-conv" in conversation_cbs:
         (<object> conversation_cbs["write-conv"])("write-conv: TODO")
 
 cdef void chat_add_users(conversation.PurpleConversation *conv, \
@@ -139,7 +141,7 @@ cdef void chat_add_users(conversation.PurpleConversation *conv, \
     @see purple_conv_chat_add_users()
     """
     debug.purple_debug_info("conversation", "%s", "chat-add-users\n")
-    if conversation_cbs.has_key("chat-add-users"):
+    if "chat-add-users" in conversation_cbs:
         (<object> conversation_cbs["chat-add-users"])("chat-add-users: TODO")
 
 cdef void chat_rename_user(conversation.PurpleConversation *conv, \
@@ -152,8 +154,9 @@ cdef void chat_rename_user(conversation.PurpleConversation *conv, \
     @see purple_conv_chat_rename_user()
     """
     debug.purple_debug_info("conversation", "%s", "chat-rename-user\n")
-    if conversation_cbs.has_key("chat-rename-user"):
-        (<object> conversation_cbs["chat-rename-user"])("chat-rename-user: TODO")
+    if "chat-rename-user" in conversation_cbs:
+        (<object> conversation_cbs["chat-rename-user"]) \
+            ("chat-rename-user: TODO")
 
 cdef void chat_remove_users(conversation.PurpleConversation *conv, \
         glib.GList *users):
@@ -162,8 +165,9 @@ cdef void chat_remove_users(conversation.PurpleConversation *conv, \
     @param  users  A GList of const char *s.
     """
     debug.purple_debug_info("conversation", "%s", "chat-remove-users\n")
-    if conversation_cbs.has_key("chat-remove-users"):
-        (<object> conversation_cbs["chat-remove-users"])("chat-remove-users: TODO")
+    if "chat-remove-users" in conversation_cbs:
+        (<object> conversation_cbs["chat-remove-users"]) \
+            ("chat-remove-users: TODO")
 
 cdef void chat_update_user(conversation.PurpleConversation *conv, \
         const_char *user):
@@ -172,8 +176,9 @@ cdef void chat_update_user(conversation.PurpleConversation *conv, \
     @see purple_conv_chat_user_set_flags()
     """
     debug.purple_debug_info("conversation", "%s", "chat-update-user\n")
-    if conversation_cbs.has_key("chat-update-user"):
-        (<object> conversation_cbs["chat-update-user"])("chat-update-user: TODO")
+    if "chat-update-user" in conversation_cbs:
+        (<object> conversation_cbs["chat-update-user"]) \
+            ("chat-update-user: TODO")
 
 cdef void present(conversation.PurpleConversation *conv):
     """
@@ -181,7 +186,7 @@ cdef void present(conversation.PurpleConversation *conv):
     dialog.
     """
     debug.purple_debug_info("conversation", "%s", "present\n")
-    if conversation_cbs.has_key("present"):
+    if "present" in conversation_cbs:
         (<object> conversation_cbs["present"])("present: TODO")
 
 cdef glib.gboolean has_focus(conversation.PurpleConversation *conv):
@@ -190,7 +195,7 @@ cdef glib.gboolean has_focus(conversation.PurpleConversation *conv):
     conversation has the focus, return TRUE; otherwise, return FALSE.
     """
     debug.purple_debug_info("conversation", "%s", "has-focus\n")
-    if conversation_cbs.has_key("has-focus"):
+    if "has-focus" in conversation_cbs:
         (<object> conversation_cbs["has-focus"])("has-focus: TODO")
     return False
 
@@ -200,8 +205,9 @@ cdef glib.gboolean custom_smiley_add(conversation.PurpleConversation *conv, \
     Custom smileys (add).
     """
     debug.purple_debug_info("conversation", "%s", "custom-smiley-add\n")
-    if conversation_cbs.has_key("custom-smiley-add"):
-        (<object> conversation_cbs["custom-smiley-add"])("custom-smiley-add: TODO")
+    if "custom-smiley-add" in conversation_cbs:
+        (<object> conversation_cbs["custom-smiley-add"]) \
+            ("custom-smiley-add: TODO")
     return False
 
 cdef void custom_smiley_write(conversation.PurpleConversation *conv, \
@@ -210,8 +216,9 @@ cdef void custom_smiley_write(conversation.PurpleConversation *conv, \
     Custom smileys (write).
     """
     debug.purple_debug_info("conversation", "%s", "custom-smiley-write\n")
-    if conversation_cbs.has_key("custom-smiley-write"):
-        (<object> conversation_cbs["custom-smiley-write"])("custom-smiley-write: TODO")
+    if "custom-smiley-write" in conversation_cbs:
+        (<object> conversation_cbs["custom-smiley-write"]) \
+            ("custom-smiley-write: TODO")
 
 cdef void custom_smiley_close(conversation.PurpleConversation *conv, \
         const_char *smile):
@@ -219,8 +226,9 @@ cdef void custom_smiley_close(conversation.PurpleConversation *conv, \
     Custom smileys (close).
     """
     debug.purple_debug_info("conversation", "%s", "custom-smiley-close\n")
-    if conversation_cbs.has_key("custom-smiley-close"):
-        (<object> conversation_cbs["custom-smiley-close"])("custom-smiley-close: TODO")
+    if "custom-smiley-close" in conversation_cbs:
+        (<object> conversation_cbs["custom-smiley-close"]) \
+            ("custom-smiley-close: TODO")
 
 cdef void send_confirm(conversation.PurpleConversation *conv, \
         const_char *message):
@@ -230,5 +238,5 @@ cdef void send_confirm(conversation.PurpleConversation *conv, \
     is NULL, libpurple will fall back to using purple_request_action().
     """
     debug.purple_debug_info("conversation", "%s", "send-confirm\n")
-    if conversation_cbs.has_key("send-confirm"):
+    if "send-confirm" in conversation_cbs:
         (<object> conversation_cbs["send-confirm"])("send-confirm: TODO")

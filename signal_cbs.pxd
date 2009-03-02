@@ -46,7 +46,7 @@ cdef void signal_signed_on_cb(connection.PurpleConnection *gc, \
     else:
         protocol_id = c_protocol_id
 
-    if signal_cbs.has_key("signed-on"):
+    if "signed-on" in signal_cbs:
         (<object> signal_cbs["signed-on"])(username, protocol_id)
 
 cdef void signal_signed_off_cb(connection.PurpleConnection *gc, \
@@ -71,7 +71,7 @@ cdef void signal_signed_off_cb(connection.PurpleConnection *gc, \
     else:
         protocol_id = c_protocol_id
 
-    if signal_cbs.has_key("signed-off"):
+    if "signed-off" in signal_cbs:
         (<object> signal_cbs["signed-off"])(username, protocol_id)
 
 cdef void signal_connection_error_cb(connection.PurpleConnection *gc, \
@@ -122,7 +122,7 @@ cdef void signal_connection_error_cb(connection.PurpleConnection *gc, \
     else:
         desc = None
 
-    if signal_cbs.has_key("connection-error"):
+    if "connection-error" in signal_cbs:
         (<object> signal_cbs["connection-error"])(username, protocol_id, \
                 short_desc, desc)
 
@@ -146,7 +146,7 @@ cdef void signal_buddy_signed_on_cb(blist.PurpleBuddy *buddy):
     else:
         alias = c_alias
 
-    if signal_cbs.has_key("buddy-signed-on"):
+    if "buddy-signed-on" in signal_cbs:
         (<object> signal_cbs["buddy-signed-on"])(name, alias)
 
 cdef void signal_buddy_signed_off_cb(blist.PurpleBuddy *buddy):
@@ -169,7 +169,7 @@ cdef void signal_buddy_signed_off_cb(blist.PurpleBuddy *buddy):
     else:
         alias = c_alias
 
-    if signal_cbs.has_key("buddy-signed-off"):
+    if "buddy-signed-off" in signal_cbs:
         (<object> signal_cbs["buddy-signed-off"])(name, alias)
 
 cdef glib.gboolean signal_receiving_im_msg_cb(account.PurpleAccount *account, \
@@ -198,7 +198,7 @@ cdef glib.gboolean signal_receiving_im_msg_cb(account.PurpleAccount *account, \
 
     stripped = util.purple_markup_strip_html(message[0])
 
-    if signal_cbs.has_key("receiving-im-msg"):
+    if "receiving-im-msg" in signal_cbs:
         return (<object> signal_cbs["receiving-im-msg"])(sender[0], alias, stripped)
 
 cdef void jabber_receiving_xmlnode_cb(connection.PurpleConnection *gc, \
@@ -208,5 +208,5 @@ cdef void jabber_receiving_xmlnode_cb(connection.PurpleConnection *gc, \
     """
     message = xmlnode.xmlnode_to_str(packet[0], NULL)
 
-    if signal_cbs.has_key("jabber-receiving-xmlnode"):
+    if "jabber-receiving-xmlnode" in signal_cbs:
         (<object> signal_cbs["jabber-receiving-xmlnode"])(message)

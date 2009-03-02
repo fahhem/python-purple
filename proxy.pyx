@@ -110,25 +110,25 @@ cdef class ProxyInfo:
                 c_proxyinfo = proxy.c_purple_proxy_info_new()
                 account.purple_account_set_proxy_info(c_account, c_proxyinfo)
 
-        if info.has_key('type') and info['type']:
+        if 'type' in info and info['type']:
             type = info['type']
-            if not type in self.types.keys():
+            if not type in self.types:
                 type = 'HTTP'
             proxy.c_purple_proxy_info_set_type(c_proxyinfo, self.types[type])
 
-        if info.has_key('host') and info['host']:
+        if 'host' in info and info['host']:
             host = info['host']
             proxy.c_purple_proxy_info_set_host(c_proxyinfo, host)
 
-        if info.has_key('port') and info['port']:
+        if 'port' in info and info['port']:
             port = int(info['port'])
             proxy.c_purple_proxy_info_set_port(c_proxyinfo, port)
 
-        if info.has_key('username') and info['username']:
+        if 'username' in info and info['username']:
             username = info['username']
             proxy.c_purple_proxy_info_set_username(c_proxyinfo, username)
 
-        if info.has_key('password') and info['password']:
+        if 'password' in info and info['password']:
             password = info['password']
             proxy.c_purple_proxy_info_set_password(c_proxyinfo, password)
 

@@ -92,7 +92,7 @@ cdef void new_list(blist.PurpleBuddyList *list):
     Sets UI-specific data on a buddy list.
     """
     debug.purple_debug_info("blist", "%s", "new-list\n")
-    if blist_cbs.has_key("new-list"):
+    if "new-list" in blist_cbs:
         (<object> blist_cbs["new-list"])("new-list: TODO")
 
 cdef void new_node(blist.PurpleBlistNode *node):
@@ -100,7 +100,7 @@ cdef void new_node(blist.PurpleBlistNode *node):
     Sets UI-specific data on a node.
     """
     debug.purple_debug_info("blist", "%s", "new-node\n")
-    if blist_cbs.has_key("new-node"):
+    if "new-node" in blist_cbs:
         if node.type == blist.PURPLE_BLIST_GROUP_NODE:
             __group_node_cb(node, blist_cbs["new-node"])
         elif node.type == blist.PURPLE_BLIST_CONTACT_NODE:
@@ -117,7 +117,7 @@ cdef void show(blist.PurpleBuddyList *list):
     The core will call this when it's finished doing its core stuff.
     """
     debug.purple_debug_info("blist", "%s", "show\n")
-    if blist_cbs.has_key("show"):
+    if "show" in blist_cbs:
         (<object> blist_cbs["show"])("show: TODO")
 
 cdef void update(blist.PurpleBuddyList *list, blist.PurpleBlistNode *node):
@@ -125,7 +125,7 @@ cdef void update(blist.PurpleBuddyList *list, blist.PurpleBlistNode *node):
     This will update a node in the buddy list.
     """
     debug.purple_debug_info("blist", "%s", "update\n")
-    if blist_cbs.has_key("update"):
+    if "update" in blist_cbs:
         if node.type == blist.PURPLE_BLIST_GROUP_NODE:
             __group_node_cb(node, blist_cbs["update"])
         elif node.type == blist.PURPLE_BLIST_CONTACT_NODE:
@@ -142,7 +142,7 @@ cdef void remove(blist.PurpleBuddyList *list, blist.PurpleBlistNode *node):
     This removes a node from the list.
     """
     debug.purple_debug_info("blist", "%s", "remove\n")
-    if blist_cbs.has_key("remove"):
+    if "remove" in blist_cbs:
         if node.type == blist.PURPLE_BLIST_GROUP_NODE:
             __group_node_cb(node, blist_cbs["remove"])
         elif node.type == blist.PURPLE_BLIST_CONTACT_NODE:
@@ -159,7 +159,7 @@ cdef void destroy(blist.PurpleBuddyList *list):
     When the list gets destroyed, this gets called to destroy the UI.
     """
     debug.purple_debug_info("blist", "%s", "destroy\n")
-    if blist_cbs.has_key("destroy"):
+    if "destroy" in blist_cbs:
         (<object> blist_cbs["destroy"])("destroy: TODO")
 
 cdef void set_visible(blist.PurpleBuddyList *list, glib.gboolean show):
@@ -167,7 +167,7 @@ cdef void set_visible(blist.PurpleBuddyList *list, glib.gboolean show):
     Hides or unhides the buddy list.
     """
     debug.purple_debug_info("blist", "%s", "set-visible\n")
-    if blist_cbs.has_key("set-visible"):
+    if "set-visible" in blist_cbs:
         (<object> blist_cbs["set-visible"])("set-visible: TODO")
 
 cdef void request_add_buddy(account.PurpleAccount *c_account, \
@@ -197,10 +197,9 @@ cdef void request_add_buddy(account.PurpleAccount *c_account, \
     else:
         buddy_alias = None
 
-    if blist_cbs.has_key("request-add-buddy"):
+    if "request-add-buddy" in blist_cbs:
         (<object> blist_cbs["request-add-buddy"])( \
-                (username, protocol_id), \
-                buddy_username, buddy_group, buddy_alias)
+            (username, protocol_id), buddy_username, buddy_group, buddy_alias)
 
 cdef void request_add_chat(account.PurpleAccount *acc, \
         blist.PurpleGroup *group, const_char *alias, const_char *name):
@@ -208,7 +207,7 @@ cdef void request_add_chat(account.PurpleAccount *acc, \
     TODO
     """
     debug.purple_debug_info("blist", "%s", "request-add-chat\n")
-    if blist_cbs.has_key("request-add-chat"):
+    if "request-add-chat" in blist_cbs:
         (<object> blist_cbs["request-add-chat"])("request-add-chat: TODO")
 
 cdef void request_add_group():
@@ -216,5 +215,5 @@ cdef void request_add_group():
     TODO
     """
     debug.purple_debug_info("blist", "%s", "request-add-group\n")
-    if blist_cbs.has_key("request-add-chat"):
-        (<object>blist_cbs["request-add-chat"])("request-add-group: TODO")
+    if "request-add-group" in blist_cbs:
+        (<object>blist_cbs["request-add-group"])("request-add-group: TODO")

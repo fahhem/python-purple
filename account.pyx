@@ -327,7 +327,7 @@ cdef class Account:
 
             sett = str(<char *> setting)
 
-            if not po.has_key(sett):
+            if sett not in po:
                 iter = iter.next
                 continue
 

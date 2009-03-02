@@ -58,7 +58,7 @@ cdef void notify_added(account.PurpleAccount *c_account, \
     their buddy list.
     """
     cdef connection.PurpleConnection *gc = \
-            account.purple_account_get_connection(c_account)
+        account.purple_account_get_connection(c_account)
 
     debug.purple_debug_info("account", "%s", "notify-added\n")
 
@@ -81,10 +81,10 @@ cdef void notify_added(account.PurpleAccount *c_account, \
     else:
         message = None
 
-    if account_cbs.has_key("notify-added"):
+    if "notify-added" in account_cbs:
         (<object> account_cbs["notify-added"])( \
-                (<char *> remote_user, remote_alias), \
-                (username, protocol_id), message)
+            (<char *> remote_user, remote_alias), \
+            (username, protocol_id), message)
 
 cdef void status_changed(account.PurpleAccount *c_account, \
         status.PurpleStatus *c_status):
@@ -99,9 +99,9 @@ cdef void status_changed(account.PurpleAccount *c_account, \
     status_id = status.purple_status_get_id(c_status)
     status_name = status.purple_status_get_name(c_status)
 
-    if account_cbs.has_key("status-changed"):
+    if "status-changed" in account_cbs:
         (<object> account_cbs["status-changed"])( \
-                (username, protocol_id), status_id, status_name)
+            (username, protocol_id), status_id, status_name)
 
 cdef void request_add(account.PurpleAccount *c_account, \
         const_char *remote_user, const_char *id, const_char *alias, \
@@ -133,10 +133,10 @@ cdef void request_add(account.PurpleAccount *c_account, \
     else:
         message = None
 
-    if account_cbs.has_key("request-add"):
+    if "request-add" in account_cbs:
         (<object> account_cbs["request-add"])( \
-                (<char *> remote_user, remote_alias), \
-                (username, protocol_id), message)
+            (<char *> remote_user, remote_alias), \
+            (username, protocol_id), message)
 
 cdef void *request_authorize(account.PurpleAccount *c_account, \
         const_char *remote_user, const_char *id, const_char *alias, \
@@ -182,12 +182,12 @@ cdef void *request_authorize(account.PurpleAccount *c_account, \
     else:
         message = None
 
-    if account_cbs.has_key("request-authorize"):
+    if "request-authorize" in account_cbs:
         (<object> account_cbs["request-authorize"])( \
-                (<char *> remote_user, remote_alias), \
-                (username, protocol_id), \
-                message, on_list, \
-                call_authorize_cb, call_deny_cb)
+            (<char *> remote_user, remote_alias), \
+            (username, protocol_id), \
+            message, on_list, \
+            call_authorize_cb, call_deny_cb)
 
 cdef void close_account_request (void *ui_handle):
     """
@@ -198,5 +198,5 @@ cdef void close_account_request (void *ui_handle):
 
     request.purple_request_close(request.PURPLE_REQUEST_ACTION, ui_handle)
 
-    if account_cbs.has_key("close-account-request"):
+    if "close-account-request" in account_cbs:
         (<object> account_cbs["close-account-request"])()

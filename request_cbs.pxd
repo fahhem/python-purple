@@ -44,7 +44,7 @@ cdef void *request_input(const_char *title, const_char *primary, \
     @see purple_request_input().
     """
     debug.purple_debug_info("request", "%s", "request-input\n")
-    if request_cbs.has_key("request-input"):
+    if "request-input" in request_cbs:
         (<object> request_cbs["request-input"])("request-input: TODO")
 
 cdef void *request_choice(const_char *title, const_char *primary, \
@@ -57,7 +57,7 @@ cdef void *request_choice(const_char *title, const_char *primary, \
     @see purple_request_choice_varg().
     """
     debug.purple_debug_info("request", "%s", "request-choice\n")
-    if request_cbs.has_key("request-choice"):
+    if "request-choice" in request_cbs:
         (<object> request_cbs["request-choice"])("request-choice: TODO")
 
 cdef void __call_action(int i):
@@ -99,10 +99,10 @@ cdef void *request_action(const_char *title, const_char *primary, \
         i = i + 1
 
     debug.purple_debug_info("request", "%s", "request-action\n")
-    if request_cbs.has_key("request-action"):
-        (<object> request_cbs["request-action"])(<char *> title,
-			<char *> primary, <char *> secondary,
-			default_action, req_actions_list)
+    if "request-action" in request_cbs:
+        (<object> request_cbs["request-action"]) \
+            (<char *> title, <char *> primary, <char *> secondary, \
+            default_action, req_actions_list)
 
 cdef void *request_fields(const_char *title, const_char *primary, \
         const_char *secondary, request.PurpleRequestFields *fields, \
@@ -114,7 +114,7 @@ cdef void *request_fields(const_char *title, const_char *primary, \
     @see purple_request_fields().
     """
     debug.purple_debug_info("request", "%s", "request-fields\n")
-    if request_cbs.has_key("request-fields"):
+    if "request-fields" in request_cbs:
         (<object> request_cbs["request-fields"])("request-fields: TODO")
 
 cdef void *request_file(const_char *title, const_char *filename, \
@@ -126,7 +126,7 @@ cdef void *request_file(const_char *title, const_char *filename, \
     @see purple_request_file().
     """
     debug.purple_debug_info("request", "%s", "request-file\n")
-    if request_cbs.has_key("request-file"):
+    if "request-file" in request_cbs:
         (<object> request_cbs["request-file"])("request-file: TODO")
 
 cdef void close_request(request.PurpleRequestType type, void *ui_handle):
@@ -134,7 +134,7 @@ cdef void close_request(request.PurpleRequestType type, void *ui_handle):
     TODO
     """
     debug.purple_debug_info("request", "%s", "close-request\n")
-    if request_cbs.has_key("close-request"):
+    if "close-request" in request_cbs:
         (<object> request_cbs["close-request"])("close-request: TODO")
 
 cdef void *request_folder(const_char *title, const_char *dirname, \
@@ -145,5 +145,5 @@ cdef void *request_folder(const_char *title, const_char *dirname, \
     @see purple_request_folder().
     """
     debug.purple_debug_info("request", "%s", "request-folder\n")
-    if request_cbs.has_key("request-folder"):
+    if "request-folder" in request_cbs:
         (<object> request_cbs["request-folder"])("request-folder: TODO")
