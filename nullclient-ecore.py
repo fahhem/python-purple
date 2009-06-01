@@ -19,6 +19,10 @@
 
 import etk
 import ecore
+import sys, dl
+
+sys.setdlopenflags(dl.RTLD_NOW | dl.RTLD_GLOBAL)
+
 import purple
 
 # The information below is needed by libpurple

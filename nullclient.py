@@ -18,9 +18,12 @@
 #
 
 import getpass
-import purple
-import sys
+import sys, dl
 import time
+
+sys.setdlopenflags(dl.RTLD_NOW | dl.RTLD_GLOBAL)
+
+import purple
 
 # The information below is needed by libpurple
 __NAME__ = "nullclient"
