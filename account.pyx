@@ -17,7 +17,15 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cimport purple
+cimport account
+cimport accountopt
+cimport blist
+cimport plugin
+cimport prefs
+cimport prpl
+cimport savedstatuses
+cimport server
+cimport status
 
 cdef class Account:
     """
@@ -669,3 +677,5 @@ cdef class Account:
             return True
         else:
             return False
+
+include "buddy.pyx"

@@ -17,7 +17,15 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cimport purple
+cimport glib
+
+cimport accountopt
+cimport plugin
+cimport prefs
+cimport prpl
+
+cdef extern from *:
+    ctypedef char const_char "const char"
 
 cdef class Protocol:
     """

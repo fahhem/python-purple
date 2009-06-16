@@ -17,8 +17,6 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cimport purple
-
 signal_cbs = {}
 
 cdef extern from *:

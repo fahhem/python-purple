@@ -17,8 +17,6 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cimport purple
-
 cdef extern from *:
     ctypedef char const_char "const char"
     ctypedef int size_t
