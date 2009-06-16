@@ -295,7 +295,7 @@ cdef class Purple:
           "request": request_cbs }[type][name] = callback
 
     def signal_connect(self, name=None, cb=None):
-        '''Connects a signal handler to a signal for a particular object.
+        '''Connects a signal handler to a callback for a particular object.
         Take care not to register a handler function twice. Purple will
         not correct any mistakes for you in this area.
 
@@ -438,7 +438,6 @@ cdef class Purple:
 include "protocol.pyx"
 #include "plugin.pyx"
 include "proxy.pyx"
-#include "protocol.pyx"
 include "account.pyx"
 include "buddy.pyx"
 #include "connection.pyx"

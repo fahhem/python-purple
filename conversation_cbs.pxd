@@ -106,7 +106,7 @@ cdef void write_im(conversation.PurpleConversation *conv, const_char *who, \
         message = None
 
     # FIXME: Maybe we need add more purple flags in the future
-    if flags & conversation.PURPLE_MESSAGE_SEND:
+    if (<int>flags & conversation.PURPLE_MESSAGE_SEND):
         flag = "SEND"
     else:
         flag = "RECV"
