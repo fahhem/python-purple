@@ -1,3 +1,11 @@
+python-purple (0.1ubuntu1) jaunty; urgency=low
+
+  * Removed python2.5-distutils dependency for Ubuntu Jaunty.
+  * Removed LD_PRELOAD dependency.
+  * Replaced Ecore mainloop with GLib.
+
+ -- Bruno Abinader <bruno.abinader@openbossa.org>  Tue, 16 Jun 2009 10:16:37 -0400
+
 python-purple (0.1) unstable; urgency=low
 
   * Initial release.
