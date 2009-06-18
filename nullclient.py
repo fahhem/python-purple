@@ -64,5 +64,9 @@ if __name__ == '__main__':
     account.set_enabled(True)
 
     while True:
-        core.iterate_main_loop()
-        time.sleep(0.01)
+        try:
+            core.iterate_main_loop()
+            time.sleep(0.01)
+        except KeyboardInterrupt:
+            core.destroy()
+            break
