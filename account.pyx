@@ -567,8 +567,8 @@ cdef class Account:
             while iter:
                 c_alias = NULL
                 c_buddy = <blist.PurpleBuddy *> iter.data
-                if <blist.PurpleBuddy *> c_buddy and \
-                        status.purple_presence_is_online( \
+                if <bint> (<blist.PurpleBuddy *> c_buddy) and \
+                        <bint> status.purple_presence_is_online( \
                                 blist.purple_buddy_get_presence(c_buddy)):
                     name = <char *> blist.purple_buddy_get_name(c_buddy)
 
@@ -626,7 +626,7 @@ cdef class Account:
         if self.__exists:
             if msg:
                 account.purple_account_set_status(self._get_structure(),
-                        <char *> type, True, "message", <char *> msg, NULL)
+                        <char *> type, True, <char *> "message", <char *> msg, NULL)
             else:
                 account.purple_account_set_status(self._get_structure(),
                         <char *> type, True, NULL)

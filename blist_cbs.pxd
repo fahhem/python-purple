@@ -114,7 +114,7 @@ cdef void show(blist.PurpleBuddyList *list):
     """
     The core will call this when it's finished doing its core stuff.
     """
-    debug.purple_debug_info("blist", "%s", "show\n")
+    debug.purple_debug_info("blist", "%s", "show")
     if "show" in blist_cbs:
         (<object> blist_cbs["show"])("show: TODO")
 
@@ -122,7 +122,7 @@ cdef void update(blist.PurpleBuddyList *list, blist.PurpleBlistNode *node):
     """
     This will update a node in the buddy list.
     """
-    debug.purple_debug_info("blist", "%s", "update\n")
+    debug.purple_debug_info("blist", "%s", "update")
     if "update" in blist_cbs:
         if node.type == blist.PURPLE_BLIST_GROUP_NODE:
             __group_node_cb(node, blist_cbs["update"])
@@ -139,7 +139,7 @@ cdef void remove(blist.PurpleBuddyList *list, blist.PurpleBlistNode *node):
     """
     This removes a node from the list.
     """
-    debug.purple_debug_info("blist", "%s", "remove\n")
+    debug.purple_debug_info("blist", "%s", "remove")
     if "remove" in blist_cbs:
         if node.type == blist.PURPLE_BLIST_GROUP_NODE:
             __group_node_cb(node, blist_cbs["remove"])
@@ -156,7 +156,7 @@ cdef void destroy(blist.PurpleBuddyList *list):
     """
     When the list gets destroyed, this gets called to destroy the UI.
     """
-    debug.purple_debug_info("blist", "%s", "destroy\n")
+    debug.purple_debug_info("blist", "%s", "destroy")
     if "destroy" in blist_cbs:
         (<object> blist_cbs["destroy"])("destroy: TODO")
 

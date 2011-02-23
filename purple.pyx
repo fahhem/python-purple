@@ -110,17 +110,17 @@ cdef class Purple:
     ui_name = property(__get_ui_name)
 
     cdef void __core_ui_ops_ui_prefs_init(self):
-        debug.purple_debug_info("core_ui_ops", "%s", "ui_prefs_init\n")
+        debug.purple_debug_info("core_ui_ops", "%s", "ui_prefs_init")
         prefs.purple_prefs_load()
 
         prefs.purple_prefs_add_none("/carman")
 
     cdef void __core_ui_ops_debug_init(self):
-        debug.purple_debug_info("core_ui_ops", "%s", "debug_ui_init\n")
+        debug.purple_debug_info("core_ui_ops", "%s", "debug_ui_init")
         pass
 
     cdef void __core_ui_ops_ui_init(self):
-        debug.purple_debug_info("core_ui_ops", "%s", "ui_init\n")
+        debug.purple_debug_info("core_ui_ops", "%s", "ui_init")
 
         account.purple_accounts_set_ui_ops(&c_account_ui_ops)
         connection.purple_connections_set_ui_ops(&c_conn_ui_ops)
@@ -133,7 +133,7 @@ cdef class Purple:
         #roomlist.purple_roomlist_set_ui_ops(&c_rlist_ui_ops)
 
     cdef void __core_ui_ops_quit(self):
-        debug.purple_debug_info("core_ui_ops", "%s", "quit\n")
+        debug.purple_debug_info("core_ui_ops", "%s", "quit")
 
         account.purple_accounts_set_ui_ops(NULL)
         connection.purple_connections_set_ui_ops(NULL)
@@ -427,7 +427,7 @@ cdef class Purple:
         protocol_list = []
         while iter:
             pp = <plugin.PurplePlugin*> iter.data
-            if pp.info and pp.info.name:
+            if <bint> pp.info and <bint> pp.info.name:
                 protocol_list.append(Protocol(pp.info.id))
             iter = iter.next
         return protocol_list

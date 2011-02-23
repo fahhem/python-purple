@@ -183,7 +183,7 @@ cdef void present(conversation.PurpleConversation *conv):
     Present this conversation to the user; for example, by displaying the IM
     dialog.
     """
-    debug.purple_debug_info("conversation", "%s", "present\n")
+    debug.purple_debug_info("conversation", "%s", "present")
     if "present" in conversation_cbs:
         (<object> conversation_cbs["present"])("present: TODO")
 

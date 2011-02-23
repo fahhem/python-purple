@@ -41,7 +41,7 @@ cdef void connected(connection.PurpleConnection *gc):
     """
     Called when a connection is established (just before the signed-on signal).
     """
-    debug.purple_debug_info("connection", "%s", "connected\n")
+    debug.purple_debug_info("connection", "%s", "connected")
     if "connected" in connection_cbs:
         (<object> connection_cbs["connected"])("connected: TODO")
 
@@ -50,7 +50,7 @@ cdef void disconnected(connection.PurpleConnection *gc):
     Called when a connection is ended (between the signing-off and signed-off
     signal).
     """
-    debug.purple_debug_info("connection", "%s", "disconnected\n")
+    debug.purple_debug_info("connection", "%s", "disconnected")
     if "disconnected" in connection_cbs:
         (<object> connection_cbs["disconnected"])("disconnected: TODO")
 
@@ -60,7 +60,7 @@ cdef void notice(connection.PurpleConnection *gc, const_char *text):
     implements this as a no-op; purple_connection_notice(), which uses this
     operation, is not used by any of the protocols shipped with libpurple.)
     """
-    debug.purple_debug_info("connection", "%s", "notice\n")
+    debug.purple_debug_info("connection", "%s", "notice")
     if "notice" in connection_cbs:
         (<object> connection_cbs["notice"])("notice: TODO")
 
